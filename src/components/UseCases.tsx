@@ -112,7 +112,7 @@ export function UseCases() {
                                 <p className="text-sm text-muted-foreground mb-3">
                                     {useCase.description}
                                 </p>
-                                <div className="rounded-lg bg-muted/50 border border-border/30 px-3 py-2">
+                                <div className="rounded-lg bg-gray-900/90 dark:bg-muted/50 border border-gray-800/50 dark:border-border/30 px-3 py-2">
                                     <code className="text-xs font-mono text-airlock-cyan">
                                         {useCase.example}
                                     </code>

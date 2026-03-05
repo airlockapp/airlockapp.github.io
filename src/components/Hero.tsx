@@ -66,10 +66,13 @@ export function Hero() {
   return (
     <section className="relative overflow-hidden py-20 md:py-32">
       {/* Background gradients */}
-      <div className="absolute inset-0 -z-10">
-        <div className="absolute top-0 -left-4 w-96 h-96 bg-airlock-violet rounded-full mix-blend-soft-light filter blur-3xl opacity-50 animate-blob" />
-        <div className="absolute top-20 right-20 w-80 h-80 bg-airlock-violet-light rounded-full mix-blend-soft-light filter blur-3xl opacity-30 animate-blob animation-delay-2000" />
-        <div className="absolute -bottom-8 left-1/3 w-72 h-72 bg-airlock-cyan/30 rounded-full mix-blend-soft-light filter blur-3xl opacity-40 animate-blob animation-delay-4000" />
+      <div
+        className="absolute inset-0 -z-10"
+        style={{ background: 'radial-gradient(ellipse 200% 100% at 50% 30%, rgba(108,62,207,0.08), transparent 80%)' }}
+      >
+        <div className="absolute top-1/4 left-1/4 w-[50vw] h-[50vw] max-w-[40rem] max-h-[40rem] bg-airlock-violet-light/10 dark:bg-airlock-violet/20 rounded-full filter blur-[140px] animate-blob" />
+        <div className="absolute top-0 left-1/2 w-[50vw] h-[50vw] max-w-[40rem] max-h-[40rem] bg-airlock-violet-light/8 dark:bg-airlock-violet/10 rounded-full filter blur-[160px] animate-blob animation-delay-2000" />
+        <div className="absolute -bottom-8 left-1/3 w-[40vw] h-[40vw] max-w-[30rem] max-h-[30rem] bg-airlock-cyan/8 dark:bg-airlock-cyan/15 rounded-full filter blur-[120px] animate-blob animation-delay-4000" />
       </div>
 
       <div className="container mx-auto px-4">
@@ -120,10 +123,10 @@ export function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.3 }}
-              className="flex flex-col gap-3 pt-4"
+              className="flex flex-col items-center lg:items-start gap-3 pt-4 w-full"
             >
               <span className="text-xs text-muted-foreground/50 uppercase tracking-widest font-semibold">Works with</span>
-              <div className="flex items-center gap-6">
+              <div className="grid grid-cols-2 gap-4 justify-items-center md:flex md:items-center md:gap-6">
                 {[
                   { name: "Cursor", icon: "/enforcers/cursor.png", href: "/docs/cursor" },
                   { name: "Windsurf", icon: "/enforcers/windsurf.png", href: "/docs/windsurf" },
@@ -133,10 +136,10 @@ export function Hero() {
                   <a
                     key={ide.name}
                     href={ide.href}
-                    className="flex items-center gap-3 text-foreground/80 hover:text-foreground transition-colors group"
+                    className="flex items-center gap-2 md:gap-3 text-foreground/80 hover:text-foreground transition-colors group"
                   >
-                    <img src={ide.icon} alt={ide.name} className="w-10 h-10 rounded-xl group-hover:scale-110 transition-transform" />
-                    <span className="text-base font-bold">{ide.name}</span>
+                    <img src={ide.icon} alt={ide.name} className="w-8 h-8 md:w-10 md:h-10 rounded-lg md:rounded-xl group-hover:scale-110 transition-transform" />
+                    <span className="text-sm md:text-base font-bold">{ide.name}</span>
                   </a>
                 ))}
               </div>
@@ -198,11 +201,11 @@ export function Hero() {
             className="flex-shrink-0 relative"
           >
             {/* Glow effect */}
-            <div className="absolute inset-0 bg-gradient-to-br from-airlock-violet/40 to-airlock-cyan/20 rounded-3xl blur-3xl animate-pulse-glow" />
+            <div className="absolute -inset-8 bg-airlock-violet-light/10 dark:bg-airlock-violet/20 rounded-full blur-[80px] animate-pulse-glow" />
 
             <div className="relative">
               {/* Carousel */}
-              <div className="w-64 md:w-72 overflow-hidden rounded-[2rem] shadow-2xl shadow-airlock-violet/30 border border-airlock-violet/20 bg-white">
+              <div className="w-64 md:w-72 overflow-hidden rounded-[2rem] shadow-xl shadow-airlock-violet-light/15 dark:shadow-airlock-violet/20 border border-airlock-violet-light/10 dark:border-airlock-violet/10 bg-white">
                 <AnimatePresence mode="wait">
                   <motion.img
                     key={currentIndex}
