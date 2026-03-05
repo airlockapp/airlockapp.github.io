@@ -1,34 +1,49 @@
 ---
-import '../styles/global.css';
-import { Header } from '@/components/Header';
-import { Footer } from '@/components/Footer';
-const { title = "Airlock — Cryptographic Approval for AI Agents" } = Astro.props;
+import "../styles/global.css";
+import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
+const { title = "Airlock — Cryptographic Approval for AI Agents" } =
+	Astro.props;
 ---
 
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
-		<meta name="description" content="Airlock ensures AI agents can't act without human-signed approval. Built on the HARP protocol with Ed25519 signatures, AES-256-GCM encryption, and zero-knowledge relay." />
-		<meta name="keywords" content="AI security, AI approval, HARP protocol, Ed25519, code review, AI governance, human-in-the-loop" />
-		<meta property="og:title" content="Airlock — Cryptographic Approval for AI Agents" />
-		<meta property="og:description" content="Every AI action, human approved. Cryptographically enforced." />
+		<meta
+			name="description"
+			content="Airlock ensures AI agents can't act without human-signed approval. Built on the HARP protocol with Ed25519 signatures, AES-256-GCM encryption, and zero-knowledge relay."
+		/>
+		<meta
+			name="keywords"
+			content="AI security, AI approval, HARP protocol, Ed25519, code review, AI governance, human-in-the-loop"
+		/>
+		<meta
+			property="og:title"
+			content="Airlock — Cryptographic Approval for AI Agents"
+		/>
+		<meta
+			property="og:description"
+			content="Every AI action, human approved. Cryptographically enforced."
+		/>
 		<meta property="og:type" content="website" />
 		<link rel="icon" type="image/png" href="/favicon.png" />
 		<link rel="preconnect" href="https://rsms.me/" />
 		<link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
 		<title>{title}</title>
 		<script is:inline>
-			(function() {
-				const stored = localStorage.getItem('theme');
-				const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-				if (stored === 'dark' || (!stored && prefersDark)) {
-					document.documentElement.classList.add('dark');
+			(function () {
+				const stored = localStorage.getItem("theme");
+				const prefersDark = window.matchMedia(
+					"(prefers-color-scheme: dark)",
+				).matches;
+				if (stored === "dark" || (!stored && prefersDark)) {
+					document.documentElement.classList.add("dark");
 				}
 			})();
 		</script>
 	</head>
-	<body class="antialiased">
+	<body class="antialiased overflow-x-hidden">
 		<Header client:load />
 		<main>
 			<slot />

@@ -64,15 +64,12 @@ export function Hero() {
   }, [nextSlide, lightboxOpen]);
 
   return (
-    <section className="relative overflow-hidden py-20 md:py-32">
+    <section className="relative py-20 md:py-32">
       {/* Background gradients */}
-      <div
-        className="absolute inset-0 -z-10"
-        style={{ background: 'radial-gradient(ellipse 200% 100% at 50% 30%, rgba(108,62,207,0.08), transparent 80%)' }}
-      >
-        <div className="absolute top-1/4 left-1/4 w-[50vw] h-[50vw] max-w-[40rem] max-h-[40rem] bg-airlock-violet-light/10 dark:bg-airlock-violet/20 rounded-full filter blur-[140px] animate-blob" />
-        <div className="absolute top-0 left-1/2 w-[50vw] h-[50vw] max-w-[40rem] max-h-[40rem] bg-airlock-violet-light/8 dark:bg-airlock-violet/10 rounded-full filter blur-[160px] animate-blob animation-delay-2000" />
-        <div className="absolute -bottom-8 left-1/3 w-[40vw] h-[40vw] max-w-[30rem] max-h-[30rem] bg-airlock-cyan/8 dark:bg-airlock-cyan/15 rounded-full filter blur-[120px] animate-blob animation-delay-4000" />
+      <div className="absolute inset-0 -z-10 overflow-hidden">
+        <div className="absolute top-1/4 left-1/4 w-[60vw] h-[60vw] max-w-[50rem] max-h-[50rem] bg-airlock-violet-light/10 dark:bg-airlock-violet/15 rounded-full filter blur-[160px] animate-blob" />
+        <div className="absolute -top-1/4 right-0 w-[60vw] h-[60vw] max-w-[50rem] max-h-[50rem] bg-airlock-violet-light/5 dark:bg-airlock-violet/8 rounded-full filter blur-[180px] animate-blob animation-delay-2000" />
+        <div className="absolute -bottom-1/4 left-1/3 w-[50vw] h-[50vw] max-w-[40rem] max-h-[40rem] bg-airlock-cyan/5 dark:bg-airlock-cyan/10 rounded-full filter blur-[160px] animate-blob animation-delay-4000" />
       </div>
 
       <div className="container mx-auto px-4">

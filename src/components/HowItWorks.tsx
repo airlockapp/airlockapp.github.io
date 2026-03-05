@@ -46,8 +46,10 @@ const steps = [
 
 export function HowItWorks() {
     return (
-        <section id="how-it-works" className="py-20 md:py-32 bg-muted/30">
-            <div className="container mx-auto px-4">
+        <section id="how-it-works" className="relative py-20 md:py-32">
+            {/* Smooth background gradient */}
+            <div className="absolute inset-0 -z-10" style={{ background: 'radial-gradient(ellipse 100% 100% at 50% 50%, hsl(var(--muted) / 0.4), transparent 75%)' }} />
+            <div className="container mx-auto">
                 <div className="text-center space-y-4 mb-16">
                     <motion.h2
                         initial={{ opacity: 0, y: 20 }}
