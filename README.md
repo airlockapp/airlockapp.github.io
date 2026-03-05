@@ -1,237 +1,107 @@
-# 🚀 GenAI Startup Astro Theme
+# Airlock
 
-A modern, beautiful, and **completely free** Astro theme template designed specifically for GenAI and AI-focused startups. Features a stunning dark/light mode toggle, smooth animations, and ready-to-deploy components.
+**Human-in-the-loop security for AI coding agents.**
 
-![GenAI Theme](https://img.shields.io/badge/Astro-5.16-blueviolet) ![License](https://img.shields.io/badge/license-MIT-green) ![TypeScript](https://img.shields.io/badge/TypeScript-Ready-blue)
+Airlock gates AI agent actions across your IDE — every shell command, file edit, and MCP tool call requires explicit human approval from a mobile app before it can execute.
 
-<img width="3809" height="2327" alt="Screenshot of GenAI Startup Homepage" src="https://github.com/user-attachments/assets/b086ecf1-1f3a-495c-927e-f940b88fc757" />
+🌐 **[airlockapp.io](https://airlockapp.io)**
 
-## ✨ Features
+## What Is Airlock?
 
-- 🎨 **Beautiful Design** - Modern, clean UI with gradient accents and smooth animations
-- 🌓 **Dark/Light Mode** - Fully functional theme toggle with localStorage persistence
-- ⚡ **Lightning Fast** - Built with Astro for optimal performance
-- 📱 **Fully Responsive** - Perfect on mobile, tablet, and desktop
-- 🎭 **Framer Motion** - Smooth scroll animations and transitions
-- 🧩 **Pre-built Sections**:
-  - Hero with animated gradients
-  - Features showcase
-  - Pricing cards
-  - Testimonials
-  - FAQ with accordion
-  - Newsletter signup
-  - Social links
-- 🎯 **TypeScript** - Full type safety
-- 🎨 **Tailwind CSS v4** - Latest utility-first CSS framework
-- 🧱 **shadcn/ui** - Beautiful, accessible components
-- 🚀 **GitHub Pages Ready** - Deploy with one click
-- ♿ **Accessible** - WCAG compliant components
+Modern AI coding assistants (Cursor, Windsurf, GitHub Copilot, Antigravity) can execute arbitrary commands and modify your codebase autonomously. Airlock intercepts these actions, routes them to your phone for review, and blocks execution until you approve — giving you a security checkpoint between AI intent and real-world impact.
 
-## 🎯 Perfect For
+### How It Works
 
-- AI/GenAI Startups
-- SaaS Landing Pages
-- API Documentation Sites
-- Developer Tools
-- Tech Product Launches
+1. **Enforcer extensions** installed in your IDE intercept actions before they execute
+2. Actions are routed through the **Airlock Gateway** to your registered device
+3. The **Mobile Approver** app presents each action for review
+4. You **Approve** or **Reject** — the IDE blocks until you decide
 
-## 🚀 Quick Start
+## Supported IDEs
 
-### 1. Clone the repository
+| IDE | Enforcer Strategy |
+|---|---|
+| **Cursor** | Workspace hooks (shell commands & MCP tool calls) |
+| **Windsurf** | Hooks-based gating with project rules |
+| **GitHub Copilot** | Hooks-based gating |
+| **Antigravity** | Chrome DevTools Protocol (CDP) interception |
 
-```bash
-git clone https://github.com/yourusername/astro-genai-startup-theme.git
-cd astro-genai-startup-theme
-```
+## About This Repo
 
-### 2. Install dependencies
-
-```bash
-npm install
-```
-
-### 3. Start development server
-
-```bash
-npm run dev
-```
-
-Visit `http://localhost:4321` to see your site!
-
-### 4. Build for production
-
-```bash
-npm run build
-```
-
-## 📦 What's Included
-
-### Components
-
-- **Header** - Responsive navigation with theme toggle
-- **Hero** - Eye-catching hero section with animated gradients and stats
-- **Features** - Grid of feature cards with icons and hover effects
-- **Pricing** - Comparison pricing cards with highlighted popular plan
-- **Testimonials** - Customer testimonials with ratings
-- **FAQ** - Accordion-style frequently asked questions
-- **Footer** - Complete footer with links and newsletter signup
-- **ThemeToggle** - Dark/light mode switcher
+This repository contains the **Airlock marketing and documentation site**, deployed at [airlockapp.io](https://airlockapp.io).
 
 ### Pages
 
-- `index.astro` - Main landing page with all sections
-- `markdown-page.md` - Example markdown page
+- **Home** — Product overview, features, and getting started
+- **About** — Team and mission
+- **Docs** — Central documentation hub with per-enforcer guides
+  - Cursor, Windsurf, Copilot, Antigravity enforcer docs
+  - Privacy Policy & Data Security
+- **Blog** — Product updates and announcements
+- **Changelog** — Release history
+- **Contact** — Get in touch
 
-### Layouts
+### Tech Stack
 
-- `main.astro` - Main layout with header and footer
+- **[Astro](https://astro.build/)** — Static site generation
+- **[React](https://react.dev/)** — Interactive UI components
+- **[Tailwind CSS](https://tailwindcss.com/)** — Utility-first styling
+- **[Framer Motion](https://www.framer.com/motion/)** — Scroll animations and transitions
+- **[Radix UI](https://www.radix-ui.com/)** — Accessible component primitives
+- **[Lucide Icons](https://lucide.dev/)** — Icon library
 
-## 🎨 Customization
+## Getting Started
 
-### Colors
+### Prerequisites
 
-Edit `src/styles/global.css` to customize your brand colors. The theme uses CSS variables for easy customization:
+- [Node.js](https://nodejs.org/) (v18+)
+- npm
 
-```css
-:root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.147 0.004 49.25);
-  /* ... more variables */
-}
-```
+### Development
 
-### Content
-
-Update the content in the component files:
-- `src/components/Hero.tsx` - Hero section text and stats
-- `src/components/Features.tsx` - Feature list
-- `src/components/Pricing.tsx` - Pricing tiers
-- `src/components/Testimonials.tsx` - Customer reviews
-- `src/components/FAQ.tsx` - Questions and answers
-
-### Branding
-
-Replace the logo and brand name in:
-- `src/components/Header.tsx`
-- `src/components/Footer.tsx`
-- `src/layouts/main.astro` (page title)
-
-## 🚀 Deploy to GitHub Pages
-
-### Automatic Deployment
-
-This theme includes a GitHub Actions workflow for automatic deployment:
-
-1. Update `astro.config.js` with your repository details:
-```js
-export default defineConfig({
-  site: 'https://yourusername.github.io',
-  base: '/your-repo-name',
-  // ...
-});
-```
-
-2. Push to your repository:
 ```bash
-git add .
-git commit -m "Initial commit"
-git push origin main
+# Install dependencies
+npm install
+
+# Start the dev server
+npm run dev
 ```
 
-3. Enable GitHub Pages in your repository settings:
-   - Go to Settings → Pages
-   - Source: GitHub Actions
+The site will be available at `http://localhost:4321`.
 
-4. Your site will be automatically deployed on every push!
-
-### Manual Deployment
+### Production Build
 
 ```bash
 npm run build
-# Upload the contents of the dist/ folder to your hosting provider
+npm run preview   # preview the production build locally
 ```
 
-## 📁 Project Structure
+## Deployment
+
+The site is automatically deployed to GitHub Pages via the included GitHub Actions workflow on every push to `main`.
+
+## Project Structure
 
 ```
 /
-├── .github/
-│   └── workflows/
-│       └── deploy.yml          # GitHub Pages deployment
-├── public/
-│   └── favicon.svg
+├── .github/workflows/     # GitHub Pages deployment
+├── public/                # Static assets (favicon, images)
 ├── src/
-│   ├── components/
-│   │   ├── ui/                 # shadcn/ui components
-│   │   │   ├── accordion.tsx
-│   │   │   └── button.tsx
-│   │   ├── FAQ.tsx
-│   │   ├── Features.tsx
-│   │   ├── Footer.tsx
-│   │   ├── Header.tsx
-│   │   ├── Hero.tsx
-│   │   ├── Pricing.tsx
-│   │   ├── Testimonials.tsx
-│   │   └── ThemeToggle.tsx
-│   ├── layouts/
-│   │   └── main.astro
-│   ├── lib/
-│   │   └── utils.ts
-│   ├── pages/
-│   │   └── index.astro
-│   └── styles/
-│       └── global.css
-├── astro.config.js
-├── components.json
-├── package.json
-├── tailwind.config.mjs
-├── tsconfig.json
-└── TODO.md                     # Development progress tracker
+│   ├── components/        # React & Astro UI components
+│   ├── img/               # Image assets
+│   ├── layouts/           # Page layouts
+│   ├── lib/               # Utility functions
+│   ├── pages/             # All site pages and docs
+│   │   ├── docs/          # Enforcer guides, privacy, data security
+│   │   └── blog/          # Blog posts
+│   └── styles/            # Global CSS
+├── astro.config.js        # Astro configuration
+├── tailwind.config.mjs    # Tailwind CSS configuration
+└── package.json
 ```
 
-## 🛠️ Tech Stack
+## License
 
-- **[Astro 5.16](https://astro.build/)** - Static site generator
-- **[React 19](https://react.dev/)** - UI components
-- **[TypeScript](https://www.typescriptlang.org/)** - Type safety
-- **[Tailwind CSS 4](https://tailwindcss.com/)** - Styling
-- **[shadcn/ui](https://ui.shadcn.com/)** - Component library
-- **[Framer Motion](https://www.framer.com/motion/)** - Animations
-- **[Lucide Icons](https://lucide.dev/)** - Icon library
-- **[Radix UI](https://www.radix-ui.com/)** - Accessible primitives
+MIT License — see [LICENSE](LICENSE) for details.
 
-## 📝 Available Scripts
-
-```bash
-npm run dev          # Start development server
-npm run build        # Build for production
-npm run preview      # Preview production build
-npm run astro        # Run Astro CLI commands
-```
-
-## 🤝 Contributing
-
-Contributions, issues, and feature requests are welcome! Feel free to check the [issues page](https://github.com/yourusername/astro-genai-startup-theme/issues).
-
-## 📄 License
-
-MIT License - feel free to use this template for your own projects!
-
-Copyright (c) 2025
-
-## 🙏 Credits
-
-- Inspired by modern SaaS landing pages
-- Components inspired by [reactbits.dev](https://reactbits.dev)
-- Built with love for the GenAI community
-
-## 💖 Support
-
-If you find this template useful, please consider:
-- ⭐ Starring the repository
-- 🐦 Sharing on Twitter
-- 📝 Writing a blog post about it
-
----
-
-**Built with ❤️ for the GenAI community**
+© 2025 Out of Band Systems, Airlock
