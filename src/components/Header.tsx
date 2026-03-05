@@ -16,6 +16,7 @@ export function Header() {
   const docsRef = useRef<HTMLDivElement>(null);
 
   const navItems = [
+    { label: "Supported IDEs", href: "/#ide-support" },
     { label: "How It Works", href: "/#how-it-works" },
     { label: "Features", href: "/#features" },
     { label: "Protocol", href: "/#protocol" },

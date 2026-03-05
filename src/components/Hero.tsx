@@ -115,11 +115,38 @@ export function Hero() {
               bound, zero-knowledge relayed.
             </motion.p>
 
-            {/* CTA Button */}
+            {/* Supported IDEs */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.3 }}
+              className="flex flex-col gap-3 pt-4"
+            >
+              <span className="text-xs text-muted-foreground/50 uppercase tracking-widest font-semibold">Works with</span>
+              <div className="flex items-center gap-6">
+                {[
+                  { name: "Cursor", icon: "/enforcers/cursor.png", href: "/docs/cursor" },
+                  { name: "Windsurf", icon: "/enforcers/windsurf.png", href: "/docs/windsurf" },
+                  { name: "Antigravity", icon: "/enforcers/antigravity.png", href: "/docs/antigravity" },
+                  { name: "Copilot", icon: "/enforcers/copilot.png", href: "/docs/copilot" },
+                ].map((ide) => (
+                  <a
+                    key={ide.name}
+                    href={ide.href}
+                    className="flex items-center gap-3 text-foreground/80 hover:text-foreground transition-colors group"
+                  >
+                    <img src={ide.icon} alt={ide.name} className="w-10 h-10 rounded-xl group-hover:scale-110 transition-transform" />
+                    <span className="text-base font-bold">{ide.name}</span>
+                  </a>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* CTA Button */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.35 }}
               className="flex flex-col sm:flex-row gap-4"
             >
               <Button
