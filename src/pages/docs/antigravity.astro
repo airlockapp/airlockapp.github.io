@@ -1,0 +1,191 @@
+---
+import DocsLayout from "../../layouts/docs.astro";
+---
+
+<DocsLayout title="Install Airlock Antigravity Enforcer">
+    <div class="space-y-8">
+        <div class="flex items-center gap-4">
+            <img
+                src="/enforcers/antigravity.png"
+                alt="Airlock Antigravity Enforcer"
+                class="w-16 h-16 rounded-xl"
+            />
+            <div>
+                <h1 class="text-3xl md:text-4xl font-bold">
+                    Airlock Antigravity Enforcer
+                </h1>
+                <p class="text-muted-foreground mt-1">
+                    Human approval for AI actions in Antigravity
+                </p>
+            </div>
+        </div>
+
+        <div class="prose dark:prose-invert max-w-none">
+            <h2 class="text-xl font-semibold mt-8 mb-4">Prerequisites</h2>
+            <ul class="space-y-2 text-muted-foreground">
+                <li class="flex items-start gap-2">
+                    <span class="text-link mt-1">•</span>
+                    <span
+                        >VS Code with <a
+                            href="https://marketplace.visualstudio.com/items?itemName=Google.vscode-google-agent"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="text-link hover:underline"
+                            >Google Antigravity</a
+                        > extension installed</span
+                    >
+                </li>
+                <li class="flex items-start gap-2">
+                    <span class="text-link mt-1">•</span>
+                    <span
+                        >An Airlock account with at least one workspace
+                        configured</span
+                    >
+                </li>
+                <li class="flex items-start gap-2">
+                    <span class="text-link mt-1">•</span>
+                    <span
+                        >The Airlock Mobile Approver app installed on your phone
+                        (Android or iOS)</span
+                    >
+                </li>
+            </ul>
+
+            <h2 class="text-xl font-semibold mt-8 mb-4">Installation</h2>
+            <ol class="space-y-4 text-muted-foreground">
+                <li class="flex items-start gap-3">
+                    <span
+                        class="flex-shrink-0 w-7 h-7 rounded-full bg-airlock-violet/20 text-airlock-violet-light text-sm font-bold flex items-center justify-center"
+                        >1</span
+                    >
+                    <div>
+                        <p class="font-medium text-foreground">
+                            Open Extensions
+                        </p>
+                        <p class="text-sm mt-1">
+                            In VS Code, open the Extensions panel by pressing <code
+                                class="px-1.5 py-0.5 rounded bg-muted text-xs font-mono"
+                                >Ctrl+Shift+X</code
+                            > (Windows/Linux) or <code
+                                class="px-1.5 py-0.5 rounded bg-muted text-xs font-mono"
+                                >Cmd+Shift+X</code
+                            > (macOS).
+                        </p>
+                    </div>
+                </li>
+                <li class="flex items-start gap-3">
+                    <span
+                        class="flex-shrink-0 w-7 h-7 rounded-full bg-airlock-violet/20 text-airlock-violet-light text-sm font-bold flex items-center justify-center"
+                        >2</span
+                    >
+                    <div>
+                        <p class="font-medium text-foreground">
+                            Search for Airlock
+                        </p>
+                        <p class="text-sm mt-1">
+                            In the search bar, type <code
+                                class="px-1.5 py-0.5 rounded bg-muted text-xs font-mono"
+                                >Airlock Enforcer</code
+                            >.
+                        </p>
+                    </div>
+                </li>
+                <li class="flex items-start gap-3">
+                    <span
+                        class="flex-shrink-0 w-7 h-7 rounded-full bg-airlock-violet/20 text-airlock-violet-light text-sm font-bold flex items-center justify-center"
+                        >3</span
+                    >
+                    <div>
+                        <p class="font-medium text-foreground">
+                            Install the Extension
+                        </p>
+                        <p class="text-sm mt-1">
+                            Find <strong>Airlock Antigravity Enforcer</strong> in
+                            the results and click <strong>Install</strong>.
+                        </p>
+                    </div>
+                </li>
+                <li class="flex items-start gap-3">
+                    <span
+                        class="flex-shrink-0 w-7 h-7 rounded-full bg-airlock-violet/20 text-airlock-violet-light text-sm font-bold flex items-center justify-center"
+                        >4</span
+                    >
+                    <div>
+                        <p class="font-medium text-foreground">
+                            Configure Gateway URL
+                        </p>
+                        <p class="text-sm mt-1">
+                            Open VS Code settings (<code
+                                class="px-1.5 py-0.5 rounded bg-muted text-xs font-mono"
+                                >Ctrl+,</code
+                            >) and search for <code
+                                class="px-1.5 py-0.5 rounded bg-muted text-xs font-mono"
+                                >airlock</code
+                            >. Set the <strong>Gateway URL</strong> to your Airlock
+                            gateway endpoint.
+                        </p>
+                    </div>
+                </li>
+                <li class="flex items-start gap-3">
+                    <span
+                        class="flex-shrink-0 w-7 h-7 rounded-full bg-airlock-violet/20 text-airlock-violet-light text-sm font-bold flex items-center justify-center"
+                        >5</span
+                    >
+                    <div>
+                        <p class="font-medium text-foreground">
+                            Pair Your Device
+                        </p>
+                        <p class="text-sm mt-1">
+                            Use the Airlock Mobile Approver to pair your phone
+                            with this workspace. The enforcer will intercept AI
+                            actions and require your cryptographic approval
+                            before execution.
+                        </p>
+                    </div>
+                </li>
+            </ol>
+
+            <h2 class="text-xl font-semibold mt-8 mb-4">
+                Antigravity-Specific Notes
+            </h2>
+            <div class="p-4 rounded-xl border border-border/50 bg-muted/30">
+                <p class="text-sm text-muted-foreground">
+                    <strong class="text-foreground">CDP Interception:</strong> The
+                    Antigravity enforcer uses Chrome DevTools Protocol (CDP) to intercept
+                    AI actions at the browser level. This provides deep integration
+                    with the Antigravity agent's execution pipeline.
+                </p>
+            </div>
+
+            <h2 class="text-xl font-semibold mt-8 mb-4">How It Works</h2>
+            <p class="text-muted-foreground">
+                The Airlock Antigravity Enforcer intercepts all AI-generated
+                terminal commands and file mutations. Each action is encrypted
+                with AES-256-GCM and submitted to the Gateway. Your Mobile
+                Approver receives a push notification — you review the action
+                and sign your decision with Ed25519. The enforcer verifies the
+                signature locally before allowing execution.
+            </p>
+
+            <div
+                class="mt-4 p-4 rounded-xl border border-border/50 bg-muted/30"
+            >
+                <p class="text-sm text-muted-foreground">
+                    <strong class="text-foreground">Security model:</strong> The enforcer
+                    operates in fail-closed mode. If the gateway is unreachable, the
+                    signature is invalid, or the request times out — the action is
+                    blocked. No exceptions.
+                </p>
+            </div>
+        </div>
+
+        <div class="mt-8 flex gap-4">
+            <a href="/docs" class="text-sm text-link hover:underline"
+                >← All Docs</a
+            >
+            <a href="/" class="text-sm text-muted-foreground hover:underline"
+                >Back to Airlock</a
+            >
+        </div>
+    </div>
+</DocsLayout>

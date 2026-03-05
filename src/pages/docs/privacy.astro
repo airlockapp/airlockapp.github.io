@@ -1,0 +1,227 @@
+---
+import DocsLayout from "../../layouts/docs.astro";
+---
+
+<DocsLayout title="Privacy Policy — Airlock">
+    <div class="space-y-8">
+        <div>
+            <h1 class="text-3xl md:text-4xl font-bold">Privacy Policy</h1>
+            <p class="text-muted-foreground mt-1">Last updated: March 2026</p>
+        </div>
+
+        <div class="prose dark:prose-invert max-w-none space-y-8">
+            <section>
+                <h2 class="text-xl font-semibold mt-8 mb-3">1. Overview</h2>
+                <p class="text-muted-foreground leading-relaxed">
+                    Airlock is a cryptographic approval gateway for AI agents.
+                    Privacy is a core architectural principle — the system is
+                    designed so that <strong
+                        >Airlock never sees the content of AI actions</strong
+                    >. This document explains what data we collect, how we
+                    process it, and your rights.
+                </p>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-semibold mt-8 mb-3">
+                    2. Zero-Knowledge Architecture
+                </h2>
+                <p class="text-muted-foreground leading-relaxed">
+                    Airlock's Gateway operates as a zero-knowledge relay. All AI
+                    action payloads are <strong>encrypted end-to-end</strong> between
+                    the enforcer (your IDE) and the approver (your mobile device)
+                    using AES-256-GCM. The Gateway only processes opaque ciphertext
+                    — it cannot decrypt, read, or store the content of AI actions.
+                </p>
+                <div
+                    class="p-4 rounded-xl border border-border/50 bg-muted/30 mt-4"
+                >
+                    <p class="text-sm text-muted-foreground">
+                        <strong class="text-foreground"
+                            >What the Gateway sees:</strong
+                        > Request metadata (timestamps, artifact type, request IDs,
+                        enforcer IDs). <br />
+                        <strong class="text-foreground"
+                            >What the Gateway never sees:</strong
+                        > AI command content, file diffs, terminal output, source
+                        code, or any payload data.
+                    </p>
+                </div>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-semibold mt-8 mb-3">
+                    3. Data We Collect
+                </h2>
+
+                <h3 class="text-lg font-medium mt-6 mb-2">3.1 Account Data</h3>
+                <p class="text-muted-foreground leading-relaxed">
+                    When you create an account, we collect:
+                </p>
+                <ul class="space-y-1 text-muted-foreground mt-2">
+                    <li class="flex items-start gap-2">
+                        <span class="text-link mt-1">•</span>Email
+                        address (for authentication and account recovery)
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <span class="text-link mt-1">•</span>Display
+                        name (optional)
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <span class="text-link mt-1">•</span
+                        >Authentication credentials (hashed, never stored in
+                        plaintext)
+                    </li>
+                </ul>
+
+                <h3 class="text-lg font-medium mt-6 mb-2">3.2 Device Data</h3>
+                <p class="text-muted-foreground leading-relaxed">
+                    When you pair a mobile device, we store:
+                </p>
+                <ul class="space-y-1 text-muted-foreground mt-2">
+                    <li class="flex items-start gap-2">
+                        <span class="text-link mt-1">•</span>Device
+                        token (for push notifications via Firebase Cloud
+                        Messaging)
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <span class="text-link mt-1">•</span>Ed25519
+                        public key (for signature verification)
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <span class="text-link mt-1">•</span>Device name
+                        and platform (for display in the admin console)
+                    </li>
+                </ul>
+
+                <h3 class="text-lg font-medium mt-6 mb-2">
+                    3.3 Workspace & Approval Metadata
+                </h3>
+                <p class="text-muted-foreground leading-relaxed">
+                    We store operational metadata:
+                </p>
+                <ul class="space-y-1 text-muted-foreground mt-2">
+                    <li class="flex items-start gap-2">
+                        <span class="text-link mt-1">•</span>Workspace
+                        names and configuration
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <span class="text-link mt-1">•</span>Approval
+                        request timestamps and status
+                        (approved/rejected/expired)
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <span class="text-link mt-1">•</span>Artifact
+                        type labels (e.g., "terminal_command") — <strong
+                            >not</strong
+                        > the command content
+                    </li>
+                </ul>
+
+                <h3 class="text-lg font-medium mt-6 mb-2">
+                    3.4 Data We Do NOT Collect
+                </h3>
+                <div
+                    class="p-4 rounded-xl border border-green-500/30 bg-green-500/5 mt-2"
+                >
+                    <ul class="space-y-1 text-muted-foreground text-sm">
+                        <li class="flex items-start gap-2">
+                            <span class="text-green-500 mt-1">✗</span>AI command
+                            content or terminal output
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-green-500 mt-1">✗</span>Source
+                            code or file diffs
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-green-500 mt-1">✗</span>Encryption
+                            keys or private signing keys
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-green-500 mt-1">✗</span>Browsing
+                            history or usage analytics
+                        </li>
+                        <li class="flex items-start gap-2">
+                            <span class="text-green-500 mt-1">✗</span>Repository
+                            contents or project metadata
+                        </li>
+                    </ul>
+                </div>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-semibold mt-8 mb-3">
+                    4. Push Notifications
+                </h2>
+                <p class="text-muted-foreground leading-relaxed">
+                    When an approval request arrives, we send a push
+                    notification via Firebase Cloud Messaging (FCM). These
+                    notifications contain <strong
+                        >only the request ID and artifact type</strong
+                    > — no payload content. The mobile app then fetches the encrypted
+                    artifact directly from the Gateway and decrypts it locally.
+                </p>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-semibold mt-8 mb-3">
+                    5. Data Retention
+                </h2>
+                <p class="text-muted-foreground leading-relaxed">
+                    Approval request metadata is retained for audit purposes.
+                    Encrypted artifacts on the Gateway are ephemeral and
+                    automatically purged after the approval decision is made or
+                    the request expires. You may request deletion of your
+                    account and all associated data at any time.
+                </p>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-semibold mt-8 mb-3">
+                    6. Third-Party Services
+                </h2>
+                <ul class="space-y-2 text-muted-foreground">
+                    <li class="flex items-start gap-2">
+                        <span class="text-link mt-1">•</span><strong
+                            >Firebase Cloud Messaging:</strong
+                        > Push notification delivery (Google's privacy policy applies)
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <span class="text-link mt-1">•</span><strong
+                            >Google Sign-In:</strong
+                        > Optional authentication provider (if you choose to sign
+                        in with Google)
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-semibold mt-8 mb-3">7. Your Rights</h2>
+                <p class="text-muted-foreground leading-relaxed">
+                    You have the right to access, correct, or delete your
+                    personal data. You may also request a copy of all data
+                    associated with your account. To exercise these rights,
+                    contact us at the email provided in your account settings.
+                </p>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-semibold mt-8 mb-3">8. Contact</h2>
+                <p class="text-muted-foreground leading-relaxed">
+                    For privacy-related inquiries, please contact us through the
+                    information provided in your Airlock account or on our
+                    website.
+                </p>
+            </section>
+        </div>
+
+        <div class="mt-8 flex gap-4">
+            <a href="/docs" class="text-sm text-link hover:underline"
+                >← All Docs</a
+            >
+            <a href="/" class="text-sm text-muted-foreground hover:underline"
+                >Back to Airlock</a
+            >
+        </div>
+    </div>
+</DocsLayout>

@@ -1,0 +1,360 @@
+---
+import DocsLayout from "../../layouts/docs.astro";
+---
+
+<DocsLayout title="Data Security — Airlock">
+    <div class="space-y-8">
+        <div>
+            <h1 class="text-3xl md:text-4xl font-bold">Data Security</h1>
+            <p class="text-muted-foreground mt-1">
+                How Airlock protects your data at every layer
+            </p>
+        </div>
+
+        <div class="prose dark:prose-invert max-w-none space-y-8">
+            <!-- Architecture Overview -->
+            <section>
+                <h2 class="text-xl font-semibold mt-8 mb-3">
+                    Security Architecture
+                </h2>
+                <p class="text-muted-foreground leading-relaxed">
+                    Airlock is built on the <a
+                        href="https://harp-protocol.github.io/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="text-link hover:underline"
+                        >HARP protocol</a
+                    > (Human Approval Relay Protocol), designed so that no single
+                    component — including the Airlock Gateway itself — can access
+                    sensitive data. Security is enforced through cryptography, not
+                    trust.
+                </p>
+            </section>
+
+            <!-- End-to-End Encryption -->
+            <section>
+                <h2 class="text-xl font-semibold mt-8 mb-3">
+                    End-to-End Encryption
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                    <div
+                        class="p-4 rounded-xl border border-border/50 bg-card/50"
+                    >
+                        <h3 class="font-medium text-sm mb-2">
+                            Payload Encryption
+                        </h3>
+                        <p class="text-xs text-muted-foreground">
+                            All AI action payloads (commands, file diffs,
+                            terminal output) are encrypted with <strong
+                                >AES-256-GCM</strong
+                            > using a symmetric key shared only between the enforcer
+                            and the approver. The Gateway processes only opaque ciphertext.
+                        </p>
+                    </div>
+                    <div
+                        class="p-4 rounded-xl border border-border/50 bg-card/50"
+                    >
+                        <h3 class="font-medium text-sm mb-2">Key Management</h3>
+                        <p class="text-xs text-muted-foreground">
+                            Encryption keys are generated during workspace
+                            pairing and stored locally on the enforcer and the
+                            approver device. Keys are <strong
+                                >never transmitted to or stored on the Gateway</strong
+                            >.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Cryptographic Signatures -->
+            <section>
+                <h2 class="text-xl font-semibold mt-8 mb-3">
+                    Cryptographic Signatures
+                </h2>
+                <p class="text-muted-foreground leading-relaxed">
+                    Approval decisions are cryptographically signed using <strong
+                        >Ed25519</strong
+                    > digital signatures. The approver's private key never leaves
+                    their mobile device. The enforcer verifies the signature locally
+                    before allowing any AI action to execute.
+                </p>
+                <div
+                    class="p-4 rounded-xl border border-border/50 bg-muted/30 mt-4"
+                >
+                    <p class="text-sm text-muted-foreground">
+                        <strong class="text-foreground"
+                            >Signature verification is local.</strong
+                        > Even if the Gateway were compromised, forged approvals would
+                        fail signature verification at the enforcer. This is the core
+                        security guarantee of the HARP protocol.
+                    </p>
+                </div>
+            </section>
+
+            <!-- Zero-Knowledge Relay -->
+            <section>
+                <h2 class="text-xl font-semibold mt-8 mb-3">
+                    Zero-Knowledge Gateway
+                </h2>
+                <p class="text-muted-foreground leading-relaxed">
+                    The Airlock Gateway operates as a zero-knowledge relay with
+                    strict guarantees:
+                </p>
+                <ul class="space-y-2 text-muted-foreground mt-3">
+                    <li class="flex items-start gap-2">
+                        <span class="text-link mt-1">•</span><strong
+                            >No payload access:</strong
+                        > The Gateway relays encrypted artifacts without decryption
+                        capability
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <span class="text-link mt-1">•</span><strong
+                            >No key material:</strong
+                        > Encryption keys and signing keys are never transmitted to
+                        the Gateway
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <span class="text-link mt-1">•</span><strong
+                            >Log redaction:</strong
+                        > A dedicated <code
+                            class="px-1 py-0.5 rounded bg-muted text-xs font-mono"
+                            >RedactionMiddleware</code
+                        > strips sensitive headers and prevents payload data from
+                        appearing in logs, traces, or error reports
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <span class="text-link mt-1">•</span><strong
+                            >Minimal push notifications:</strong
+                        > Push notifications contain only request IDs and artifact
+                        type labels — no payload content
+                    </li>
+                </ul>
+            </section>
+
+            <!-- Fail-Closed Enforcement -->
+            <section>
+                <h2 class="text-xl font-semibold mt-8 mb-3">
+                    Fail-Closed Enforcement
+                </h2>
+                <p class="text-muted-foreground leading-relaxed">
+                    All Airlock enforcer extensions operate in <strong
+                        >fail-closed</strong
+                    > mode. If any part of the approval flow fails, the AI action
+                    is blocked:
+                </p>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
+                    <div
+                        class="p-3 rounded-lg border border-red-500/20 bg-red-500/5"
+                    >
+                        <p class="text-xs font-medium text-red-400">
+                            Gateway unreachable → Blocked
+                        </p>
+                    </div>
+                    <div
+                        class="p-3 rounded-lg border border-red-500/20 bg-red-500/5"
+                    >
+                        <p class="text-xs font-medium text-red-400">
+                            Invalid signature → Blocked
+                        </p>
+                    </div>
+                    <div
+                        class="p-3 rounded-lg border border-red-500/20 bg-red-500/5"
+                    >
+                        <p class="text-xs font-medium text-red-400">
+                            Request timeout → Blocked
+                        </p>
+                    </div>
+                    <div
+                        class="p-3 rounded-lg border border-red-500/20 bg-red-500/5"
+                    >
+                        <p class="text-xs font-medium text-red-400">
+                            JSON parse error → Blocked
+                        </p>
+                    </div>
+                    <div
+                        class="p-3 rounded-lg border border-red-500/20 bg-red-500/5"
+                    >
+                        <p class="text-xs font-medium text-red-400">
+                            Missing routing token → Blocked
+                        </p>
+                    </div>
+                    <div
+                        class="p-3 rounded-lg border border-red-500/20 bg-red-500/5"
+                    >
+                        <p class="text-xs font-medium text-red-400">
+                            Submission error → Blocked
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Transport Security -->
+            <section>
+                <h2 class="text-xl font-semibold mt-8 mb-3">
+                    Transport Security
+                </h2>
+                <p class="text-muted-foreground leading-relaxed">
+                    In addition to end-to-end encryption, the Gateway enforces:
+                </p>
+                <ul class="space-y-2 text-muted-foreground mt-3">
+                    <li class="flex items-start gap-2">
+                        <span class="text-link mt-1">•</span>HTTPS/TLS
+                        for all API communication
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <span class="text-link mt-1">•</span><code
+                            class="px-1 py-0.5 rounded bg-muted text-xs font-mono"
+                            >X-Content-Type-Options: nosniff</code
+                        > to prevent MIME-type sniffing
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <span class="text-link mt-1">•</span><code
+                            class="px-1 py-0.5 rounded bg-muted text-xs font-mono"
+                            >X-Frame-Options: DENY</code
+                        > to prevent clickjacking
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <span class="text-link mt-1">•</span><code
+                            class="px-1 py-0.5 rounded bg-muted text-xs font-mono"
+                            >Cache-Control: no-store</code
+                        > to prevent caching of sensitive responses
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <span class="text-link mt-1">•</span><code
+                            class="px-1 py-0.5 rounded bg-muted text-xs font-mono"
+                            >Referrer-Policy: strict-origin-when-cross-origin</code>
+                    </li>
+                </ul>
+            </section>
+
+            <!-- Canonical Hashing -->
+            <section>
+                <h2 class="text-xl font-semibold mt-8 mb-3">
+                    Integrity Verification
+                </h2>
+                <p class="text-muted-foreground leading-relaxed">
+                    Every artifact is canonicalized using <strong
+                        >JSON Canonicalization Scheme (JCS / RFC 8785)</strong
+                    > before hashing with SHA-256. This produces a deterministic <code
+                        class="px-1 py-0.5 rounded bg-muted text-xs font-mono"
+                        >artifactHash</code
+                    > that both the enforcer and approver can independently verify,
+                    ensuring no tampering occurred in transit.
+                </p>
+            </section>
+
+            <!-- Open Source Components -->
+            <section>
+                <h2 class="text-xl font-semibold mt-8 mb-3">
+                    Open Source & Auditability
+                </h2>
+                <p class="text-muted-foreground leading-relaxed">
+                    The following components are open source for independent
+                    audit:
+                </p>
+                <ul class="space-y-2 text-muted-foreground mt-3">
+                    <li class="flex items-start gap-2">
+                        <span class="text-link mt-1">•</span><strong
+                            >HARP Protocol Specification:</strong
+                        > Full protocol spec with test vectors and compliance criteria
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <span class="text-link mt-1">•</span><strong
+                            >Enforcer Extensions:</strong
+                        > Cursor, Windsurf, Antigravity, and Copilot enforcers
+                    </li>
+                    <li class="flex items-start gap-2">
+                        <span class="text-link mt-1">•</span><strong
+                            >Gateway API Client:</strong
+                        > The client library for gateway integration (coming soon)
+                    </li>
+                </ul>
+            </section>
+
+            <!-- Summary Table -->
+            <section>
+                <h2 class="text-xl font-semibold mt-8 mb-3">
+                    Security Summary
+                </h2>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm mt-4">
+                        <thead>
+                            <tr class="border-b border-border/50">
+                                <th class="text-left py-3 pr-4 font-semibold"
+                                    >Layer</th
+                                >
+                                <th class="text-left py-3 pr-4 font-semibold"
+                                    >Mechanism</th
+                                >
+                                <th class="text-left py-3 font-semibold"
+                                    >Standard</th
+                                >
+                            </tr>
+                        </thead>
+                        <tbody class="text-muted-foreground">
+                            <tr class="border-b border-border/30">
+                                <td class="py-3 pr-4">Payload Encryption</td>
+                                <td class="py-3 pr-4">Symmetric AEAD</td>
+                                <td class="py-3"
+                                    ><code
+                                        class="px-1 py-0.5 rounded bg-muted text-xs font-mono"
+                                        >AES-256-GCM</code
+                                    ></td
+                                >
+                            </tr>
+                            <tr class="border-b border-border/30">
+                                <td class="py-3 pr-4">Decision Signing</td>
+                                <td class="py-3 pr-4">Digital Signatures</td>
+                                <td class="py-3"
+                                    ><code
+                                        class="px-1 py-0.5 rounded bg-muted text-xs font-mono"
+                                        >Ed25519</code
+                                    ></td
+                                >
+                            </tr>
+                            <tr class="border-b border-border/30">
+                                <td class="py-3 pr-4">Artifact Integrity</td>
+                                <td class="py-3 pr-4">Canonical Hashing</td>
+                                <td class="py-3"
+                                    ><code
+                                        class="px-1 py-0.5 rounded bg-muted text-xs font-mono"
+                                        >JCS + SHA-256</code
+                                    ></td
+                                >
+                            </tr>
+                            <tr class="border-b border-border/30">
+                                <td class="py-3 pr-4">Transport</td>
+                                <td class="py-3 pr-4">Channel Encryption</td>
+                                <td class="py-3"
+                                    ><code
+                                        class="px-1 py-0.5 rounded bg-muted text-xs font-mono"
+                                        >TLS 1.2+</code
+                                    ></td
+                                >
+                            </tr>
+                            <tr>
+                                <td class="py-3 pr-4">Failure Mode</td>
+                                <td class="py-3 pr-4">Fail-Closed</td>
+                                <td class="py-3"
+                                    ><code
+                                        class="px-1 py-0.5 rounded bg-muted text-xs font-mono"
+                                        >Block on any error</code
+                                    ></td
+                                >
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </div>
+
+        <div class="mt-8 flex gap-4">
+            <a href="/docs" class="text-sm text-link hover:underline"
+                >← All Docs</a
+            >
+            <a href="/" class="text-sm text-muted-foreground hover:underline"
+                >Back to Airlock</a
+            >
+        </div>
+    </div>
+</DocsLayout>
