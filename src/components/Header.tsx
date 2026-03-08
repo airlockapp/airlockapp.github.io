@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Menu, X, Shield, ChevronDown } from "lucide-react";
+import { Menu, X, Shield, ChevronDown, Github } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 const docsItems = [
@@ -103,6 +103,15 @@ export function Header() {
 
         {/* Actions */}
         <div className="flex items-center space-x-4">
+          <a
+            href="https://github.com/airlockapp/extensions"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-muted-foreground hover:text-foreground transition-colors"
+            aria-label="GitHub"
+          >
+            <Github className="h-5 w-5" />
+          </a>
           <ThemeToggle />
 
           {/* Mobile Menu Button */}

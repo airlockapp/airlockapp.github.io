@@ -1,19 +1,33 @@
 import { motion } from "framer-motion";
-import { Package, Users, Puzzle, CheckCircle, Clock } from "lucide-react";
+import { Package, Users, Puzzle, CheckCircle, Clock, Terminal, Shield } from "lucide-react";
 
 const roadmapItems = [
     {
-        icon: Package,
-        title: "Open Source Gateway API Client",
+        icon: Shield,
+        title: "Claude Code Enforcer",
         description:
-            "The Airlock Gateway API Client will be published as an open-source package, enabling custom integrations and community-driven extensions.",
+            "A new enforcer for Anthropic's Claude Code CLI agent, bringing Airlock's cryptographic approval workflow to Claude-powered terminal sessions.",
+        status: "in-progress",
+    },
+    {
+        icon: Terminal,
+        title: "airlock-cli",
+        description:
+            "Command-line integration for Airlock — includes zsh and bash Airlock plugins and a PowerShell Airlock profile for seamless terminal-based approval workflows.",
         status: "in-progress",
     },
     {
         icon: Users,
         title: "Team Formation",
         description:
-            "Build teams, invite teammates, and configure flexible approval policies — \"at least one\", \"at most X\", or \"everyone must approve\" decision rules.",
+            "Build teams, invite teammates, and configure flexible review and approval policies — \"at least one\", \"at most X\", or \"everyone must review/approve\".",
+        status: "planned",
+    },
+    {
+        icon: Package,
+        title: "Open Source Gateway API Client",
+        description:
+            "The Airlock Gateway API Client will be published as an open-source package, enabling custom integrations and community-driven extensions.",
         status: "planned",
     },
     {

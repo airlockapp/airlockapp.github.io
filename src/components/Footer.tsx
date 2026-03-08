@@ -1,3 +1,5 @@
+import { Github } from "lucide-react";
+
 export function Footer() {
   const currentYear = new Date().getFullYear();
 
@@ -76,6 +78,16 @@ export function Footer() {
             <ul className="space-y-3">
               <li>
                 <a
+                  href="https://github.com/airlockapp/extensions"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Extensions Repo
+                </a>
+              </li>
+              <li>
+                <a
                   href="https://harp-protocol.github.io/blog/introducing-harp/"
                   target="_blank"
                   rel="noopener noreferrer"
@@ -129,9 +141,20 @@ export function Footer() {
           <p className="text-sm text-muted-foreground">
             © {currentYear} Out of Band Systems, Airlock. Built on the HARP Protocol.
           </p>
-          <p className="text-xs text-muted-foreground/60 font-mono">
-            HARP-CORE v0.2 · Ed25519 · AES-256-GCM · SHA-256
-          </p>
+          <div className="flex items-center gap-4">
+            <p className="text-xs text-muted-foreground/60 font-mono">
+              HARP-CORE v0.2 · Ed25519 · AES-256-GCM · SHA-256
+            </p>
+            <a
+              href="https://github.com/airlockapp/extensions"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-muted-foreground/60 hover:text-foreground transition-colors"
+              aria-label="GitHub"
+            >
+              <Github className="h-5 w-5" />
+            </a>
+          </div>
         </div>
       </div>
     </footer>
