@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Package, Users, Puzzle, CheckCircle, Clock, Terminal, Shield } from "lucide-react";
+import { Package, Users, Puzzle, CheckCircle, Clock, Shield } from "lucide-react";
 
 const roadmapItems = [
     {
@@ -7,13 +7,6 @@ const roadmapItems = [
         title: "Claude Code Enforcer",
         description:
             "A new enforcer for Anthropic's Claude Code CLI agent, bringing Airlock's cryptographic approval workflow to Claude-powered terminal sessions.",
-        status: "in-progress",
-    },
-    {
-        icon: Terminal,
-        title: "airlock-cli",
-        description:
-            "Command-line integration for Airlock — includes zsh and bash Airlock plugins and a PowerShell Airlock profile for seamless terminal-based approval workflows.",
         status: "in-progress",
     },
     {

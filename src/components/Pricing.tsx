@@ -18,8 +18,21 @@ const plans = [
     highlighted: false,
   },
   {
-    name: "Pro",
-    price: "$12",
+    name: "Pro Weekly",
+    price: "$4.99",
+    period: "/ user / week",
+    description: "Full coverage, billed weekly",
+    features: [
+      "Unlimited approvals",
+      "Unlimited workspaces",
+      "Push notifications",
+    ],
+    cta: "Get Started",
+    highlighted: false,
+  },
+  {
+    name: "Pro Monthly",
+    price: "$11.99",
     period: "/ user / month",
     description: "Full coverage across all workspaces",
     features: [
@@ -60,7 +73,7 @@ export function Pricing() {
           </motion.p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
           {plans.map((plan, index) => (
             <motion.div
               key={index}

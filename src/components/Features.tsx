@@ -18,6 +18,27 @@ const features = [
     gradient: "from-airlock-violet to-airlock-violet-light",
   },
   {
+    icon: Smartphone,
+    title: "Mobile Approval",
+    description:
+      "Flutter app for Android & iOS. Receive push notifications, review encrypted artifacts, and sign decisions — all from your phone.",
+    gradient: "from-airlock-cyan to-airlock-cyan-light",
+  },
+  {
+    icon: Monitor,
+    title: "Multi-IDE Support",
+    description:
+      "Host Enforcer extensions for VS Code — supporting Antigravity, Cursor, Windsurf, and GitHub Copilot. Intercept and gate AI actions at the source.",
+    gradient: "from-indigo-500 to-airlock-violet",
+  },
+  {
+    icon: RefreshCw,
+    title: "Replay Protection",
+    description:
+      "Every decision includes a nonce, expiry timestamp, and journal entry. Replay and substitution attacks are cryptographically prevented.",
+    gradient: "from-cyan-500 to-blue-500",
+  },
+  {
     icon: ShieldCheck,
     title: "Ed25519 Signatures",
     description:
@@ -31,27 +52,6 @@ const features = [
     description:
       "Artifacts are encrypted with AES-256-GCM via ECDH key exchange during device pairing. Only the paired approver can decrypt.",
     gradient: "from-airlock-cyan to-teal-500",
-  },
-  {
-    icon: RefreshCw,
-    title: "Replay Protection",
-    description:
-      "Every decision includes a nonce, expiry timestamp, and journal entry. Replay and substitution attacks are cryptographically prevented.",
-    gradient: "from-cyan-500 to-blue-500",
-  },
-  {
-    icon: Monitor,
-    title: "Multi-IDE Support",
-    description:
-      "Host Enforcer extensions for VS Code — supporting Antigravity, Cursor, Windsurf, and GitHub Copilot. Intercept and gate AI actions at the source.",
-    gradient: "from-indigo-500 to-airlock-violet",
-  },
-  {
-    icon: Smartphone,
-    title: "Mobile Approval",
-    description:
-      "Flutter app for Android & iOS. Receive push notifications, review encrypted artifacts, and sign decisions — all from your phone.",
-    gradient: "from-airlock-cyan to-airlock-cyan-light",
   },
 ];
 

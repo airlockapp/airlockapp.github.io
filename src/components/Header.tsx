@@ -8,6 +8,8 @@ const docsItems = [
   { label: "Windsurf", href: "/docs/windsurf", icon: "/enforcers/windsurf.png" },
   { label: "Antigravity", href: "/docs/antigravity", icon: "/enforcers/antigravity.png" },
   { label: "Copilot", href: "/docs/copilot", icon: "/enforcers/copilot.png" },
+  { label: "CLI", href: "/docs/cli", icon: null },
+  { label: "Shells", href: "/docs/shells", icon: null },
 ];
 
 export function Header() {
@@ -83,8 +85,14 @@ export function Header() {
                     className="flex items-center gap-3 px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
                     onClick={() => setIsDocsOpen(false)}
                   >
-                    <img src={item.icon} alt={item.label} className="w-5 h-5 rounded" />
-                    {item.label} Enforcer
+                    {item.icon ? (
+                      <img src={item.icon} alt={item.label} className="w-5 h-5 rounded" />
+                    ) : (
+                      <span className="w-5 h-5 rounded bg-airlock-cyan/20 flex items-center justify-center flex-shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="w-3 h-3 text-airlock-cyan" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                      </span>
+                    )}
+                    {item.label === "CLI" || item.label === "Shells" ? item.label : `${item.label} Enforcer`}
                   </a>
                 ))}
                 <div className="border-t border-border/40 mt-1 pt-1">
@@ -154,8 +162,14 @@ export function Header() {
                   className="flex items-center gap-3 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  <img src={item.icon} alt={item.label} className="w-5 h-5 rounded" />
-                  {item.label} Enforcer
+                  {item.icon ? (
+                    <img src={item.icon} alt={item.label} className="w-5 h-5 rounded" />
+                  ) : (
+                    <span className="w-5 h-5 rounded bg-airlock-cyan/20 flex items-center justify-center flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="w-3 h-3 text-airlock-cyan" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
+                    </span>
+                  )}
+                  {item.label === "CLI" || item.label === "Shells" ? item.label : `${item.label} Enforcer`}
                 </a>
               ))}
             </div>

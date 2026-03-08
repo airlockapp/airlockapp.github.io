@@ -35,5 +35,49 @@ const { title = "Airlock Docs" } = Astro.props;
             <slot />
         </main>
         <Footer />
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const main = document.querySelector("main");
+                if (!main) return;
+                const pres = main.querySelectorAll("pre");
+                pres.forEach(function (pre) {
+                    const code = pre.querySelector("code");
+                    const text = code ? code.textContent || "" : pre.textContent || "";
+                    if (!text.trim()) return;
+
+                    const wrapper = document.createElement("div");
+                    wrapper.className = "docs-code-block";
+
+                    const btn = document.createElement("button");
+                    btn.type = "button";
+                    btn.className = "docs-copy-btn";
+                    btn.setAttribute("aria-label", "Copy code");
+                    btn.textContent = "Copy";
+
+                    btn.addEventListener("click", function () {
+                        navigator.clipboard.writeText(text).then(
+                            function () {
+                                btn.textContent = "Copied!";
+                                btn.classList.add("copied");
+                                setTimeout(function () {
+                                    btn.textContent = "Copy";
+                                    btn.classList.remove("copied");
+                                }, 2000);
+                            },
+                            function () {
+                                btn.textContent = "Failed";
+                                setTimeout(function () {
+                                    btn.textContent = "Copy";
+                                }, 2000);
+                            }
+                        );
+                    });
+
+                    pre.parentNode.insertBefore(wrapper, pre);
+                    wrapper.appendChild(btn);
+                    wrapper.appendChild(pre);
+                });
+            });
+        </script>
     </body>
 </html>

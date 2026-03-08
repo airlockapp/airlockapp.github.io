@@ -1,0 +1,158 @@
+---
+import DocsLayout from "../../layouts/docs.astro";
+
+// Code snippets as strings so Astro doesn't parse ${...} as JS expressions
+const bashRcSnippet = `export AIRLOCK_CLI="\${AIRLOCK_CLI:-$HOME/.airlock/bin/airlock-cli}"
+export AIRLOCK_ENABLED=1
+export AIRLOCK_FAIL_MODE=open
+source "$HOME/.airlock/shell/airlock.plugin.bash"`;
+
+const zshRcSnippet = `export AIRLOCK_CLI="$HOME/.airlock/bin/airlock-cli"
+export AIRLOCK_ENABLED=1
+export AIRLOCK_FAIL_MODE=open
+source "$HOME/.airlock/shell/airlock.plugin.zsh"`;
+
+const poshProfileSnippet = `$env:AIRLOCK_CLI = "$HOME\\.airlock\\bin\\airlock-cli.exe"
+$env:AIRLOCK_ENABLED = "1"
+$env:AIRLOCK_FAIL_MODE = "open"
+. "$HOME\\.airlock\\shell\\airlock.profile.ps1"`;
+---
+
+<DocsLayout title="Airlock Shell Integration">
+    <div class="space-y-8">
+        <div class="flex items-center gap-4">
+            <div class="w-16 h-16 rounded-xl bg-airlock-cyan/20 flex items-center justify-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-airlock-cyan" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h7"/></svg>
+            </div>
+            <div>
+                <h1 class="text-3xl md:text-4xl font-bold">Shell integration</h1>
+                <p class="text-muted-foreground mt-1">
+                    Require approval for every command in Bash, Zsh, or PowerShell
+                </p>
+            </div>
+        </div>
+
+        <div class="flex flex-wrap gap-3 mt-4">
+            <a
+                href="https://github.com/airlockapp/extensions/tree/main/src/shells"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-border/50 bg-muted/30 text-sm font-medium text-foreground hover:bg-muted/60 transition-colors"
+            >
+                Source (Bash, Zsh, Posh)
+                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            </a>
+        </div>
+
+        <div class="prose dark:prose-invert max-w-none space-y-8">
+            <section>
+                <h2 class="text-xl font-semibold mt-8 mb-4">What shell integration does</h2>
+                <p class="text-muted-foreground">
+                    When you press <strong>Enter</strong> on a command, the shell plugin sends it to Airlock (via <code class="rounded bg-muted px-1.5 py-0.5">airlock-cli</code>). A notification appears on your Airlock mobile app. You tap <strong>Approve</strong> or <strong>Deny</strong>. If you approve, the command runs; if you deny or don’t respond in time, it does not run. You get a second check before risky commands (e.g. <code class="rounded bg-muted px-1.5 py-0.5">git push</code>, <code class="rounded bg-muted px-1.5 py-0.5">rm -rf</code>, production deploys) execute.
+                </p>
+                <p class="text-muted-foreground">
+                    Supported shells: <strong>Bash</strong>, <strong>Zsh</strong>, <strong>PowerShell</strong> (Windows). Each requires <a href="/docs/cli" class="text-link hover:underline">airlock-cli</a> to be installed, signed in, and paired first.
+                </p>
+            </section>
+
+            <!-- Bash -->
+            <section id="bash" class="scroll-mt-24">
+                <h2 class="text-xl font-semibold mt-8 mb-4 flex items-center gap-2">
+                    <span class="w-1.5 h-6 rounded-full bg-airlock-violet-light"></span>
+                    Bash
+                </h2>
+                <p class="text-muted-foreground mb-4">Opt-in Bash integration that intercepts Enter, calls <code class="rounded bg-muted px-1.5 py-0.5">airlock-cli approve</code>, and only runs the command when the CLI exits 0.</p>
+                <h3 class="text-lg font-medium mt-4 mb-2">Prerequisites</h3>
+                <ul class="list-disc pl-6 space-y-1 text-muted-foreground">
+                    <li>Bash (interactive session)</li>
+                    <li><a href="/docs/cli" class="text-link hover:underline">airlock-cli</a> on your PATH (or set <code class="rounded bg-muted px-1">AIRLOCK_CLI</code>)</li>
+                    <li>Signed in and paired: <code class="rounded bg-muted px-1">airlock-cli sign-in</code> and <code class="rounded bg-muted px-1">airlock-cli pair</code></li>
+                </ul>
+                <h3 class="text-lg font-medium mt-4 mb-2">Installation</h3>
+                <pre class="rounded-lg bg-muted/50 p-4 text-sm overflow-x-auto"><code>mkdir -p ~/.airlock/shell
+# Copy plugin from repo: src/shells/bash/airlock.plugin.bash
+cp /path/to/airlock/src/shells/bash/airlock.plugin.bash ~/.airlock/shell/</code></pre>
+                <p class="text-muted-foreground mt-2">Add to <code class="rounded bg-muted px-1.5 py-0.5">~/.bashrc</code>:</p>
+                <pre class="rounded-lg bg-muted/50 p-4 text-sm overflow-x-auto"><code>{bashRcSnippet}</code></pre>
+                <p class="text-muted-foreground mt-2">Then <code class="rounded bg-muted px-1.5 py-0.5">source ~/.bashrc</code> or open a new Bash session.</p>
+                <p class="text-sm text-muted-foreground mt-4"><a href="https://github.com/airlockapp/extensions/tree/main/src/shells/bash" class="text-link hover:underline" target="_blank" rel="noopener noreferrer">Bash plugin source →</a></p>
+            </section>
+
+            <!-- Zsh -->
+            <section id="zsh" class="scroll-mt-24">
+                <h2 class="text-xl font-semibold mt-8 mb-4 flex items-center gap-2">
+                    <span class="w-1.5 h-6 rounded-full bg-airlock-cyan"></span>
+                    Zsh
+                </h2>
+                <p class="text-muted-foreground mb-4">Same behavior as Bash: intercept Enter, call <code class="rounded bg-muted px-1.5 py-0.5">airlock-cli approve</code>, run command only when approved.</p>
+                <h3 class="text-lg font-medium mt-4 mb-2">Prerequisites</h3>
+                <ul class="list-disc pl-6 space-y-1 text-muted-foreground">
+                    <li>Zsh (macOS default or Linux install)</li>
+                    <li><a href="/docs/cli" class="text-link hover:underline">airlock-cli</a> on PATH or <code class="rounded bg-muted px-1">AIRLOCK_CLI</code></li>
+                    <li>Signed in and paired</li>
+                </ul>
+                <h3 class="text-lg font-medium mt-4 mb-2">Installation</h3>
+                <pre class="rounded-lg bg-muted/50 p-4 text-sm overflow-x-auto"><code>mkdir -p ~/.airlock/shell
+cp /path/to/airlock/src/shells/zsh/airlock.plugin.zsh ~/.airlock/shell/</code></pre>
+                <p class="text-muted-foreground mt-2">Add to <code class="rounded bg-muted px-1.5 py-0.5">~/.zshrc</code>:</p>
+                <pre class="rounded-lg bg-muted/50 p-4 text-sm overflow-x-auto"><code>{zshRcSnippet}</code></pre>
+                <p class="text-muted-foreground mt-2">Then <code class="rounded bg-muted px-1.5 py-0.5">source ~/.zshrc</code> or open a new Zsh session.</p>
+                <p class="text-sm text-muted-foreground mt-4"><a href="https://github.com/airlockapp/extensions/tree/main/src/shells/zsh" class="text-link hover:underline" target="_blank" rel="noopener noreferrer">Zsh plugin source →</a></p>
+            </section>
+
+            <!-- PowerShell -->
+            <section id="posh" class="scroll-mt-24">
+                <h2 class="text-xl font-semibold mt-8 mb-4 flex items-center gap-2">
+                    <span class="w-1.5 h-6 rounded-full bg-amber-500"></span>
+                    PowerShell (Windows)
+                </h2>
+                <p class="text-muted-foreground mb-4">PowerShell profile that intercepts Enter and sends the command to <code class="rounded bg-muted px-1.5 py-0.5">airlock-cli</code>. Requires PSReadLine (usually present by default).</p>
+                <h3 class="text-lg font-medium mt-4 mb-2">Prerequisites</h3>
+                <ul class="list-disc pl-6 space-y-1 text-muted-foreground">
+                    <li>PowerShell 5 or PowerShell Core (pwsh) on Windows</li>
+                    <li><a href="/docs/cli" class="text-link hover:underline">airlock-cli</a> (e.g. <code class="rounded bg-muted px-1">airlock-cli.exe</code>) on PATH or in a known folder</li>
+                    <li>Signed in and paired</li>
+                </ul>
+                <h3 class="text-lg font-medium mt-4 mb-2">Installation</h3>
+                <pre class="rounded-lg bg-muted/50 p-4 text-sm overflow-x-auto"><code>New-Item -ItemType Directory -Force -Path "$HOME\.airlock\shell"
+Copy-Item "path\to\airlock\src\shells\posh\airlock.profile.ps1" "$HOME\.airlock\shell\"</code></pre>
+                <p class="text-muted-foreground mt-2">Open your PowerShell profile (create if needed): <code class="rounded bg-muted px-1.5 py-0.5">notepad $PROFILE</code>. Add:</p>
+                <pre class="rounded-lg bg-muted/50 p-4 text-sm overflow-x-auto"><code>{poshProfileSnippet}</code></pre>
+                <p class="text-muted-foreground mt-2">Reload: <code class="rounded bg-muted px-1.5 py-0.5">. $PROFILE</code> or reopen PowerShell.</p>
+                <p class="text-sm text-muted-foreground mt-4"><a href="https://github.com/airlockapp/extensions/tree/main/src/shells/posh" class="text-link hover:underline" target="_blank" rel="noopener noreferrer">PowerShell profile source →</a></p>
+            </section>
+
+            <!-- Environment & behavior -->
+            <section>
+                <h2 class="text-xl font-semibold mt-8 mb-4">Environment variables (all shells)</h2>
+                <table class="w-full text-sm border-collapse">
+                    <thead>
+                        <tr class="border-b border-border/50">
+                            <th class="text-left py-2 font-medium">Variable</th>
+                            <th class="text-left py-2 font-medium">Default</th>
+                            <th class="text-left py-2 font-medium">Description</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-muted-foreground">
+                        <tr class="border-b border-border/30"><td class="py-2"><code class="rounded bg-muted px-1">AIRLOCK_CLI</code></td><td class="py-2"><code class="rounded bg-muted px-1">airlock-cli</code></td><td class="py-2">Path to the airlock-cli binary</td></tr>
+                        <tr class="border-b border-border/30"><td class="py-2"><code class="rounded bg-muted px-1">AIRLOCK_ENABLED</code></td><td class="py-2"><code class="rounded bg-muted px-1">1</code></td><td class="py-2">Set to <code class="rounded bg-muted px-1">0</code> to disable interception</td></tr>
+                        <tr class="border-b border-border/30"><td class="py-2"><code class="rounded bg-muted px-1">AIRLOCK_FAIL_MODE</code></td><td class="py-2"><code class="rounded bg-muted px-1">open</code></td><td class="py-2"><code class="rounded bg-muted px-1">open</code> = allow command when CLI fails/timeout; <code class="rounded bg-muted px-1">closed</code> = block</td></tr>
+                    </tbody>
+                </table>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-semibold mt-8 mb-4">Quick reference</h2>
+                <ul class="list-disc pl-6 space-y-1 text-muted-foreground">
+                    <li><strong>Use Airlock on every command</strong> — Keep <code class="rounded bg-muted px-1">AIRLOCK_ENABLED=1</code> and source the plugin in your rc/profile.</li>
+                    <li><strong>Run without approval temporarily</strong> — Set <code class="rounded bg-muted px-1">AIRLOCK_ENABLED=0</code> and reload your config.</li>
+                    <li><strong>Block when CLI fails</strong> — Set <code class="rounded bg-muted px-1">AIRLOCK_FAIL_MODE=closed</code> before sourcing the plugin.</li>
+                </ul>
+            </section>
+
+            <p class="text-muted-foreground text-sm mt-8">
+                Full user guides and implementation details: <a href="https://github.com/airlockapp/extensions/tree/main/src/shells" class="text-link hover:underline" target="_blank" rel="noopener noreferrer">shells (bash, zsh, posh)</a>.
+            </p>
+        </div>
+    </div>
+</DocsLayout>
