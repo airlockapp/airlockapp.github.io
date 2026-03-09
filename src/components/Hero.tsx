@@ -85,7 +85,7 @@ export function Hero() {
               <div className="inline-flex items-center gap-2 rounded-full border border-airlock-violet-light/30 bg-airlock-violet/10 dark:bg-airlock-violet/20 backdrop-blur-sm px-4 py-1.5 text-sm">
                 <Shield className="h-4 w-4 text-airlock-cyan" />
                 <span className="text-foreground/70 dark:text-muted-foreground">
-                  Built on the HARP Protocol
+                  Built on the HARP Specification
                 </span>
               </div>
             </motion.div>
@@ -97,9 +97,9 @@ export function Hero() {
               transition={{ duration: 0.5, delay: 0.1 }}
               className="text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight max-w-3xl"
             >
-              Every AI action.{" "}
+              AI commands.{" "}
               <span className="bg-gradient-to-r from-airlock-violet-light via-airlock-cyan to-airlock-cyan-light bg-clip-text text-transparent animate-gradient">
-                Human approved.
+                Remotely approved.
               </span>
             </motion.h1>
 
@@ -110,16 +110,39 @@ export function Hero() {
               transition={{ duration: 0.5, delay: 0.2 }}
               className="text-lg md:text-xl text-muted-foreground max-w-2xl leading-relaxed"
             >
-              Airlock ensures no AI agent can execute sensitive actions without an
-              explicitly signed human decision — verified locally, cryptographically
-              bound, zero-knowledge relayed.
+              Remotely approve agent tool calls with cryptographically secure
+              human authorization.
             </motion.p>
+
+            {/* How it works steps */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 w-full max-w-2xl"
+            >
+              {steps.map((step, index) => {
+                const Icon = step.icon;
+                return (
+                  <div key={index} className="flex flex-col items-center lg:items-start gap-1">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-mono text-muted-foreground/60">
+                        {String(index + 1).padStart(2, "0")}
+                      </span>
+                      <Icon className="h-4 w-4 text-airlock-cyan" />
+                    </div>
+                    <p className="text-sm font-semibold">{step.label}</p>
+                    <p className="text-xs text-muted-foreground">{step.desc}</p>
+                  </div>
+                );
+              })}
+            </motion.div>
 
             {/* Supported IDEs */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
+              transition={{ duration: 0.5, delay: 0.35 }}
               className="flex flex-col items-center lg:items-start gap-3 pt-4 w-full"
             >
               <span className="text-xs text-muted-foreground/50 uppercase tracking-widest font-semibold">Works with</span>
@@ -143,13 +166,13 @@ export function Hero() {
               <div className="flex flex-wrap items-center gap-3 mt-2">
                 <a href="/docs/cli" className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
                   <span className="w-6 h-6 rounded bg-airlock-cyan/20 flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5 text-airlock-cyan" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5 text-airlock-cyan" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
                   </span>
                   CLI
                 </a>
                 <a href="/docs/shells" className="inline-flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
                   <span className="w-6 h-6 rounded bg-airlock-cyan/20 flex items-center justify-center">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5 text-airlock-cyan" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h7"/></svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-3.5 h-3.5 text-airlock-cyan" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M4 6h16M4 12h16M4 18h7" /></svg>
                   </span>
                   Shells (Bash, Zsh, PowerShell)
                 </a>
@@ -160,7 +183,7 @@ export function Hero() {
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.35 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
               className="flex flex-col sm:flex-row gap-4"
             >
               <Button
@@ -177,30 +200,6 @@ export function Hero() {
                   Read the Spec
                 </a>
               </Button>
-            </motion.div>
-
-            {/* How it works steps */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.4 }}
-              className="grid grid-cols-2 md:grid-cols-4 gap-4 pt-4 w-full max-w-2xl"
-            >
-              {steps.map((step, index) => {
-                const Icon = step.icon;
-                return (
-                  <div key={index} className="flex flex-col items-center lg:items-start gap-1">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs font-mono text-muted-foreground/60">
-                        {String(index + 1).padStart(2, "0")}
-                      </span>
-                      <Icon className="h-4 w-4 text-airlock-cyan" />
-                    </div>
-                    <p className="text-sm font-semibold">{step.label}</p>
-                    <p className="text-xs text-muted-foreground">{step.desc}</p>
-                  </div>
-                );
-              })}
             </motion.div>
           </div>
 

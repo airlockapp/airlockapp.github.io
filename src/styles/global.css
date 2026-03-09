@@ -202,6 +202,19 @@
   background: hsl(var(--accent));
   border-color: hsl(var(--accent));
 }
+
+/* Dark mode copy button — blend with dark code block */
+.dark .docs-copy-btn {
+  color: #8b949e;
+  background: rgba(110, 118, 129, 0.15);
+  border-color: rgba(110, 118, 129, 0.4);
+}
+.dark .docs-copy-btn:hover {
+  color: #c9d1d9;
+  background: rgba(110, 118, 129, 0.3);
+  border-color: rgba(110, 118, 129, 0.6);
+}
+
 .docs-code-block pre {
-  padding-top: 2.25rem;
+  padding: 2.25rem 1rem 1rem 1rem;
 }

@@ -1,12 +1,50 @@
 ---
 import DocsLayout from "../../layouts/docs.astro";
+import { Code } from "astro:components";
+
+const buildFromSource = `cd src/airlock-cli
+go build -o airlock-cli ./cmd/airlock-cli`;
+
+const signIn = `airlock-cli sign-in`;
+
+const pair = `airlock-cli pair`;
+
+const approveBasic = `airlock-cli approve --command "git push origin main"`;
+
+const approveContext = `airlock-cli approve \\
+  --command "git push origin main" \\
+  --cwd "/home/me/my-project" \\
+  --shell "bash" \\
+  --host "my-laptop"`;
+
+const scriptExample = `airlock-cli approve --command "$*" --cwd "$(pwd)" --shell "$SHELL" --host "$(hostname)"
+if [ $? -eq 0 ]; then
+  "$@"
+else
+  echo "Command not approved or failed."
+  exit 1
+fi`;
 ---
 
 <DocsLayout title="Airlock CLI — User Guide">
     <div class="space-y-8">
         <div class="flex items-center gap-4">
-            <div class="w-16 h-16 rounded-xl bg-airlock-violet/20 flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-airlock-violet-light" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+            <div
+                class="w-16 h-16 rounded-xl bg-airlock-violet/20 flex items-center justify-center"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="h-8 w-8 text-airlock-violet-light"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    ><path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                    ></path></svg
+                >
             </div>
             <div>
                 <h1 class="text-3xl md:text-4xl font-bold">Airlock CLI</h1>
@@ -24,103 +62,279 @@ import DocsLayout from "../../layouts/docs.astro";
                 class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-border/50 bg-muted/30 text-sm font-medium text-foreground hover:bg-muted/60 transition-colors"
             >
                 Source & README
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-3.5 h-3.5 text-muted-foreground" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="w-3.5 h-3.5 text-muted-foreground"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    ><path
+                        d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"
+                    ></path><polyline points="15 3 21 3 21 9"></polyline><line
+                        x1="10"
+                        y1="14"
+                        x2="21"
+                        y2="3"></line></svg
+                >
             </a>
         </div>
 
         <div class="prose dark:prose-invert max-w-none space-y-8">
             <section>
-                <h2 class="text-xl font-semibold mt-8 mb-4">What is the Airlock CLI?</h2>
+                <h2 class="text-xl font-semibold mt-8 mb-4">
+                    What is the Airlock CLI?
+                </h2>
                 <p class="text-muted-foreground">
-                    The Airlock CLI is a non–hook-based enforcer that gates shell commands through the Airlock gateway. Sign in and pair once; then use <code class="rounded bg-muted px-1.5 py-0.5">airlock-cli approve</code> to request human approval before running sensitive commands (e.g. <code class="rounded bg-muted px-1.5 py-0.5">git push</code>, production deploys).
+                    The Airlock CLI is a standalone enforcer that gates shell
+                    commands through the Airlock gateway. Sign in and pair once;
+                    then use <code class="rounded bg-muted px-1.5 py-0.5"
+                        >airlock-cli approve</code
+                    > to request human approval before running sensitive commands
+                    (e.g. <code class="rounded bg-muted px-1.5 py-0.5"
+                        >git push</code
+                    >, production deploys).
                 </p>
                 <ul class="list-disc pl-6 space-y-2 text-muted-foreground">
-                    <li><strong>Asks for approval</strong> — Before a command runs, it sends a request to the gateway. You see the request on the Airlock mobile app and tap Approve or Deny.</li>
-                    <li><strong>Blocks until you decide</strong> — The terminal waits until you approve, deny, or until a timeout. It exits with a clear result so your shell or script can allow or block the command.</li>
-                    <li><strong>Stays secure</strong> — Sign in once and pair the CLI with your phone once. Approvals are cryptographically verified.</li>
+                    <li>
+                        <strong>Asks for approval</strong> — Before a command runs,
+                        it sends a request to the gateway. You see the request on
+                        the Airlock mobile app and tap Approve or Deny.
+                    </li>
+                    <li>
+                        <strong>Blocks until you decide</strong> — The terminal waits
+                        until you approve, deny, or until a timeout. It exits with
+                        a clear result so your shell or script can allow or block
+                        the command.
+                    </li>
+                    <li>
+                        <strong>Stays secure</strong> — Sign in once and pair the
+                        CLI with your phone once. Approvals are cryptographically
+                        verified.
+                    </li>
                 </ul>
             </section>
 
             <section>
-                <h2 class="text-xl font-semibold mt-8 mb-4">Before you start</h2>
+                <h2 class="text-xl font-semibold mt-8 mb-4">Prerequisites</h2>
                 <ul class="list-disc pl-6 space-y-2 text-muted-foreground">
-                    <li><strong>Airlock gateway</strong> — Your organization gives you a URL (e.g. <code class="rounded bg-muted px-1.5 py-0.5">https://gateway.mycompany.com</code>). For local dev, use <code class="rounded bg-muted px-1.5 py-0.5">https://localhost:7145</code>.</li>
-                    <li><strong>An account</strong> — Same account you use for the Airlock web app or IDE extension (Keycloak/SSO).</li>
-                    <li><strong>Airlock mobile app</strong> — Installed on your phone, signed in. Used to approve/deny and to pair the CLI.</li>
+                    <li>
+                        <strong>An Airlock account</strong> — Same account you use
+                        for the Airlock mobile app or IDE extension.
+                    </li>
+                    <li>
+                        <strong>Airlock mobile app</strong> — Installed on your phone,
+                        signed in. Used to approve/deny and to pair the CLI.
+                    </li>
                 </ul>
             </section>
 
             <section>
-                <h2 class="text-xl font-semibold mt-8 mb-4">Step 1: Install the CLI</h2>
-                <h3 class="text-lg font-medium mt-4 mb-2">Option A: Download a release</h3>
-                <p class="text-muted-foreground mb-2">Get the right binary for your system from your team or the <a href="https://github.com/airlockapp/extensions" class="text-link hover:underline">releases</a>:</p>
-                <ul class="list-disc pl-6 space-y-1 text-muted-foreground text-sm">
-                    <li>Windows (64-bit): <code class="rounded bg-muted px-1">airlock-cli-windows-amd64.exe</code></li>
-                    <li>Windows (32-bit): <code class="rounded bg-muted px-1">airlock-cli-windows-386.exe</code></li>
-                    <li>Linux (64-bit): <code class="rounded bg-muted px-1">airlock-cli-linux-amd64</code></li>
-                    <li>Linux (ARM64): <code class="rounded bg-muted px-1">airlock-cli-linux-arm64</code></li>
-                    <li>macOS (Intel): <code class="rounded bg-muted px-1">airlock-cli-darwin-amd64</code></li>
-                    <li>macOS (Apple Silicon): <code class="rounded bg-muted px-1">airlock-cli-darwin-arm64</code></li>
+                <h2 class="text-xl font-semibold mt-8 mb-4">
+                    Step 1: Install the CLI
+                </h2>
+                <h3 class="text-lg font-medium mt-4 mb-2">
+                    Option A: Download a release
+                </h3>
+                <p class="text-muted-foreground mb-2">
+                    Get the right binary for your system from the <a
+                        href="https://github.com/airlockapp/extensions"
+                        class="text-link hover:underline">releases</a
+                    >:
+                </p>
+                <ul
+                    class="list-disc pl-6 space-y-1 text-muted-foreground text-sm"
+                >
+                    <li>
+                        Windows (64-bit): <code class="rounded bg-muted px-1"
+                            >airlock-cli-windows-amd64.exe</code>
+                    </li>
+                    <li>
+                        Windows (32-bit): <code class="rounded bg-muted px-1"
+                            >airlock-cli-windows-386.exe</code>
+                    </li>
+                    <li>
+                        Linux (64-bit): <code class="rounded bg-muted px-1"
+                            >airlock-cli-linux-amd64</code>
+                    </li>
+                    <li>
+                        Linux (ARM64): <code class="rounded bg-muted px-1"
+                            >airlock-cli-linux-arm64</code>
+                    </li>
+                    <li>
+                        macOS (Intel): <code class="rounded bg-muted px-1"
+                            >airlock-cli-darwin-amd64</code>
+                    </li>
+                    <li>
+                        macOS (Apple Silicon): <code
+                            class="rounded bg-muted px-1"
+                            >airlock-cli-darwin-arm64</code>
+                    </li>
                 </ul>
-                <p class="text-muted-foreground mt-2">Rename to <code class="rounded bg-muted px-1.5 py-0.5">airlock-cli</code> (or <code class="rounded bg-muted px-1.5 py-0.5">airlock-cli.exe</code> on Windows) and put it in your PATH. On Linux/macOS: <code class="rounded bg-muted px-1.5 py-0.5">chmod +x airlock-cli</code>.</p>
-                <h3 class="text-lg font-medium mt-4 mb-2">Option B: Build from source</h3>
-                <pre class="rounded-lg bg-muted/50 p-4 text-sm overflow-x-auto"><code>cd src/airlock-cli
-go build -o airlock-cli ./cmd/airlock-cli</code></pre>
+                <p class="text-muted-foreground mt-2">
+                    Rename to <code class="rounded bg-muted px-1.5 py-0.5"
+                        >airlock-cli</code
+                    > (or <code class="rounded bg-muted px-1.5 py-0.5"
+                        >airlock-cli.exe</code
+                    > on Windows) and put it in your PATH. On Linux/macOS: <code
+                        class="rounded bg-muted px-1.5 py-0.5"
+                        >chmod +x airlock-cli</code
+                    >.
+                </p>
+                <h3 class="text-lg font-medium mt-4 mb-2">
+                    Option B: Build from source
+                </h3>
+                <div
+                    class="rounded-lg border border-border/50 overflow-hidden dark:hidden"
+                >
+                    <Code
+                        code={buildFromSource}
+                        lang="bash"
+                        theme="github-light"
+                    />
+                </div>
+                <div
+                    class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"
+                >
+                    <Code
+                        code={buildFromSource}
+                        lang="bash"
+                        theme="github-dark"
+                    />
+                </div>
             </section>
 
             <section>
                 <h2 class="text-xl font-semibold mt-8 mb-4">Step 2: Sign in</h2>
-                <pre class="rounded-lg bg-muted/50 p-4 text-sm overflow-x-auto"><code>airlock-cli sign-in
-# If your gateway is not the default:
-airlock-cli sign-in --gateway https://your-gateway.example.com</code></pre>
-                <p class="text-muted-foreground mt-2">Your browser will open; sign in with your Airlock/Keycloak account. Then check: <code class="rounded bg-muted px-1.5 py-0.5">airlock-cli status</code> — you should see “Signed in: true”.</p>
+                <div
+                    class="rounded-lg border border-border/50 overflow-hidden dark:hidden"
+                >
+                    <Code code={signIn} lang="bash" theme="github-light" />
+                </div>
+                <div
+                    class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"
+                >
+                    <Code code={signIn} lang="bash" theme="github-dark" />
+                </div>
+                <p class="text-muted-foreground mt-2">
+                    Your browser will open; sign in with your Airlock account.
+                    Then check: <code class="rounded bg-muted px-1.5 py-0.5"
+                        >airlock-cli status</code
+                    > — you should see "Signed in: true".
+                </p>
             </section>
 
             <section>
-                <h2 class="text-xl font-semibold mt-8 mb-4">Step 3: Pair with your phone</h2>
-                <pre class="rounded-lg bg-muted/50 p-4 text-sm overflow-x-auto"><code>airlock-cli pair</code></pre>
-                <p class="text-muted-foreground mt-2">The CLI shows a pairing code. Open the Airlock mobile app, go to pairing, and enter the code. When done, <code class="rounded bg-muted px-1.5 py-0.5">airlock-cli status</code> should show “Paired: true”.</p>
+                <h2 class="text-xl font-semibold mt-8 mb-4">
+                    Step 3: Pair with your phone
+                </h2>
+                <div
+                    class="rounded-lg border border-border/50 overflow-hidden dark:hidden"
+                >
+                    <Code code={pair} lang="bash" theme="github-light" />
+                </div>
+                <div
+                    class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"
+                >
+                    <Code code={pair} lang="bash" theme="github-dark" />
+                </div>
+                <p class="text-muted-foreground mt-2">
+                    The CLI shows a pairing code. On the Airlock Mobile Approver
+                    app, go to <strong>Settings → Pair Another Workspace</strong
+                    > and enter the code. When done, <code
+                        class="rounded bg-muted px-1.5 py-0.5"
+                        >airlock-cli status</code
+                    > should show "Paired: true".
+                </p>
             </section>
 
             <section>
-                <h2 class="text-xl font-semibold mt-8 mb-4">Step 4: Use the approve command</h2>
+                <h2 class="text-xl font-semibold mt-8 mb-4">
+                    Step 4: Use the approve command
+                </h2>
                 <p class="text-muted-foreground mb-2">Basic usage:</p>
-                <pre class="rounded-lg bg-muted/50 p-4 text-sm overflow-x-auto"><code>airlock-cli approve --command "git push origin main"</code></pre>
-                <p class="text-muted-foreground mt-2">With more context (recommended):</p>
-                <pre class="rounded-lg bg-muted/50 p-4 text-sm overflow-x-auto"><code>airlock-cli approve \
-  --command "git push origin main" \
-  --cwd "/home/me/my-project" \
-  --shell "bash" \
-  --host "my-laptop"</code></pre>
+                <div
+                    class="rounded-lg border border-border/50 overflow-hidden dark:hidden"
+                >
+                    <Code
+                        code={approveBasic}
+                        lang="bash"
+                        theme="github-light"
+                    />
+                </div>
+                <div
+                    class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"
+                >
+                    <Code code={approveBasic} lang="bash" theme="github-dark" />
+                </div>
+                <p class="text-muted-foreground mt-2">
+                    With more context (recommended):
+                </p>
+                <div
+                    class="rounded-lg border border-border/50 overflow-hidden dark:hidden"
+                >
+                    <Code
+                        code={approveContext}
+                        lang="bash"
+                        theme="github-light"
+                    />
+                </div>
+                <div
+                    class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"
+                >
+                    <Code
+                        code={approveContext}
+                        lang="bash"
+                        theme="github-dark"
+                    />
+                </div>
                 <h3 class="text-lg font-medium mt-4 mb-2">Exit codes</h3>
                 <ul class="list-none space-y-1 text-muted-foreground text-sm">
-                    <li><code class="rounded bg-muted px-1">0</code> — Approved → safe to run the command</li>
-                    <li><code class="rounded bg-muted px-1">1</code> — Denied</li>
-                    <li><code class="rounded bg-muted px-1">2</code> — Verification failed (don’t run the command)</li>
-                    <li><code class="rounded bg-muted px-1">3</code> — Timeout (don’t assume approval)</li>
+                    <li>
+                        <code class="rounded bg-muted px-1">0</code> — Approved →
+                        safe to run the command
+                    </li>
+                    <li>
+                        <code class="rounded bg-muted px-1">1</code> — Denied
+                    </li>
+                    <li>
+                        <code class="rounded bg-muted px-1">2</code> — Verification
+                        failed (don't run the command)
+                    </li>
+                    <li>
+                        <code class="rounded bg-muted px-1">3</code> — Timeout (don't
+                        assume approval)
+                    </li>
                 </ul>
             </section>
 
             <section>
-                <h2 class="text-xl font-semibold mt-8 mb-4">Using the CLI from a script</h2>
-                <p class="text-muted-foreground mb-2">Run the CLI first; only run the real command if the CLI exits 0.</p>
+                <h2 class="text-xl font-semibold mt-8 mb-4">
+                    Using the CLI from a script
+                </h2>
+                <p class="text-muted-foreground mb-2">
+                    Run the CLI first; only run the real command if the CLI
+                    exits 0.
+                </p>
                 <p class="text-sm font-medium mt-2">Bash example:</p>
-                <pre class="rounded-lg bg-muted/50 p-4 text-sm overflow-x-auto"><code>airlock-cli approve --command "$*" --cwd "$(pwd)" --shell "$SHELL" --host "$(hostname)"
-if [ $? -eq 0 ]; then
-  "$@"
-else
-  echo "Command not approved or failed."
-  exit 1
-fi</code></pre>
-            </section>
-
-            <section>
-                <h2 class="text-xl font-semibold mt-8 mb-4">Configuration & data</h2>
-                <ul class="list-disc pl-6 space-y-1 text-muted-foreground">
-                    <li>Linux/macOS: <code class="rounded bg-muted px-1">~/.config/airlock/</code></li>
-                    <li>Windows: <code class="rounded bg-muted px-1">%APPDATA%\airlock</code></li>
-                </ul>
-                <p class="text-muted-foreground mt-2"><code class="rounded bg-muted px-1.5 py-0.5">config.json</code> — Gateway URL and enforcer ID. <code class="rounded bg-muted px-1.5 py-0.5">secrets.json</code> — Tokens and pairing keys (keep private).</p>
+                <div
+                    class="rounded-lg border border-border/50 overflow-hidden dark:hidden"
+                >
+                    <Code
+                        code={scriptExample}
+                        lang="bash"
+                        theme="github-light"
+                    />
+                </div>
+                <div
+                    class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"
+                >
+                    <Code
+                        code={scriptExample}
+                        lang="bash"
+                        theme="github-dark"
+                    />
+                </div>
             </section>
 
             <section>
@@ -133,18 +347,55 @@ fi</code></pre>
                         </tr>
                     </thead>
                     <tbody class="text-muted-foreground">
-                        <tr class="border-b border-border/30"><td class="py-2">Sign in</td><td class="py-2"><code class="rounded bg-muted px-1">airlock-cli sign-in</code></td></tr>
-                        <tr class="border-b border-border/30"><td class="py-2">Pair phone</td><td class="py-2"><code class="rounded bg-muted px-1">airlock-cli pair</code></td></tr>
-                        <tr class="border-b border-border/30"><td class="py-2">Request approval</td><td class="py-2"><code class="rounded bg-muted px-1">airlock-cli approve --command "your command"</code></td></tr>
-                        <tr class="border-b border-border/30"><td class="py-2">Check status</td><td class="py-2"><code class="rounded bg-muted px-1">airlock-cli status</code></td></tr>
-                        <tr class="border-b border-border/30"><td class="py-2">Sign out</td><td class="py-2"><code class="rounded bg-muted px-1">airlock-cli sign-out</code></td></tr>
+                        <tr class="border-b border-border/30"
+                            ><td class="py-2">Sign in</td><td class="py-2"
+                                ><code class="rounded bg-muted px-1"
+                                    >airlock-cli sign-in</code
+                                ></td
+                            ></tr
+                        >
+                        <tr class="border-b border-border/30"
+                            ><td class="py-2">Pair phone</td><td class="py-2"
+                                ><code class="rounded bg-muted px-1"
+                                    >airlock-cli pair</code
+                                ></td
+                            ></tr
+                        >
+                        <tr class="border-b border-border/30"
+                            ><td class="py-2">Request approval</td><td
+                                class="py-2"
+                                ><code class="rounded bg-muted px-1"
+                                    >airlock-cli approve --command "your
+                                    command"</code
+                                ></td
+                            ></tr
+                        >
+                        <tr class="border-b border-border/30"
+                            ><td class="py-2">Check status</td><td class="py-2"
+                                ><code class="rounded bg-muted px-1"
+                                    >airlock-cli status</code
+                                ></td
+                            ></tr
+                        >
+                        <tr class="border-b border-border/30"
+                            ><td class="py-2">Sign out</td><td class="py-2"
+                                ><code class="rounded bg-muted px-1"
+                                    >airlock-cli sign-out</code
+                                ></td
+                            ></tr
+                        >
                     </tbody>
                 </table>
             </section>
 
             <p class="text-muted-foreground text-sm mt-8">
                 For full flag details, build instructions, and testing, see the
-                <a href="https://github.com/airlockapp/extensions/tree/main/src/airlock-cli" class="text-link hover:underline" target="_blank" rel="noopener noreferrer">airlock-cli README</a>.
+                <a
+                    href="https://github.com/airlockapp/extensions/tree/main/src/airlock-cli"
+                    class="text-link hover:underline"
+                    target="_blank"
+                    rel="noopener noreferrer">airlock-cli README</a
+                >.
             </p>
         </div>
     </div>

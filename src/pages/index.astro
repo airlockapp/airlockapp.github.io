@@ -8,21 +8,17 @@ import { Features } from "@/components/Features";
 import { Protocol } from "@/components/Protocol";
 import { Pricing } from "@/components/Pricing";
 import { UseCases } from "@/components/UseCases";
-import { Roadmap } from "@/components/Roadmap";
-import { FAQ } from "@/components/FAQ";
 import { ScrollToTop } from "@/components/ScrollToTop";
 ---
 
 <Layout>
 	<Hero client:load />
-	<IDESupport client:load />
 	<HowItWorks client:load />
-	<MobileShowcase client:load />
 	<Features client:load />
+	<IDESupport client:load />
+	<MobileShowcase client:load />
+	<UseCases client:load />
 	<Protocol client:load />
 	<Pricing client:load />
-	<UseCases client:load />
-	<Roadmap client:load />
-	<FAQ client:load />
 	<ScrollToTop client:load />
 </Layout>

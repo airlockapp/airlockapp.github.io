@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Bot, Shield, Smartphone, CheckCircle } from "lucide-react";
+import { Bot, Shield, Smartphone, CheckCircle, Globe, FileSignature, Play } from "lucide-react";
 
 const steps = [
     {
@@ -42,6 +42,15 @@ const steps = [
         borderColor: "border-emerald-500/30",
         bgColor: "bg-emerald-500/10",
     },
+];
+
+const flowNodes = [
+    { label: "IDE Agent", icon: Bot, color: "text-purple-400", bg: "bg-purple-500/15", border: "border-purple-500/40" },
+    { label: "Host Enforcer", icon: Shield, color: "text-airlock-violet-light", bg: "bg-airlock-violet/15", border: "border-airlock-violet-light/40" },
+    { label: "Zero-knowledge Gateway", icon: Globe, color: "text-muted-foreground", bg: "bg-muted/30", border: "border-border" },
+    { label: "Mobile Approver", icon: Smartphone, color: "text-airlock-cyan", bg: "text-airlock-cyan bg-airlock-cyan/15", border: "border-airlock-cyan/40" },
+    { label: "Signed Decision", icon: FileSignature, color: "text-amber-400", bg: "bg-amber-500/15", border: "border-amber-500/40" },
+    { label: "Execution", icon: Play, color: "text-emerald-400", bg: "bg-emerald-500/15", border: "border-emerald-500/40" },
 ];
 
 export function HowItWorks() {
@@ -121,28 +130,45 @@ export function HowItWorks() {
                         })}
                     </div>
 
-                    {/* Flow diagram */}
+                    {/* Vertical flow diagram */}
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.5, delay: 0.6 }}
-                        className="mt-12 p-6 rounded-2xl border border-border/50 bg-card/30 backdrop-blur-sm"
+                        className="mt-16 flex justify-center"
                     >
-                        <div className="flex flex-wrap items-center justify-center gap-3 text-sm font-mono">
-                            <span className="text-purple-400">Agent</span>
-                            <span className="text-muted-foreground">→</span>
-                            <span className="text-airlock-violet-light">Enforcer</span>
-                            <span className="text-muted-foreground">→</span>
-                            <span className="text-muted-foreground/60">Gateway (blind)</span>
-                            <span className="text-muted-foreground">→</span>
-                            <span className="text-airlock-cyan">Approver</span>
-                            <span className="text-muted-foreground">→</span>
-                            <span className="text-muted-foreground/60">Gateway (blind)</span>
-                            <span className="text-muted-foreground">→</span>
-                            <span className="text-airlock-violet-light">Enforcer</span>
-                            <span className="text-muted-foreground">→</span>
-                            <span className="text-emerald-400">✓ Execute</span>
+                        <div className="flex flex-col items-center gap-0">
+                            {flowNodes.map((node, index) => {
+                                const Icon = node.icon;
+                                return (
+                                    <div key={index} className="flex flex-col items-center">
+                                        <motion.div
+                                            initial={{ opacity: 0, scale: 0.9 }}
+                                            whileInView={{ opacity: 1, scale: 1 }}
+                                            viewport={{ once: true }}
+                                            transition={{ duration: 0.4, delay: 0.7 + index * 0.1 }}
+                                            className={`flex items-center gap-3 px-6 py-3 rounded-xl border ${node.border} ${node.bg} backdrop-blur-sm min-w-[220px] justify-center`}
+                                        >
+                                            <Icon className={`h-5 w-5 ${node.color}`} />
+                                            <span className="text-sm font-semibold">{node.label}</span>
+                                        </motion.div>
+                                        {index < flowNodes.length - 1 && (
+                                            <motion.div
+                                                initial={{ opacity: 0 }}
+                                                whileInView={{ opacity: 1 }}
+                                                viewport={{ once: true }}
+                                                transition={{ duration: 0.3, delay: 0.8 + index * 0.1 }}
+                                                className="flex flex-col items-center py-1"
+                                            >
+                                                <div className="w-px h-4 bg-gradient-to-b from-border to-border/50" />
+                                                <span className="text-muted-foreground/60 text-xs">↓</span>
+                                                <div className="w-px h-4 bg-gradient-to-b from-border/50 to-transparent" />
+                                            </motion.div>
+                                        )}
+                                    </div>
+                                );
+                            })}
                         </div>
                     </motion.div>
                 </div>
