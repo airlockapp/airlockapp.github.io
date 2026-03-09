@@ -4,6 +4,7 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 const { title = "Airlock — Cryptographic Approval for AI Agents" } =
 	Astro.props;
+const isProduction = import.meta.env.PROD;
 ---
 
 <html lang="en">
@@ -30,6 +31,26 @@ const { title = "Airlock — Cryptographic Approval for AI Agents" } =
 		<link rel="icon" type="image/png" href="/favicon.png" />
 		<link rel="preconnect" href="https://rsms.me/" />
 		<link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+
+		{isProduction && (
+			<>
+				<!-- Google Analytics -->
+				<script
+					async
+					src="https://www.googletagmanager.com/gtag/js?id=G-5MMXJSF3RW"
+				></script>
+				<script is:inline>
+					window.dataLayer = window.dataLayer || [];
+					function gtag() {
+						// eslint-disable-next-line prefer-rest-params
+						dataLayer.push(arguments);
+					}
+					gtag("js", new Date());
+					gtag("config", "G-5MMXJSF3RW", { anonymize_ip: true });
+				</script>
+			</>
+		)}
+
 		<title>{title}</title>
 		<script is:inline>
 			(function () {
