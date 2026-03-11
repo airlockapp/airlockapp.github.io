@@ -1,0 +1,626 @@
+---
+import DocsLayout from "../../layouts/docs.astro";
+import { Code } from "astro:components";
+
+// ── .NET ──
+const dotnetInstall = `dotnet add package Airlock.Gateway.Sdk`;
+const dotnetQuickStart = `using Airlock.Gateway.Sdk;
+using Airlock.Gateway.Sdk.Models;
+
+var httpClient = new HttpClient
+{
+    BaseAddress = new Uri("https://gw.example.com")
+};
+httpClient.DefaultRequestHeaders.Authorization =
+    new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", "your-token");
+
+var client = new AirlockGatewayClient(httpClient);
+
+// Submit an artifact for approval
+var requestId = await client.SubmitArtifactAsync(new ArtifactSubmitRequest
+{
+    EnforcerId = "my-enforcer",
+    ArtifactHash = "sha256-hash",
+    Ciphertext = new CiphertextRef
+    {
+        Alg = "aes-256-gcm",
+        Data = "base64-encrypted-content",
+        Nonce = "nonce",
+        Tag = "tag"
+    },
+    Metadata = new Dictionary<string, string>
+    {
+        ["routingToken"] = "rt-abc"
+    }
+});
+
+// Wait for a decision (long-poll)
+var decision = await client.WaitForDecisionAsync(requestId, timeoutSeconds: 30);
+if (decision?.Body?.IsApproved == true)
+{
+    Console.WriteLine($"Approved: {decision.Body.Reason}");
+}`;
+
+// ── Python ──
+const pythonInstall = `pip install airlock-gateway`;
+const pythonQuickStart = `import asyncio
+from airlock_gateway import (
+    AirlockGatewayClient,
+    ArtifactSubmitRequest,
+    CiphertextRef,
+)
+
+async def main():
+    async with AirlockGatewayClient(
+        "https://gw.example.com", token="your-token"
+    ) as client:
+        # Submit an artifact for approval
+        request_id = await client.submit_artifact(
+            ArtifactSubmitRequest(
+                enforcer_id="my-enforcer",
+                artifact_hash="sha256-hash",
+                ciphertext=CiphertextRef(
+                    alg="aes-256-gcm",
+                    data="base64-encrypted-content",
+                    nonce="nonce",
+                    tag="tag",
+                ),
+                metadata={"routingToken": "rt-abc"},
+            )
+        )
+
+        # Wait for a decision (long-poll)
+        decision = await client.wait_for_decision(request_id, timeout_seconds=30)
+        if decision and decision.body and decision.body.is_approved:
+            print(f"Approved: {decision.body.reason}")
+
+asyncio.run(main())`;
+
+// ── TypeScript ──
+const tsInstall = `npm install @airlock/gateway-sdk`;
+const tsQuickStart = `import { AirlockGatewayClient } from "@airlock/gateway-sdk";
+
+const client = new AirlockGatewayClient(
+  "https://gw.example.com",
+  "your-token"
+);
+
+// Submit an artifact for approval
+const requestId = await client.submitArtifact({
+  enforcerId: "my-enforcer",
+  artifactHash: "sha256-hash",
+  ciphertext: {
+    alg: "aes-256-gcm",
+    data: "base64-encrypted-content",
+    nonce: "nonce",
+    tag: "tag",
+  },
+  metadata: { routingToken: "rt-abc" },
+});
+
+// Wait for a decision (long-poll)
+const decision = await client.waitForDecision(requestId, 30);
+if (decision?.body?.isApproved) {
+  console.log(\`Approved: \${decision.body.reason}\`);
+}`;
+
+// ── Go ──
+const goInstall = `go get github.com/airlockapp/gateway-clients/src/go`;
+const goQuickStart = `package main
+
+import (
+    "context"
+    "fmt"
+    airlock "github.com/airlockapp/gateway-clients/src/go/airlock"
+)
+
+func main() {
+    client := airlock.NewClient("https://gw.example.com", "your-token")
+    ctx := context.Background()
+
+    // Submit an artifact for approval
+    requestID, err := client.SubmitArtifact(ctx, &airlock.ArtifactSubmitRequest{
+        EnforcerID:   "my-enforcer",
+        ArtifactHash: "sha256-hash",
+        Ciphertext: airlock.CiphertextRef{
+            Alg:   "aes-256-gcm",
+            Data:  "base64-encrypted-content",
+            Nonce: "nonce",
+            Tag:   "tag",
+        },
+        Metadata: map[string]string{"routingToken": "rt-abc"},
+    })
+    if err != nil {
+        panic(err)
+    }
+
+    // Wait for a decision (long-poll)
+    decision, err := client.WaitForDecision(ctx, requestID, 30)
+    if err != nil {
+        panic(err)
+    }
+    if decision != nil && decision.Body.IsApproved {
+        fmt.Printf("Approved: %s\\n", decision.Body.Reason)
+    }
+}`;
+
+// ── Rust ──
+const rustInstall = `cargo add airlock-gateway`;
+const rustQuickStart = `use airlock_gateway::{AirlockGatewayClient, ArtifactSubmitRequest, CiphertextRef};
+use std::collections::HashMap;
+
+#[tokio::main]
+async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let client = AirlockGatewayClient::new(
+        "https://gw.example.com",
+        "your-token",
+    );
+
+    // Submit an artifact for approval
+    let mut metadata = HashMap::new();
+    metadata.insert("routingToken".into(), "rt-abc".into());
+
+    let request_id = client
+        .submit_artifact(&ArtifactSubmitRequest {
+            enforcer_id: "my-enforcer".into(),
+            artifact_hash: "sha256-hash".into(),
+            ciphertext: CiphertextRef {
+                alg: "aes-256-gcm".into(),
+                data: "base64-encrypted-content".into(),
+                nonce: "nonce".into(),
+                tag: "tag".into(),
+            },
+            metadata,
+        })
+        .await?;
+
+    // Wait for a decision (long-poll)
+    if let Some(decision) = client.wait_for_decision(&request_id, 30).await? {
+        if decision.body.is_approved {
+            println!("Approved: {}", decision.body.reason);
+        }
+    }
+
+    Ok(())
+}`;
+---
+
+<DocsLayout title="Airlock Gateway Client SDKs">
+    <div class="space-y-8">
+        <div>
+            <h1 class="text-3xl md:text-4xl font-bold">
+                Gateway Client SDKs
+            </h1>
+            <p class="text-muted-foreground mt-2">
+                Multi-language client libraries for the Airlock Gateway,
+                built on the
+                <a
+                    href="https://harp-protocol.github.io"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="text-link hover:underline">HARP protocol</a
+                >.
+            </p>
+        </div>
+
+        <div class="flex flex-wrap gap-3 mt-4">
+            <a
+                href="https://github.com/airlockapp/gateway-clients"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-border/50 bg-muted/30 text-sm font-medium text-foreground hover:bg-muted/60 transition-colors"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="w-4 h-4"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    ><path
+                        d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0 0 24 12c0-6.63-5.37-12-12-12Z"
+                    ></path></svg
+                >
+                GitHub Repository
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="w-3.5 h-3.5 text-muted-foreground"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    ><path
+                        d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"
+                    ></path><polyline points="15 3 21 3 21 9"
+                    ></polyline><line x1="10" y1="14" x2="21" y2="3"
+                    ></line></svg
+                >
+            </a>
+            <a
+                href="https://harp-protocol.github.io"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-border/50 bg-muted/30 text-sm font-medium text-foreground hover:bg-muted/60 transition-colors"
+            >
+                HARP Protocol
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="w-3.5 h-3.5 text-muted-foreground"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    ><path
+                        d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"
+                    ></path><polyline points="15 3 21 3 21 9"
+                    ></polyline><line x1="10" y1="14" x2="21" y2="3"
+                    ></line></svg
+                >
+            </a>
+        </div>
+
+        <!-- Overview -->
+        <div class="prose dark:prose-invert max-w-none">
+            <div
+                class="p-4 rounded-xl border border-border/50 bg-muted/30"
+            >
+                <p class="text-sm text-muted-foreground">
+                    All SDKs cover the <strong class="text-foreground"
+                        >enforcer-side</strong
+                    > Gateway API: artifact submission, decision polling,
+                    exchange management, pairing, presence heartbeats, and
+                    discovery. Authenticated endpoints require a
+                    <strong class="text-foreground">Bearer JWT</strong> token
+                    issued by the Airlock identity provider.
+                </p>
+            </div>
+        </div>
+
+        <!-- API Surface -->
+        <div class="prose dark:prose-invert max-w-none">
+            <h2 class="text-xl font-semibold mt-8 mb-4 flex items-center gap-2">
+                <span class="w-1.5 h-6 rounded-full bg-emerald-500"></span>
+                Gateway API Surface
+            </h2>
+            <table class="w-full text-sm border-collapse">
+                <thead>
+                    <tr class="border-b border-border/50">
+                        <th class="text-left py-2 font-medium">Endpoint</th>
+                        <th class="text-left py-2 font-medium">Description</th>
+                    </tr>
+                </thead>
+                <tbody class="text-muted-foreground">
+                    <tr class="border-b border-border/30"
+                        ><td class="py-2"
+                            ><code class="rounded bg-muted px-1"
+                                >POST /v1/artifacts</code
+                            ></td
+                        ><td class="py-2">Submit artifact for approval</td></tr
+                    >
+                    <tr class="border-b border-border/30"
+                        ><td class="py-2"
+                            ><code class="rounded bg-muted px-1"
+                                >GET /v1/exchanges/{'{id}'}</code
+                            ></td
+                        ><td class="py-2">Get exchange status</td></tr
+                    >
+                    <tr class="border-b border-border/30"
+                        ><td class="py-2"
+                            ><code class="rounded bg-muted px-1"
+                                >GET /v1/exchanges/{'{id}'}/wait</code
+                            ></td
+                        ><td class="py-2">Long-poll for decision</td></tr
+                    >
+                    <tr class="border-b border-border/30"
+                        ><td class="py-2"
+                            ><code class="rounded bg-muted px-1"
+                                >POST /v1/exchanges/{'{id}'}/withdraw</code
+                            ></td
+                        ><td class="py-2">Withdraw pending exchange</td></tr
+                    >
+                    <tr class="border-b border-border/30"
+                        ><td class="py-2"
+                            ><code class="rounded bg-muted px-1"
+                                >POST /v1/acks</code
+                            ></td
+                        ><td class="py-2">Acknowledge inbox message</td></tr
+                    >
+                    <tr class="border-b border-border/30"
+                        ><td class="py-2"
+                            ><code class="rounded bg-muted px-1"
+                                >Pairing</code
+                            ></td
+                        ><td class="py-2"
+                            >Initiate, resolve, status, complete, revoke,
+                            batch-status</td
+                        ></tr
+                    >
+                    <tr class="border-b border-border/30"
+                        ><td class="py-2"
+                            ><code class="rounded bg-muted px-1"
+                                >Presence</code
+                            ></td
+                        ><td class="py-2"
+                            >Heartbeat, list enforcers, get enforcer</td
+                        ></tr
+                    >
+                    <tr class="border-b border-border/30"
+                        ><td class="py-2"
+                            ><code class="rounded bg-muted px-1"
+                                >GET /echo</code
+                            ></td
+                        ><td class="py-2">Discovery / health check</td></tr
+                    >
+                </tbody>
+            </table>
+        </div>
+
+        <!-- ──────────────────────────────────────────── .NET SDK ──── -->
+        <section
+            id="dotnet"
+            class="prose dark:prose-invert max-w-none pt-8 border-t border-border/30"
+        >
+            <h2 class="text-xl font-semibold mb-4 flex items-center gap-2">
+                <span
+                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-purple-600/15 text-purple-500 text-xs font-bold"
+                    >C#</span
+                >
+                .NET — <code class="text-base">Airlock.Gateway.Sdk</code>
+            </h2>
+            <div class="flex flex-wrap gap-2 mb-4">
+                <a
+                    href="https://www.nuget.org/packages/Airlock.Gateway.Sdk"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-border/50 bg-muted/30 text-xs font-medium hover:bg-muted/60 transition-colors"
+                >
+                    NuGet ↗
+                </a>
+                <a
+                    href="https://github.com/airlockapp/gateway-clients/tree/main/src/dotnet"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-border/50 bg-muted/30 text-xs font-medium hover:bg-muted/60 transition-colors"
+                >
+                    Source ↗
+                </a>
+            </div>
+            <p class="text-muted-foreground text-sm mb-3">
+                .NET Standard 2.0 — compatible with .NET Core 2.0+, .NET
+                Framework 4.6.1+, and .NET 5+. Depends on
+                <code class="rounded bg-muted px-1">System.Text.Json</code>.
+            </p>
+            <h3 class="text-base font-medium mt-4 mb-2">Installation</h3>
+            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden">
+                <Code code={dotnetInstall} lang="bash" theme="github-light" />
+            </div>
+            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block">
+                <Code code={dotnetInstall} lang="bash" theme="github-dark" />
+            </div>
+            <h3 class="text-base font-medium mt-6 mb-2">Quick Start</h3>
+            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden">
+                <Code code={dotnetQuickStart} lang="csharp" theme="github-light" />
+            </div>
+            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block">
+                <Code code={dotnetQuickStart} lang="csharp" theme="github-dark" />
+            </div>
+        </section>
+
+        <!-- ──────────────────────────────────────────── Python SDK ──── -->
+        <section
+            id="python"
+            class="prose dark:prose-invert max-w-none pt-8 border-t border-border/30"
+        >
+            <h2 class="text-xl font-semibold mb-4 flex items-center gap-2">
+                <span
+                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-yellow-500/15 text-yellow-500 text-xs font-bold"
+                    >Py</span
+                >
+                Python — <code class="text-base">airlock-gateway</code>
+            </h2>
+            <div class="flex flex-wrap gap-2 mb-4">
+                <a
+                    href="https://pypi.org/project/airlock-gateway/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-border/50 bg-muted/30 text-xs font-medium hover:bg-muted/60 transition-colors"
+                >
+                    PyPI ↗
+                </a>
+                <a
+                    href="https://github.com/airlockapp/gateway-clients/tree/main/src/python"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-border/50 bg-muted/30 text-xs font-medium hover:bg-muted/60 transition-colors"
+                >
+                    Source ↗
+                </a>
+            </div>
+            <p class="text-muted-foreground text-sm mb-3">
+                Async Python 3.9+ client using
+                <code class="rounded bg-muted px-1">httpx</code> and
+                <code class="rounded bg-muted px-1">pydantic</code>.
+            </p>
+            <h3 class="text-base font-medium mt-4 mb-2">Installation</h3>
+            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden">
+                <Code code={pythonInstall} lang="bash" theme="github-light" />
+            </div>
+            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block">
+                <Code code={pythonInstall} lang="bash" theme="github-dark" />
+            </div>
+            <h3 class="text-base font-medium mt-6 mb-2">Quick Start</h3>
+            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden">
+                <Code code={pythonQuickStart} lang="python" theme="github-light" />
+            </div>
+            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block">
+                <Code code={pythonQuickStart} lang="python" theme="github-dark" />
+            </div>
+        </section>
+
+        <!-- ──────────────────────────────────────────── TypeScript SDK ──── -->
+        <section
+            id="typescript"
+            class="prose dark:prose-invert max-w-none pt-8 border-t border-border/30"
+        >
+            <h2 class="text-xl font-semibold mb-4 flex items-center gap-2">
+                <span
+                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-blue-500/15 text-blue-500 text-xs font-bold"
+                    >TS</span
+                >
+                TypeScript —
+                <code class="text-base">@airlock/gateway-sdk</code>
+            </h2>
+            <div class="flex flex-wrap gap-2 mb-4">
+                <a
+                    href="https://www.npmjs.com/package/@airlock/gateway-sdk"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-border/50 bg-muted/30 text-xs font-medium hover:bg-muted/60 transition-colors"
+                >
+                    NPM ↗
+                </a>
+                <a
+                    href="https://github.com/airlockapp/gateway-clients/tree/main/src/typescript"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-border/50 bg-muted/30 text-xs font-medium hover:bg-muted/60 transition-colors"
+                >
+                    Source ↗
+                </a>
+            </div>
+            <p class="text-muted-foreground text-sm mb-3">
+                TypeScript-first, zero production dependencies. Node.js 18+
+                with built-in <code class="rounded bg-muted px-1">fetch</code>.
+            </p>
+            <h3 class="text-base font-medium mt-4 mb-2">Installation</h3>
+            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden">
+                <Code code={tsInstall} lang="bash" theme="github-light" />
+            </div>
+            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block">
+                <Code code={tsInstall} lang="bash" theme="github-dark" />
+            </div>
+            <h3 class="text-base font-medium mt-6 mb-2">Quick Start</h3>
+            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden">
+                <Code code={tsQuickStart} lang="typescript" theme="github-light" />
+            </div>
+            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block">
+                <Code code={tsQuickStart} lang="typescript" theme="github-dark" />
+            </div>
+        </section>
+
+        <!-- ──────────────────────────────────────────── Go SDK ──── -->
+        <section
+            id="go"
+            class="prose dark:prose-invert max-w-none pt-8 border-t border-border/30"
+        >
+            <h2 class="text-xl font-semibold mb-4 flex items-center gap-2">
+                <span
+                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-cyan-500/15 text-cyan-500 text-xs font-bold"
+                    >Go</span
+                >
+                Go —
+                <code class="text-base">airlock-gateway</code>
+            </h2>
+            <div class="flex flex-wrap gap-2 mb-4">
+                <a
+                    href="https://pkg.go.dev/github.com/airlockapp/gateway-clients/src/go"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-border/50 bg-muted/30 text-xs font-medium hover:bg-muted/60 transition-colors"
+                >
+                    pkg.go.dev ↗
+                </a>
+                <a
+                    href="https://github.com/airlockapp/gateway-clients/tree/main/src/go"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-border/50 bg-muted/30 text-xs font-medium hover:bg-muted/60 transition-colors"
+                >
+                    Source ↗
+                </a>
+            </div>
+            <p class="text-muted-foreground text-sm mb-3">
+                Go 1.21+ module with idiomatic error handling and context
+                support.
+            </p>
+            <h3 class="text-base font-medium mt-4 mb-2">Installation</h3>
+            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden">
+                <Code code={goInstall} lang="bash" theme="github-light" />
+            </div>
+            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block">
+                <Code code={goInstall} lang="bash" theme="github-dark" />
+            </div>
+            <h3 class="text-base font-medium mt-6 mb-2">Quick Start</h3>
+            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden">
+                <Code code={goQuickStart} lang="go" theme="github-light" />
+            </div>
+            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block">
+                <Code code={goQuickStart} lang="go" theme="github-dark" />
+            </div>
+        </section>
+
+        <!-- ──────────────────────────────────────────── Rust SDK ──── -->
+        <section
+            id="rust"
+            class="prose dark:prose-invert max-w-none pt-8 border-t border-border/30"
+        >
+            <h2 class="text-xl font-semibold mb-4 flex items-center gap-2">
+                <span
+                    class="inline-flex items-center justify-center w-8 h-8 rounded-lg bg-orange-500/15 text-orange-500 text-xs font-bold"
+                    >Rs</span
+                >
+                Rust — <code class="text-base">airlock-gateway</code>
+            </h2>
+            <div class="flex flex-wrap gap-2 mb-4">
+                <a
+                    href="https://crates.io/crates/airlock-gateway"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-border/50 bg-muted/30 text-xs font-medium hover:bg-muted/60 transition-colors"
+                >
+                    crates.io ↗
+                </a>
+                <a
+                    href="https://github.com/airlockapp/gateway-clients/tree/main/src/rust"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-border/50 bg-muted/30 text-xs font-medium hover:bg-muted/60 transition-colors"
+                >
+                    Source ↗
+                </a>
+            </div>
+            <p class="text-muted-foreground text-sm mb-3">
+                Async Rust client using
+                <code class="rounded bg-muted px-1">reqwest</code>,
+                <code class="rounded bg-muted px-1">serde</code>, and
+                <code class="rounded bg-muted px-1">thiserror</code>. Edition 2021.
+            </p>
+            <h3 class="text-base font-medium mt-4 mb-2">Installation</h3>
+            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden">
+                <Code code={rustInstall} lang="bash" theme="github-light" />
+            </div>
+            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block">
+                <Code code={rustInstall} lang="bash" theme="github-dark" />
+            </div>
+            <h3 class="text-base font-medium mt-6 mb-2">Quick Start</h3>
+            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden">
+                <Code code={rustQuickStart} lang="rust" theme="github-light" />
+            </div>
+            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block">
+                <Code code={rustQuickStart} lang="rust" theme="github-dark" />
+            </div>
+        </section>
+
+        <!-- Navigation -->
+        <div class="mt-8 flex gap-4">
+            <a href="/docs" class="text-sm text-link hover:underline"
+                >← All Docs</a
+            >
+            <a href="/" class="text-sm text-muted-foreground hover:underline"
+                >Back to Airlock</a
+            >
+        </div>
+    </div>
+</DocsLayout>

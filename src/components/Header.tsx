@@ -10,6 +10,7 @@ const docsItems = [
   { label: "Copilot", href: "/docs/copilot", icon: "/enforcers/copilot.png" },
   { label: "CLI", href: "/docs/cli", icon: null },
   { label: "Shells", href: "/docs/shells", icon: null },
+  { label: "Gateway SDK", href: "/docs/sdk", icon: null },
 ];
 
 export function Header() {
@@ -78,7 +79,7 @@ export function Header() {
                 <p className="px-3 py-1.5 text-xs font-semibold text-muted-foreground/60 uppercase tracking-wider">
                   Installation Guides
                 </p>
-                {docsItems.map((item) => (
+                {docsItems.filter(i => i.label !== "Gateway SDK").map((item) => (
                   <a
                     key={item.label}
                     href={item.href}
@@ -96,6 +97,24 @@ export function Header() {
                   </a>
                 ))}
                 <div className="border-t border-border/40 mt-1 pt-1">
+                  <p className="px-3 py-1.5 text-xs font-semibold text-muted-foreground/60 uppercase tracking-wider">
+                    Developer
+                  </p>
+                  {docsItems.filter(i => i.label === "Gateway SDK").map((item) => (
+                    <a
+                      key={item.label}
+                      href={item.href}
+                      className="flex items-center gap-3 px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
+                      onClick={() => setIsDocsOpen(false)}
+                    >
+                      <span className="w-5 h-5 rounded bg-emerald-500/20 flex items-center justify-center flex-shrink-0">
+                        <svg xmlns="http://www.w3.org/2000/svg" className="w-3 h-3 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M17.25 6.75 22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3-4.5 16.5" /></svg>
+                      </span>
+                      {item.label}
+                    </a>
+                  ))}
+                </div>
+                <div className="border-t border-border/40 mt-1 pt-1">
                   <a
                     href="/docs"
                     className="flex items-center gap-2 px-3 py-2 text-sm text-link hover:text-foreground hover:bg-muted/50 transition-colors"
@@ -112,7 +131,7 @@ export function Header() {
         {/* Actions */}
         <div className="flex items-center space-x-4">
           <a
-            href="https://github.com/airlockapp/extensions"
+            href="https://github.com/airlockapp"
             target="_blank"
             rel="noopener noreferrer"
             className="text-muted-foreground hover:text-foreground transition-colors"
@@ -155,7 +174,7 @@ export function Header() {
               <p className="text-xs font-semibold text-muted-foreground/60 uppercase tracking-wider mb-2">
                 Docs
               </p>
-              {docsItems.map((item) => (
+              {docsItems.filter(i => i.label !== "Gateway SDK").map((item) => (
                 <a
                   key={item.label}
                   href={item.href}
@@ -170,6 +189,22 @@ export function Header() {
                     </span>
                   )}
                   {item.label === "CLI" || item.label === "Shells" ? item.label : `${item.label} Enforcer`}
+                </a>
+              ))}
+              <p className="text-xs font-semibold text-muted-foreground/60 uppercase tracking-wider mb-2 mt-3">
+                Developer
+              </p>
+              {docsItems.filter(i => i.label === "Gateway SDK").map((item) => (
+                <a
+                  key={item.label}
+                  href={item.href}
+                  className="flex items-center gap-3 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <span className="w-5 h-5 rounded bg-emerald-500/20 flex items-center justify-center flex-shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-3 h-3 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M17.25 6.75 22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3-4.5 16.5" /></svg>
+                  </span>
+                  {item.label}
                 </a>
               ))}
             </div>
