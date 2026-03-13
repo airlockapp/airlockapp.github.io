@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Menu, X, Shield, ChevronDown, Github } from "lucide-react";
+import { Menu, X, Shield, ChevronDown, Github, Home } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 const docsItems = [
@@ -55,6 +55,13 @@ export function Header() {
 
         {/* Desktop Navigation */}
         <div className="hidden md:flex items-center space-x-8">
+          <a
+            href="/"
+            className="text-muted-foreground hover:text-foreground transition-colors"
+            aria-label="Home"
+          >
+            <Home className="h-4 w-4" />
+          </a>
           {navItems.map((item) => (
             <a
               key={item.label}
@@ -160,6 +167,14 @@ export function Header() {
       {isMenuOpen && (
         <div className="md:hidden border-t border-border/40">
           <div className="container py-4 space-y-4">
+            <a
+              href="/"
+              className="flex items-center gap-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+              onClick={() => setIsMenuOpen(false)}
+            >
+              <Home className="h-4 w-4" />
+              Home
+            </a>
             {navItems.map((item) => (
               <a
                 key={item.label}

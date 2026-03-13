@@ -279,7 +279,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         </div>
 
         <!-- API Surface -->
-        <div class="prose dark:prose-invert max-w-none">
+        <div class="max-w-none">
             <h2 class="text-xl font-semibold mt-8 mb-4 flex items-center gap-2">
                 <span class="w-1.5 h-6 rounded-full bg-emerald-500"></span>
                 Gateway API Surface
@@ -287,81 +287,103 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             <table class="w-full text-sm border-collapse">
                 <thead>
                     <tr class="border-b border-border/50">
+                        <th class="text-left py-2 font-medium w-20">Method</th>
                         <th class="text-left py-2 font-medium">Endpoint</th>
                         <th class="text-left py-2 font-medium">Description</th>
                     </tr>
                 </thead>
                 <tbody class="text-muted-foreground">
+                    <!-- Discovery -->
                     <tr class="border-b border-border/30"
-                        ><td class="py-2"
-                            ><code class="rounded bg-muted px-1"
-                                >POST /v1/artifacts</code
-                            ></td
-                        ><td class="py-2">Submit artifact for approval</td></tr
+                        ><td class="py-2"><span class="inline-block rounded px-1.5 py-0.5 text-xs font-semibold bg-emerald-500/15 text-emerald-500">GET</span></td
+                        ><td class="py-2"><code class="rounded bg-muted px-1">/echo</code></td
+                        ><td class="py-2">Gateway discovery and health check</td></tr
                     >
+                    <!-- Artifacts -->
                     <tr class="border-b border-border/30"
-                        ><td class="py-2"
-                            ><code class="rounded bg-muted px-1"
-                                >GET /v1/exchanges/{'{id}'}</code
-                            ></td
+                        ><td class="py-2"><span class="inline-block rounded px-1.5 py-0.5 text-xs font-semibold bg-blue-500/15 text-blue-500">POST</span></td
+                        ><td class="py-2"><code class="rounded bg-muted px-1">/v1/artifacts</code></td
+                        ><td class="py-2">Submit an artifact for approval</td></tr
+                    >
+                    <!-- Exchanges -->
+                    <tr class="border-b border-border/30"
+                        ><td class="py-2"><span class="inline-block rounded px-1.5 py-0.5 text-xs font-semibold bg-emerald-500/15 text-emerald-500">GET</span></td
+                        ><td class="py-2"><code class="rounded bg-muted px-1">/v1/exchanges/&#123;id&#125;</code></td
                         ><td class="py-2">Get exchange status</td></tr
                     >
                     <tr class="border-b border-border/30"
-                        ><td class="py-2"
-                            ><code class="rounded bg-muted px-1"
-                                >GET /v1/exchanges/{'{id}'}/wait</code
-                            ></td
-                        ><td class="py-2">Long-poll for decision</td></tr
+                        ><td class="py-2"><span class="inline-block rounded px-1.5 py-0.5 text-xs font-semibold bg-emerald-500/15 text-emerald-500">GET</span></td
+                        ><td class="py-2"><code class="rounded bg-muted px-1">/v1/exchanges/&#123;id&#125;/wait</code></td
+                        ><td class="py-2">Long-poll for a decision</td></tr
                     >
                     <tr class="border-b border-border/30"
-                        ><td class="py-2"
-                            ><code class="rounded bg-muted px-1"
-                                >POST /v1/exchanges/{'{id}'}/withdraw</code
-                            ></td
-                        ><td class="py-2">Withdraw pending exchange</td></tr
+                        ><td class="py-2"><span class="inline-block rounded px-1.5 py-0.5 text-xs font-semibold bg-blue-500/15 text-blue-500">POST</span></td
+                        ><td class="py-2"><code class="rounded bg-muted px-1">/v1/exchanges/&#123;id&#125;/withdraw</code></td
+                        ><td class="py-2">Withdraw a pending exchange</td></tr
+                    >
+                    <!-- Acknowledgements -->
+                    <tr class="border-b border-border/30"
+                        ><td class="py-2"><span class="inline-block rounded px-1.5 py-0.5 text-xs font-semibold bg-blue-500/15 text-blue-500">POST</span></td
+                        ><td class="py-2"><code class="rounded bg-muted px-1">/v1/acks</code></td
+                        ><td class="py-2">Acknowledge an inbox message</td></tr
+                    >
+                    <!-- Pairing -->
+                    <tr class="border-b border-border/30"
+                        ><td class="py-2"><span class="inline-block rounded px-1.5 py-0.5 text-xs font-semibold bg-blue-500/15 text-blue-500">POST</span></td
+                        ><td class="py-2"><code class="rounded bg-muted px-1">/v1/pairing/initiate</code></td
+                        ><td class="py-2">Start a new pairing session</td></tr
                     >
                     <tr class="border-b border-border/30"
-                        ><td class="py-2"
-                            ><code class="rounded bg-muted px-1"
-                                >POST /v1/acks</code
-                            ></td
-                        ><td class="py-2">Acknowledge inbox message</td></tr
+                        ><td class="py-2"><span class="inline-block rounded px-1.5 py-0.5 text-xs font-semibold bg-emerald-500/15 text-emerald-500">GET</span></td
+                        ><td class="py-2"><code class="rounded bg-muted px-1">/v1/pairing/resolve/&#123;code&#125;</code></td
+                        ><td class="py-2">Resolve a pairing code</td></tr
                     >
                     <tr class="border-b border-border/30"
-                        ><td class="py-2"
-                            ><code class="rounded bg-muted px-1"
-                                >Pairing</code
-                            ></td
-                        ><td class="py-2"
-                            >Initiate, resolve, status, complete, revoke,
-                            batch-status</td
-                        ></tr
+                        ><td class="py-2"><span class="inline-block rounded px-1.5 py-0.5 text-xs font-semibold bg-emerald-500/15 text-emerald-500">GET</span></td
+                        ><td class="py-2"><code class="rounded bg-muted px-1">/v1/pairing/&#123;nonce&#125;/status</code></td
+                        ><td class="py-2">Poll pairing status</td></tr
                     >
                     <tr class="border-b border-border/30"
-                        ><td class="py-2"
-                            ><code class="rounded bg-muted px-1"
-                                >Presence</code
-                            ></td
-                        ><td class="py-2"
-                            >Heartbeat, list enforcers, get enforcer</td
-                        ></tr
+                        ><td class="py-2"><span class="inline-block rounded px-1.5 py-0.5 text-xs font-semibold bg-blue-500/15 text-blue-500">POST</span></td
+                        ><td class="py-2"><code class="rounded bg-muted px-1">/v1/pairing/complete</code></td
+                        ><td class="py-2">Complete pairing from approver side</td></tr
                     >
                     <tr class="border-b border-border/30"
-                        ><td class="py-2"
-                            ><code class="rounded bg-muted px-1"
-                                >DND Policies</code
-                            ></td
-                        ><td class="py-2"
-                            >Submit signed DND rules and fetch effective policies
-                            for an enforcer/workspace/session</td
-                        ></tr
+                        ><td class="py-2"><span class="inline-block rounded px-1.5 py-0.5 text-xs font-semibold bg-blue-500/15 text-blue-500">POST</span></td
+                        ><td class="py-2"><code class="rounded bg-muted px-1">/v1/pairing/revoke</code></td
+                        ><td class="py-2">Revoke an active pairing</td></tr
                     >
                     <tr class="border-b border-border/30"
-                        ><td class="py-2"
-                            ><code class="rounded bg-muted px-1"
-                                >GET /echo</code
-                            ></td
-                        ><td class="py-2">Discovery / health check</td></tr
+                        ><td class="py-2"><span class="inline-block rounded px-1.5 py-0.5 text-xs font-semibold bg-blue-500/15 text-blue-500">POST</span></td
+                        ><td class="py-2"><code class="rounded bg-muted px-1">/v1/pairing/status-batch</code></td
+                        ><td class="py-2">Batch check pairing statuses</td></tr
+                    >
+                    <!-- Presence -->
+                    <tr class="border-b border-border/30"
+                        ><td class="py-2"><span class="inline-block rounded px-1.5 py-0.5 text-xs font-semibold bg-blue-500/15 text-blue-500">POST</span></td
+                        ><td class="py-2"><code class="rounded bg-muted px-1">/v1/presence/heartbeat</code></td
+                        ><td class="py-2">Send a presence heartbeat</td></tr
+                    >
+                    <tr class="border-b border-border/30"
+                        ><td class="py-2"><span class="inline-block rounded px-1.5 py-0.5 text-xs font-semibold bg-emerald-500/15 text-emerald-500">GET</span></td
+                        ><td class="py-2"><code class="rounded bg-muted px-1">/v1/presence/enforcers</code></td
+                        ><td class="py-2">List online enforcers</td></tr
+                    >
+                    <tr class="border-b border-border/30"
+                        ><td class="py-2"><span class="inline-block rounded px-1.5 py-0.5 text-xs font-semibold bg-emerald-500/15 text-emerald-500">GET</span></td
+                        ><td class="py-2"><code class="rounded bg-muted px-1">/v1/presence/enforcers/&#123;id&#125;</code></td
+                        ><td class="py-2">Get a single enforcer's presence</td></tr
+                    >
+                    <!-- DND Policies -->
+                    <tr class="border-b border-border/30"
+                        ><td class="py-2"><span class="inline-block rounded px-1.5 py-0.5 text-xs font-semibold bg-blue-500/15 text-blue-500">POST</span></td
+                        ><td class="py-2"><code class="rounded bg-muted px-1">/v1/policy/dnd</code></td
+                        ><td class="py-2">Submit a signed DND policy object</td></tr
+                    >
+                    <tr class="border-b border-border/30"
+                        ><td class="py-2"><span class="inline-block rounded px-1.5 py-0.5 text-xs font-semibold bg-emerald-500/15 text-emerald-500">GET</span></td
+                        ><td class="py-2"><code class="rounded bg-muted px-1">/v1/policy/dnd/effective</code></td
+                        ><td class="py-2">Fetch effective DND policies for an enforcer/workspace/session</td></tr
                     >
                 </tbody>
             </table>

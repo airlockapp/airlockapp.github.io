@@ -6,19 +6,22 @@ import { Lightbox } from "@/components/Lightbox";
 
 const heroScreenshots = [
   {
-    src: "/screenshots/login.png",
+    light: "/screenshots/mobile/login-light.jpeg",
+    dark: "/screenshots/mobile/login-dark.jpeg",
     alt: "Airlock Mobile Approver — Login",
     caption: "Login",
   },
   {
-    src: "/screenshots/pairing-code.png",
-    alt: "Airlock — Workspace Pairing Code",
-    caption: "Workspace Pairing",
+    light: "/screenshots/mobile/workspaces-light.jpeg",
+    dark: "/screenshots/mobile/workspaces-dark.jpeg",
+    alt: "Airlock — Workspaces",
+    caption: "Workspaces",
   },
   {
-    src: "/screenshots/workspaces-waiting.png",
-    alt: "Airlock — Workspaces Waiting for Approval",
-    caption: "Workspaces",
+    light: "/screenshots/mobile/pairing-light.jpeg",
+    dark: "/screenshots/mobile/pairing-dark.jpeg",
+    alt: "Airlock — Workspace Pairing",
+    caption: "Workspace Pairing",
   },
 ];
 
@@ -48,6 +51,21 @@ const steps = [
 export function Hero() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [isDark, setIsDark] = useState(false);
+
+  // Listen for theme changes (class "dark" on <html>)
+  useEffect(() => {
+    const root = document.documentElement;
+    setIsDark(root.classList.contains("dark"));
+    const observer = new MutationObserver(() => {
+      setIsDark(root.classList.contains("dark"));
+    });
+    observer.observe(root, { attributes: true, attributeFilter: ["class"] });
+    return () => observer.disconnect();
+  }, []);
+
+  const getImgSrc = (shot: (typeof heroScreenshots)[number]) =>
+    isDark ? shot.dark : shot.light;
 
   const nextSlide = useCallback(() => {
     setCurrentIndex((prev) => (prev + 1) % heroScreenshots.length);
@@ -215,11 +233,11 @@ export function Hero() {
 
             <div className="relative">
               {/* Carousel */}
-              <div className="w-64 md:w-72 overflow-hidden rounded-[2rem] shadow-xl shadow-airlock-violet-light/15 dark:shadow-airlock-violet/20 border border-airlock-violet-light/10 dark:border-airlock-violet/10 bg-white">
+              <div className="w-64 md:w-72 overflow-hidden rounded-[2rem] shadow-xl shadow-airlock-violet-light/15 dark:shadow-airlock-violet/20 border border-airlock-violet-light/10 dark:border-airlock-violet/10 bg-white dark:bg-zinc-900">
                 <AnimatePresence mode="wait">
                   <motion.img
-                    key={currentIndex}
-                    src={heroScreenshots[currentIndex].src}
+                    key={`${currentIndex}-${isDark}`}
+                    src={getImgSrc(heroScreenshots[currentIndex])}
                     alt={heroScreenshots[currentIndex].alt}
                     className="w-full cursor-pointer block"
                     initial={{ opacity: 0, x: 60 }}
@@ -268,7 +286,7 @@ export function Hero() {
 
       {/* Lightbox */}
       <Lightbox
-        images={heroScreenshots}
+        images={heroScreenshots.map((s) => ({ src: getImgSrc(s), alt: s.alt, caption: s.caption }))}
         initialIndex={currentIndex}
         isOpen={lightboxOpen}
         onClose={() => setLightboxOpen(false)}
