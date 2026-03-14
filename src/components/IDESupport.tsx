@@ -3,6 +3,13 @@ import { ExternalLink } from "lucide-react";
 
 const enforcers = [
     {
+        name: "Claude Code",
+        displayName: "Airlock Claude Code Enforcer",
+        icon: "/enforcers/claude-code.svg",
+        docsUrl: "/docs/claude-code",
+        description: "Anthropic's AI coding agent",
+    },
+    {
         name: "Cursor",
         displayName: "Airlock Cursor Enforcer",
         icon: "/enforcers/cursor.png",
@@ -79,7 +86,7 @@ export function IDESupport() {
                     initial="hidden"
                     whileInView="show"
                     viewport={{ once: true }}
-                    className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-4xl mx-auto"
+                    className="grid grid-cols-2 md:grid-cols-5 gap-6 max-w-5xl mx-auto"
                 >
                     {enforcers.map((enforcer) => (
                         <motion.a

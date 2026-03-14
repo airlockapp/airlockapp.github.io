@@ -1,12 +1,12 @@
 import { motion } from "framer-motion";
-import { Package, Users, Puzzle, CheckCircle, Clock, Shield } from "lucide-react";
+import { Smartphone, Users, Puzzle, CheckCircle, Clock } from "lucide-react";
 
 const roadmapItems = [
     {
-        icon: Shield,
-        title: "Claude Code Enforcer",
+        icon: Smartphone,
+        title: "Airlock Apps",
         description:
-            "A new enforcer for Anthropic's Claude Code CLI agent, bringing Airlock's cryptographic approval workflow to Claude-powered terminal sessions.",
+            "Allow developers to register 3rd party Airlock Enforcer applications integrated directly to the Airlock Mobile Approver through the Airlock Gateway.",
         status: "in-progress",
     },
     {
@@ -14,13 +14,6 @@ const roadmapItems = [
         title: "Team Formation",
         description:
             "Build teams, invite teammates, and configure flexible review and approval policies — \"at least one\", \"at most X\", or \"everyone must review/approve\".",
-        status: "planned",
-    },
-    {
-        icon: Package,
-        title: "Open Source Gateway API Client",
-        description:
-            "The Airlock Gateway API Client will be published as an open-source package, enabling custom integrations and community-driven extensions.",
         status: "planned",
     },
     {

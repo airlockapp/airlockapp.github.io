@@ -166,6 +166,7 @@ export function Hero() {
               <span className="text-xs text-muted-foreground/50 uppercase tracking-widest font-semibold">Works with</span>
               <div className="grid grid-cols-2 gap-4 justify-items-center md:flex md:items-center md:gap-6">
                 {[
+                  { name: "Claude Code", icon: "/enforcers/claude-code.svg", href: "/docs/claude-code" },
                   { name: "Cursor", icon: "/enforcers/cursor.png", href: "/docs/cursor" },
                   { name: "Windsurf", icon: "/enforcers/windsurf.png", href: "/docs/windsurf" },
                   { name: "Antigravity", icon: "/enforcers/antigravity.png", href: "/docs/antigravity" },

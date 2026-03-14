@@ -1,0 +1,326 @@
+---
+import DocsLayout from "../../layouts/docs.astro";
+---
+
+<DocsLayout title="Install Airlock Claude Code Enforcer">
+    <div class="space-y-8">
+        <div class="flex items-center gap-4">
+            <img
+                src="/enforcers/claude-code.svg"
+                alt="Airlock Claude Code Enforcer"
+                class="w-16 h-16 rounded-xl"
+            />
+            <div>
+                <h1 class="text-3xl md:text-4xl font-bold">
+                    Airlock Claude Code Enforcer
+                </h1>
+                <p class="text-muted-foreground mt-1">
+                    Human approval for AI actions in Claude Code
+                </p>
+            </div>
+        </div>
+
+        <div class="flex flex-wrap gap-3 mt-4">
+            <a
+                href="https://github.com/airlockapp/claude-plugins"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-border/50 bg-muted/30 text-sm font-medium text-foreground hover:bg-muted/60 transition-colors"
+            >
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="w-4 h-4"
+                    viewBox="0 0 24 24"
+                    fill="currentColor"
+                    ><path
+                        d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"
+                    ></path></svg
+                >
+                GitHub
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="w-3.5 h-3.5 text-muted-foreground"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    ><path
+                        d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"
+                    ></path><polyline points="15 3 21 3 21 9"></polyline><line
+                        x1="10"
+                        y1="14"
+                        x2="21"
+                        y2="3"></line></svg
+                >
+            </a>
+        </div>
+
+        <div class="prose dark:prose-invert max-w-none">
+            <h2 class="text-xl font-semibold mt-8 mb-4">Prerequisites</h2>
+            <ul class="space-y-2 text-muted-foreground">
+                <li class="flex items-start gap-2">
+                    <span class="text-link mt-1">•</span>
+                    <span
+                        ><a
+                            href="https://code.claude.com/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            class="text-link hover:underline">Claude Code</a
+                        > installed</span
+                    >
+                </li>
+                <li class="flex items-start gap-2">
+                    <span class="text-link mt-1">•</span>
+                    <span>Node.js 18 or later</span>
+                </li>
+                <li class="flex items-start gap-2">
+                    <span class="text-link mt-1">•</span>
+                    <span>An Airlock account</span>
+                </li>
+                <li class="flex items-start gap-2">
+                    <span class="text-link mt-1">•</span>
+                    <span
+                        >The Airlock Mobile Approver app installed on your phone
+                        (Android or iOS)</span
+                    >
+                </li>
+            </ul>
+
+            <h2 class="text-xl font-semibold mt-8 mb-4">Getting Started</h2>
+            <ol class="space-y-4 text-muted-foreground">
+                <li class="flex items-start gap-3">
+                    <span
+                        class="flex-shrink-0 w-7 h-7 rounded-full bg-airlock-violet/20 text-airlock-violet-light text-sm font-bold flex items-center justify-center"
+                        >1</span
+                    >
+                    <div>
+                        <p class="font-medium text-foreground">
+                            Load the Plugin
+                        </p>
+                        <p class="text-sm mt-1">
+                            Add the Airlock marketplace and install the plugin:
+                        </p>
+                        <div class="mt-2 space-y-1">
+                            <code
+                                class="block px-3 py-1.5 rounded bg-muted text-xs font-mono"
+                                >/plugin marketplace add airlockapp/claude-plugins</code
+                            >
+                            <code
+                                class="block px-3 py-1.5 rounded bg-muted text-xs font-mono"
+                                >/plugin install airlock@airlock-claude-plugins</code
+                            >
+                        </div>
+                    </div>
+                </li>
+                <li class="flex items-start gap-3">
+                    <span
+                        class="flex-shrink-0 w-7 h-7 rounded-full bg-airlock-violet/20 text-airlock-violet-light text-sm font-bold flex items-center justify-center"
+                        >2</span
+                    >
+                    <div>
+                        <p class="font-medium text-foreground">Sign In</p>
+                        <p class="text-sm mt-1">
+                            In Claude Code, run <code
+                                class="px-1.5 py-0.5 rounded bg-muted text-xs font-mono"
+                                >/airlock:sign-in</code
+                            >. The sign-in flow opens a verification URL in your
+                            default browser. Authenticate with your Airlock
+                            account.
+                        </p>
+                    </div>
+                </li>
+                <li class="flex items-start gap-3">
+                    <span
+                        class="flex-shrink-0 w-7 h-7 rounded-full bg-airlock-violet/20 text-airlock-violet-light text-sm font-bold flex items-center justify-center"
+                        >3</span
+                    >
+                    <div>
+                        <p class="font-medium text-foreground">
+                            Pair with Mobile App
+                        </p>
+                        <p class="text-sm mt-1">
+                            Run <code
+                                class="px-1.5 py-0.5 rounded bg-muted text-xs font-mono"
+                                >/airlock:pair</code
+                            >. A <strong>6-character pairing code</strong> will
+                            be displayed. On the Airlock Mobile Approver app, go
+                            to <strong>Settings → Pair Another Workspace</strong
+                            > and enter the code. The daemon starts automatically
+                            after pairing.
+                        </p>
+                    </div>
+                </li>
+                <li class="flex items-start gap-3">
+                    <span
+                        class="flex-shrink-0 w-7 h-7 rounded-full bg-airlock-violet/20 text-airlock-violet-light text-sm font-bold flex items-center justify-center"
+                        >4</span
+                    >
+                    <div>
+                        <p class="font-medium text-foreground">
+                            Enable Auto Mode
+                        </p>
+                        <p class="text-sm mt-1">
+                            Run <code
+                                class="px-1.5 py-0.5 rounded bg-muted text-xs font-mono"
+                                >/airlock:auto-off</code
+                            > to ensure all tool use (shell commands, file edits,
+                            MCP calls) requires your mobile approval.
+                        </p>
+                    </div>
+                </li>
+            </ol>
+
+            <h2 class="text-xl font-semibold mt-8 mb-4">Plugin Commands</h2>
+            <table class="w-full text-sm border-collapse">
+                <thead>
+                    <tr class="border-b border-border/50">
+                        <th class="text-left py-2 font-medium">Command</th>
+                        <th class="text-left py-2 font-medium">Description</th>
+                    </tr>
+                </thead>
+                <tbody class="text-muted-foreground">
+                    <tr class="border-b border-border/30"
+                        ><td class="py-2"
+                            ><code class="rounded bg-muted px-1"
+                                >/airlock:sign-in</code
+                            ></td
+                        ><td class="py-2"
+                            >Authenticate with the Gateway</td
+                        ></tr
+                    >
+                    <tr class="border-b border-border/30"
+                        ><td class="py-2"
+                            ><code class="rounded bg-muted px-1"
+                                >/airlock:sign-out</code
+                            ></td
+                        ><td class="py-2"
+                            >Clear authentication and stop daemon</td
+                        ></tr
+                    >
+                    <tr class="border-b border-border/30"
+                        ><td class="py-2"
+                            ><code class="rounded bg-muted px-1"
+                                >/airlock:pair</code
+                            ></td
+                        ><td class="py-2"
+                            >Pair with the Airlock mobile app (pairing code)</td
+                        ></tr
+                    >
+                    <tr class="border-b border-border/30"
+                        ><td class="py-2"
+                            ><code class="rounded bg-muted px-1"
+                                >/airlock:unpair</code
+                            ></td
+                        ><td class="py-2">Remove paired device</td></tr
+                    >
+                    <tr class="border-b border-border/30"
+                        ><td class="py-2"
+                            ><code class="rounded bg-muted px-1"
+                                >/airlock:auto-on</code
+                            ></td
+                        ><td class="py-2"
+                            >Enable auto-approve (skip gateway)</td
+                        ></tr
+                    >
+                    <tr class="border-b border-border/30"
+                        ><td class="py-2"
+                            ><code class="rounded bg-muted px-1"
+                                >/airlock:auto-off</code
+                            ></td
+                        ><td class="py-2"
+                            >Disable auto-approve (resume gating)</td
+                        ></tr
+                    >
+                    <tr class="border-b border-border/30"
+                        ><td class="py-2"
+                            ><code class="rounded bg-muted px-1"
+                                >/airlock:status</code
+                            ></td
+                        ><td class="py-2"
+                            >Show mode, gateway URL, sign-in, and pairing state</td
+                        ></tr
+                    >
+                    <tr class="border-b border-border/30"
+                        ><td class="py-2"
+                            ><code class="rounded bg-muted px-1"
+                                >/airlock:fail-mode &lt;open|closed&gt;</code
+                            ></td
+                        ><td class="py-2"
+                            >Set behavior when daemon is unavailable</td
+                        ></tr
+                    >
+                    <tr class="border-b border-border/30"
+                        ><td class="py-2"
+                            ><code class="rounded bg-muted px-1"
+                                >/airlock:approve &lt;pattern&gt;</code
+                            ></td
+                        ><td class="py-2"
+                            >Auto-approve shell commands matching pattern</td
+                        ></tr
+                    >
+                    <tr class="border-b border-border/30"
+                        ><td class="py-2"
+                            ><code class="rounded bg-muted px-1"
+                                >/airlock:disapprove &lt;pattern&gt;</code
+                            ></td
+                        ><td class="py-2"
+                            >Remove an auto-approve pattern</td
+                        ></tr
+                    >
+                    <tr class="border-b border-border/30"
+                        ><td class="py-2"
+                            ><code class="rounded bg-muted px-1"
+                                >/airlock:patterns</code
+                            ></td
+                        ><td class="py-2"
+                            >List current auto-approve patterns</td
+                        ></tr
+                    >
+                </tbody>
+            </table>
+
+            <h2 class="text-xl font-semibold mt-8 mb-4">How It Works</h2>
+            <p class="text-muted-foreground">
+                The Airlock Claude Code Enforcer is a plugin that hooks into
+                Claude Code's tool-use pipeline. When Claude attempts to run a
+                shell command, edit a file, or make an MCP call, the plugin
+                intercepts the action and forwards it to a local daemon. The
+                daemon encrypts the action with AES-256-GCM and submits it to
+                the Airlock Gateway. Your Mobile Approver receives a push
+                notification — you review the action and sign your decision with
+                Ed25519. The daemon verifies the signature locally before
+                allowing execution.
+            </p>
+            <p class="text-muted-foreground mt-4">
+                The daemon starts and stops automatically with your Claude Code
+                sessions. It maintains a persistent WebSocket connection for
+                real-time presence, so the mobile app always shows your workspace
+                status.
+            </p>
+
+            <div
+                class="mt-8 p-4 rounded-xl border border-border/50 bg-muted/30"
+            >
+                <p class="text-sm text-muted-foreground">
+                    <strong class="text-foreground">Security model:</strong> The
+                    enforcer operates in fail-closed mode by default. If the daemon
+                    is unreachable, the signature is invalid, or the request times
+                    out — the action is blocked. You can switch to fail-open mode
+                    with <code class="rounded bg-muted px-1">/airlock:fail-mode open</code>
+                    if needed.
+                </p>
+            </div>
+        </div>
+
+        <div class="mt-8 flex gap-4">
+            <a href="/docs" class="text-sm text-link hover:underline"
+                >← All Docs</a
+            >
+            <a href="/" class="text-sm text-muted-foreground hover:underline"
+                >Back to Airlock</a
+            >
+        </div>
+    </div>
+</DocsLayout>

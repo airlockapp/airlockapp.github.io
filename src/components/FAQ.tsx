@@ -25,7 +25,7 @@ const faqs = [
   {
     question: "Which IDEs and AI agents are supported?",
     answer:
-      "Airlock provides Host Enforcer extensions for VS Code, supporting Google Antigravity, Cursor, Windsurf, and GitHub Copilot. The enforcer intercepts AI-generated commands at the IDE level, before they can execute.",
+      "Airlock provides Host Enforcer extensions for VS Code, supporting Google Antigravity, Cursor, Windsurf, and GitHub Copilot. There is also an Airlock plugin for Anthropic's Claude Code CLI agent. The enforcer intercepts AI-generated commands at the IDE or agent level, before they can execute.",
   },
   {
     question: "Can the Gateway see my code?",
@@ -40,7 +40,7 @@ const faqs = [
   {
     question: "Is Airlock open source?",
     answer:
-      "The HARP protocol specification is fully open source. Airlock itself is not open source. However, all Airlock enforcer extensions (Cursor, Windsurf, Antigravity, and Copilot) and the Airlock Gateway API Client are open source. The HARP spec includes test vectors, compliance criteria, and interoperability requirements to enable cross-vendor implementations.",
+      "The HARP protocol specification is fully open source. Airlock itself is not open source. However, all Airlock enforcer extensions (Claude Code, Cursor, Windsurf, Antigravity, and Copilot) and the Airlock Gateway API Client are open source. The HARP spec includes test vectors, compliance criteria, and interoperability requirements to enable cross-vendor implementations.",
   },
 ];
 

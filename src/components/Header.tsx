@@ -4,6 +4,7 @@ import { Menu, X, Shield, ChevronDown, Github, Home } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
 const docsItems = [
+  { label: "Claude Code", href: "/docs/claude-code", icon: "/enforcers/claude-code.svg" },
   { label: "Cursor", href: "/docs/cursor", icon: "/enforcers/cursor.png" },
   { label: "Windsurf", href: "/docs/windsurf", icon: "/enforcers/windsurf.png" },
   { label: "Antigravity", href: "/docs/antigravity", icon: "/enforcers/antigravity.png" },
