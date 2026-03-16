@@ -1,5 +1,6 @@
 ---
 import DocsLayout from "../../layouts/docs.astro";
+import { Code } from "astro:components";
 ---
 
 <DocsLayout title="Install Airlock Claude Code Enforcer">
@@ -102,15 +103,35 @@ import DocsLayout from "../../layouts/docs.astro";
                         <p class="text-sm mt-1">
                             Add the Airlock marketplace and install the plugin:
                         </p>
-                        <div class="mt-2 space-y-1">
-                            <code
-                                class="block px-3 py-1.5 rounded bg-muted text-xs font-mono"
-                                >/plugin marketplace add airlockapp/claude-plugins</code
-                            >
-                            <code
-                                class="block px-3 py-1.5 rounded bg-muted text-xs font-mono"
-                                >/plugin install airlock@airlock-claude-plugins</code
-                            >
+                        <div class="mt-2 space-y-2">
+                            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden">
+                                <Code
+                                    code={`/plugin marketplace add airlockapp/claude-plugins`}
+                                    lang="bash"
+                                    theme="github-light"
+                                />
+                            </div>
+                            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block">
+                                <Code
+                                    code={`/plugin marketplace add airlockapp/claude-plugins`}
+                                    lang="bash"
+                                    theme="github-dark"
+                                />
+                            </div>
+                            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden">
+                                <Code
+                                    code={`/plugin install airlock@airlock-claude-plugins`}
+                                    lang="bash"
+                                    theme="github-light"
+                                />
+                            </div>
+                            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block">
+                                <Code
+                                    code={`/plugin install airlock@airlock-claude-plugins`}
+                                    lang="bash"
+                                    theme="github-dark"
+                                />
+                            </div>
                         </div>
                     </div>
                 </li>
@@ -280,6 +301,7 @@ import DocsLayout from "../../layouts/docs.astro";
                     >
                 </tbody>
             </table>
+
 
             <h2 class="text-xl font-semibold mt-8 mb-4">How It Works</h2>
             <p class="text-muted-foreground">
