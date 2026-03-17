@@ -29,7 +29,7 @@ httpClient.DefaultRequestHeaders.Add("X-Client-Secret", "your-client-secret");
 
 var client = new AirlockGatewayClient(httpClient);`;
 
-const tsInitClient = `import { AirlockGatewayClient } from "@airlock/gateway-sdk";
+const tsInitClient = `import { AirlockGatewayClient } from "@airlockapp/gateway-sdk";
 
 const client = new AirlockGatewayClient({
   baseUrl: "https://igw.airlocks.io",
@@ -50,7 +50,7 @@ async with AirlockGatewayClient(
 ) as client:
     echo = await client.echo()`;
 
-const sdkAuthCredentialsTs = `import { AirlockGatewayClient } from "@airlock/gateway-sdk";
+const sdkAuthCredentialsTs = `import { AirlockGatewayClient } from "@airlockapp/gateway-sdk";
 
 const client = new AirlockGatewayClient({
   baseUrl: "https://igw.airlocks.io",
@@ -354,10 +354,10 @@ python test_enforcer.py`;
                             <td class="py-2">TypeScript</td>
                             <td class="py-2">
                                 <a
-                                    href="https://www.npmjs.com/package/@airlock/gateway-sdk"
+                                    href="https://www.npmjs.com/package/@airlockapp/gateway-sdk"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    class="text-link hover:underline">@airlock/gateway-sdk</a
+                                    class="text-link hover:underline">@airlockapp/gateway-sdk</a
                                 >
                             </td>
                             <td class="py-2">
@@ -373,7 +373,7 @@ python test_enforcer.py`;
                             <td class="py-2">Go</td>
                             <td class="py-2">
                                 <a
-                                    href="https://pkg.go.dev/github.com/airlockapp/gateway-clients/tree/main/src/go"
+                                    href="https://pkg.go.dev/github.com/airlockapp/gateway-clients/src/go"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     class="text-link hover:underline">pkg.go.dev (Go package docs)</a

@@ -102,8 +102,8 @@ async def main():
 asyncio.run(main())`;
 
 // ── TypeScript ──
-const tsInstall = `npm install @airlock/gateway-sdk`;
-const tsAuthInitClients = `import { AirlockGatewayClient } from "@airlock/gateway-sdk";
+const tsInstall = `npm install @airlockapp/gateway-sdk`;
+const tsAuthInitClients = `import { AirlockGatewayClient } from "@airlockapp/gateway-sdk";
 
 const gwClient = new AirlockGatewayClient({
   baseUrl: gatewayUrl,
@@ -112,7 +112,7 @@ const gwClient = new AirlockGatewayClient({
 });`;
 const tsAuthSetBearer = `// After user sign-in (Device Auth Grant):
 gwClient.setBearerToken(accessToken);`;
-const tsQuickStart = `import { AirlockGatewayClient } from "@airlock/gateway-sdk";
+const tsQuickStart = `import { AirlockGatewayClient } from "@airlockapp/gateway-sdk";
 
 const client = new AirlockGatewayClient({
   baseUrl: "https://igw.airlocks.io",
@@ -140,7 +140,7 @@ if (decision?.body?.isApproved) {
 }`;
 
 // ── Go ──
-const goInstall = `go get github.com/airlockapp/gateway-clients/tree/main/src/go`;
+const goInstall = `go get github.com/airlockapp/gateway-clients/src/go/airlock`;
 const goAuthInitClients = `// Initialize the gateway client with app credentials
 gwClient := airlock.NewClientWithCredentials(
     gatewayUrl,
@@ -154,7 +154,7 @@ const goQuickStart = `package main
 import (
     "context"
     "fmt"
-    airlock "github.com/airlockapp/gateway-clients/tree/main/src/go/airlock"
+    airlock "github.com/airlockapp/gateway-clients/src/go/airlock"
 )
 
 func main() {
@@ -344,6 +344,44 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     Recommended artifact type for command review flows:
                     <code class="rounded bg-muted px-1">command.review</code>
                 </p>
+            </div>
+        </div>
+
+        <!-- Language jump links -->
+        <div
+            class="sticky top-4 z-20 -mx-1 px-1 py-2 backdrop-blur supports-[backdrop-filter]:bg-background/70"
+        >
+            <div
+                class="flex flex-wrap items-center gap-2 rounded-xl border border-border/50 bg-muted/30 px-3 py-2"
+            >
+                <span class="text-xs font-medium text-muted-foreground mr-1"
+                    >Jump to:</span
+                >
+                <a
+                    href="#dotnet"
+                    class="inline-flex items-center rounded-full border border-border/50 bg-background/40 px-3 py-1 text-xs font-medium text-foreground hover:bg-muted/60 transition-colors"
+                    >.NET</a
+                >
+                <a
+                    href="#python"
+                    class="inline-flex items-center rounded-full border border-border/50 bg-background/40 px-3 py-1 text-xs font-medium text-foreground hover:bg-muted/60 transition-colors"
+                    >Python</a
+                >
+                <a
+                    href="#typescript"
+                    class="inline-flex items-center rounded-full border border-border/50 bg-background/40 px-3 py-1 text-xs font-medium text-foreground hover:bg-muted/60 transition-colors"
+                    >TypeScript</a
+                >
+                <a
+                    href="#go"
+                    class="inline-flex items-center rounded-full border border-border/50 bg-background/40 px-3 py-1 text-xs font-medium text-foreground hover:bg-muted/60 transition-colors"
+                    >Go</a
+                >
+                <a
+                    href="#rust"
+                    class="inline-flex items-center rounded-full border border-border/50 bg-background/40 px-3 py-1 text-xs font-medium text-foreground hover:bg-muted/60 transition-colors"
+                    >Rust</a
+                >
             </div>
         </div>
 
@@ -619,11 +657,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     >TS</span
                 >
                 TypeScript —
-                <code class="text-base">@airlock/gateway-sdk</code>
+                <code class="text-base">@airlockapp/gateway-sdk</code>
             </h2>
             <div class="flex flex-wrap gap-2 mb-4">
                 <a
-                    href="https://www.npmjs.com/package/@airlock/gateway-sdk"
+                    href="https://www.npmjs.com/package/@airlockapp/gateway-sdk"
                     target="_blank"
                     rel="noopener noreferrer"
                     class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-border/50 bg-muted/30 text-xs font-medium hover:bg-muted/60 transition-colors"
@@ -692,7 +730,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             </h2>
             <div class="flex flex-wrap gap-2 mb-4">
                 <a
-                    href="https://pkg.go.dev/github.com/airlockapp/gateway-clients/tree/main/src/go"
+                    href="https://pkg.go.dev/github.com/airlockapp/gateway-clients/src/go"
                     target="_blank"
                     rel="noopener noreferrer"
                     class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-border/50 bg-muted/30 text-xs font-medium hover:bg-muted/60 transition-colors"
