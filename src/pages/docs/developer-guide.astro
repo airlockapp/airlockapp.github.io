@@ -1,0 +1,670 @@
+---
+import DocsLayout from "../../layouts/docs.astro";
+import { Code } from "astro:components";
+
+// Code snippets as strings so Astro doesn't parse ${...} as JS expressions
+const httpPublicClientExample = `GET /v1/exchanges/req-123 HTTP/1.1
+Host: igw.airlocks.io
+X-Client-Id: ABCDEFGHJKLMNPRSTUVWXYZabc
+Origin: https://myapp.com
+Authorization: Bearer <user-jwt>`;
+
+const httpConfidentialClientExample = `POST /v1/artifacts HTTP/1.1
+Host: igw.airlocks.io
+X-Client-Id: ABCDEFGHJKLMNPRSTUVWXYZabc
+X-Client-Secret: abcdEFGH1234567890abcdEFGH1234567890abcd
+Authorization: Bearer <user-jwt>`;
+
+const pythonInitClient = `from airlock_gateway import AirlockGatewayClient
+
+client = AirlockGatewayClient(
+    "https://igw.airlocks.io",
+    client_id="your-client-id",
+    client_secret="your-client-secret",
+)`;
+
+const dotnetInitClient = `var httpClient = new HttpClient { BaseAddress = new Uri("https://igw.airlocks.io") };
+httpClient.DefaultRequestHeaders.Add("X-Client-Id", "your-client-id");
+httpClient.DefaultRequestHeaders.Add("X-Client-Secret", "your-client-secret");
+
+var client = new AirlockGatewayClient(httpClient);`;
+
+const tsInitClient = `import { AirlockGatewayClient } from "@airlock/gateway-sdk";
+
+const client = new AirlockGatewayClient({
+  baseUrl: "https://igw.airlocks.io",
+  clientId: "your-client-id",
+  clientSecret: "your-client-secret",
+});`;
+
+const goInitClient = `client := airlock.NewClient(
+    "https://igw.airlocks.io",
+    airlock.WithClientCredentials("your-client-id", "your-client-secret"),
+)`;
+
+const sdkAuthBearerPython = `from airlock_gateway import AirlockGatewayClient
+
+async with AirlockGatewayClient(
+    "https://igw.airlocks.io",
+    token="your-jwt-token",
+) as client:
+    echo = await client.echo()`;
+
+const sdkAuthCredentialsTs = `import { AirlockGatewayClient } from "@airlock/gateway-sdk";
+
+const client = new AirlockGatewayClient({
+  baseUrl: "https://igw.airlocks.io",
+  clientId: "your-client-id",
+  clientSecret: "your-client-secret",
+});`;
+
+const sdkAuthDualTs = `// After user login (Device Auth Grant or Auth Code + PKCE)
+client.setBearerToken(accessToken);`;
+
+const lifecycleDiagram = `Discovery → Sign In → Consent Check → Pair → Heartbeat ↺
+                                                ↓
+                                    Submit Artifact → Wait for Decision
+                                                ↓
+                                        Unpair → Sign Out`;
+
+const discoveryRequest = `GET /v1/integrations/discovery`;
+
+const discoveryResponse = `{
+  "idp": {
+    "baseUrl": "https://auth.airlocks.io/realms/airlock",
+    "clientId": "airlock-integrations"
+  }
+}`;
+
+const pythonSetBearer = `# After obtaining the access token
+client.set_bearer_token(access_token)`;
+
+const consentCheckRequest = `GET /v1/consents/check`;
+
+const pythonInitiatePairing = `response = client.initiate_pairing(
+    device_id="dev-my-machine",
+    enforcer_id="my-enforcer",
+    enforcer_label="My Custom Enforcer",
+    workspace_name="default",
+)
+
+# Display the pairing code to the user
+print(f"Pairing code: {response.pairing_code}")
+print("Enter this code in the Airlock mobile app.")`;
+
+const pythonPairingStatus = `status = client.get_pairing_status(response.pairing_nonce)
+if status.state == "completed":
+    routing_token = status.routing_token
+    # Save this token — you'll need it for all subsequent requests`;
+
+const pythonHeartbeat = `client.send_heartbeat(
+    enforcer_id="my-enforcer",
+    enforcer_label="My Custom Enforcer",
+    workspace_name="default",
+)`;
+
+const pythonSubmitArtifact = `request_id = client.submit_artifact(
+    enforcer_id="my-enforcer",
+    artifact_type="command.review",
+    artifact_hash="sha256-of-content",
+    ciphertext={
+        "alg": "xchacha20-poly1305",
+        "data": "<base64-encrypted-payload>",
+        "nonce": "<base64-nonce>",
+        "tag": "<base64-auth-tag>",
+    },
+    metadata={
+        "routingToken": routing_token,
+        "workspaceName": "default",
+    },
+)`;
+
+const pythonWaitForDecision = `decision = client.wait_for_decision(request_id, timeout_seconds=25)
+
+if decision and decision.body:
+    if decision.body.decision == "approve":
+        # Execute the agent's action
+        pass
+    else:
+        # Block the agent's action
+        reason = decision.body.reason  # Optional reason from the approver`;
+
+const pythonWithdrawExchange = `client.withdraw_exchange(request_id)`;
+
+const pythonRevokePairing = `client.revoke_pairing(routing_token)`;
+
+const architectureDiagram = `┌─────────────────┐     HTTPS       ┌──────────────────────┐
+│  Your Enforcer   │ ──────────────→ │ Integrations Gateway │
+│  (3rd-party app) │                 │  (igw.airlocks.io)   │
+└─────────────────┘                  └──────────┬───────────┘
+                                                │
+                                     Internal routing
+                                                │
+                                     ┌──────────▼───────────┐
+                                     │   Platform Backend    │
+                                     │   (not accessible     │
+                                     │    to enforcers)      │
+                                     └──────────────────────┘`;
+
+const runDotnetTestEnforcer = `cd gateway_sdk/src/dotnet/Airlock.Gateway.Sdk.TestEnforcer
+dotnet run`;
+
+const runTsTestEnforcer = `cd gateway_sdk/src/typescript/test-enforcer
+npm install
+npx ts-node index.ts`;
+
+const runGoTestEnforcer = `cd gateway_sdk/src/go
+go run ./cmd/test-enforcer`;
+
+const runPythonTestEnforcer = `cd gateway_sdk/src/python
+pip install -e .
+python test_enforcer.py`;
+---
+
+<DocsLayout title="Developer Guide: Enforcer Apps & Gateway SDK">
+    <div class="space-y-8">
+        <div>
+            <h1 class="text-3xl md:text-4xl font-bold">
+                Developer Guide
+            </h1>
+            <p class="text-muted-foreground mt-2">
+                Build third-party enforcer applications that integrate with the
+                Airlock Integrations Gateway for human-in-the-loop approval.
+            </p>
+        </div>
+
+        <div class="prose dark:prose-invert max-w-none space-y-8">
+            <section>
+                <h2 class="text-xl font-semibold mt-8 mb-4">Overview</h2>
+                <p class="text-muted-foreground">
+                    Airlock enables <strong>human-in-the-loop approval</strong> for
+                    AI agent operations. An <strong>enforcer</strong> intercepts
+                    agent actions (commands, code changes, API calls) and routes
+                    them through Airlock for human review before execution.
+                </p>
+                <p class="text-muted-foreground">
+                    Third-party enforcers communicate with the <strong>Integrations Gateway</strong>
+                    at <code class="rounded bg-muted px-1">https://igw.airlocks.io</code>.
+                </p>
+                <p class="text-muted-foreground">
+                    To build a third-party enforcer, you typically:
+                </p>
+                <ol class="list-decimal pl-6 space-y-1 text-muted-foreground">
+                    <li>Join the Developer Programme</li>
+                    <li>Register an Enforcer App</li>
+                    <li>Integrate using the Gateway SDK</li>
+                    <li>Implement the enforcer lifecycle (auth, consent, pairing, presence, artifacts)</li>
+                </ol>
+            </section>
+
+            <section id="step-1" class="scroll-mt-24">
+                <h2 class="text-xl font-semibold mt-8 mb-4">
+                    Step 1 — Join the Developer Programme
+                </h2>
+                <p class="text-muted-foreground">
+                    Apply via the Airlock Platform under <strong>Developer Programme</strong>.
+                    Your developer profile details (name/org, contact email, and optional web page)
+                    may be shown to end users during the consent flow.
+                </p>
+            </section>
+
+            <section id="step-2" class="scroll-mt-24">
+                <h2 class="text-xl font-semibold mt-8 mb-4">
+                    Step 2 — Register an Enforcer App
+                </h2>
+                <p class="text-muted-foreground">
+                    Create an app entry under <strong>Developer Programme → My Apps</strong>.
+                    When created, you'll receive an App ID, Client ID, and (for confidential apps)
+                    a Client Secret (shown only once).
+                </p>
+
+                <h3 class="text-lg font-medium mt-4 mb-2">App kind reference</h3>
+                <table class="w-full text-sm border-collapse">
+                    <thead>
+                        <tr class="border-b border-border/50">
+                            <th class="text-left py-2 font-medium">Kind</th>
+                            <th class="text-left py-2 font-medium">Client Type</th>
+                            <th class="text-left py-2 font-medium">Auth Method</th>
+                            <th class="text-left py-2 font-medium">Typical Use Case</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-muted-foreground">
+                        <tr class="border-b border-border/30">
+                            <td class="py-2">Web</td>
+                            <td class="py-2">Public</td>
+                            <td class="py-2">Client ID + Origin validation</td>
+                            <td class="py-2">Browser-based enforcer UIs, dashboards</td>
+                        </tr>
+                        <tr class="border-b border-border/30">
+                            <td class="py-2">Mobile</td>
+                            <td class="py-2">Public</td>
+                            <td class="py-2">Client ID + Origin validation</td>
+                            <td class="py-2">Mobile enforcer apps</td>
+                        </tr>
+                        <tr class="border-b border-border/30">
+                            <td class="py-2">Agent</td>
+                            <td class="py-2">Confidential</td>
+                            <td class="py-2">Client ID + Client Secret</td>
+                            <td class="py-2">AI agent plugins, autonomous enforcers</td>
+                        </tr>
+                        <tr class="border-b border-border/30">
+                            <td class="py-2">Desktop</td>
+                            <td class="py-2">Confidential</td>
+                            <td class="py-2">Client ID + Client Secret</td>
+                            <td class="py-2">Desktop IDE plugins, CLI tools</td>
+                        </tr>
+                        <tr class="border-b border-border/30">
+                            <td class="py-2">VsCodeExtension</td>
+                            <td class="py-2">Confidential</td>
+                            <td class="py-2">Client ID + Client Secret</td>
+                            <td class="py-2">VS Code / IDE extension enforcers</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3 class="text-lg font-medium mt-6 mb-2">Authentication methods</h3>
+                <p class="text-muted-foreground">
+                    Public clients use <code class="rounded bg-muted px-1">X-Client-Id</code> plus
+                    Origin validation. Confidential clients use both
+                    <code class="rounded bg-muted px-1">X-Client-Id</code> and
+                    <code class="rounded bg-muted px-1">X-Client-Secret</code>.
+                    Many flows are also user-scoped and include a user Bearer token.
+                </p>
+
+                <p class="text-muted-foreground mt-4 mb-2">
+                    Public client example:
+                </p>
+                <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden">
+                    <Code code={httpPublicClientExample} lang="http" theme="github-light" />
+                </div>
+                <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block">
+                    <Code code={httpPublicClientExample} lang="http" theme="github-dark" />
+                </div>
+
+                <p class="text-muted-foreground mt-4 mb-2">
+                    Confidential client example:
+                </p>
+                <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden">
+                    <Code code={httpConfidentialClientExample} lang="http" theme="github-light" />
+                </div>
+                <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block">
+                    <Code code={httpConfidentialClientExample} lang="http" theme="github-dark" />
+                </div>
+            </section>
+
+            <section id="step-3" class="scroll-mt-24">
+                <h2 class="text-xl font-semibold mt-8 mb-4">
+                    Step 3 — Integrate Using the Gateway SDK
+                </h2>
+                <p class="text-muted-foreground">
+                    The Gateway SDKs provide a consistent client surface for the
+                    Integrations Gateway. Initialize the client with the gateway
+                    URL and your app credentials.
+                </p>
+
+                <h3 class="text-lg font-medium mt-6 mb-2">SDK source and packages</h3>
+                <table class="w-full text-sm border-collapse">
+                    <thead>
+                        <tr class="border-b border-border/50">
+                            <th class="text-left py-2 font-medium">Language</th>
+                            <th class="text-left py-2 font-medium">Package</th>
+                            <th class="text-left py-2 font-medium">Source</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-muted-foreground">
+                        <tr class="border-b border-border/30">
+                            <td class="py-2">.NET</td>
+                            <td class="py-2">
+                                <a
+                                    href="https://www.nuget.org/packages/Airlock.Gateway.Sdk"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="text-link hover:underline">Airlock.Gateway.Sdk</a
+                                >
+                            </td>
+                            <td class="py-2">
+                                <a
+                                    href="https://github.com/airlockapp/gateway-clients/tree/main/src/dotnet"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="text-link hover:underline">github.com/airlockapp/gateway-clients</a
+                                >
+                            </td>
+                        </tr>
+                        <tr class="border-b border-border/30">
+                            <td class="py-2">Python</td>
+                            <td class="py-2">
+                                <a
+                                    href="https://pypi.org/project/airlock-gateway/"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="text-link hover:underline">airlock-gateway</a
+                                >
+                            </td>
+                            <td class="py-2">
+                                <a
+                                    href="https://github.com/airlockapp/gateway-clients/tree/main/src/python"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="text-link hover:underline">github.com/airlockapp/gateway-clients</a
+                                >
+                            </td>
+                        </tr>
+                        <tr class="border-b border-border/30">
+                            <td class="py-2">TypeScript</td>
+                            <td class="py-2">
+                                <a
+                                    href="https://www.npmjs.com/package/@airlock/gateway-sdk"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="text-link hover:underline">@airlock/gateway-sdk</a
+                                >
+                            </td>
+                            <td class="py-2">
+                                <a
+                                    href="https://github.com/airlockapp/gateway-clients/tree/main/src/typescript"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="text-link hover:underline">github.com/airlockapp/gateway-clients</a
+                                >
+                            </td>
+                        </tr>
+                        <tr class="border-b border-border/30">
+                            <td class="py-2">Go</td>
+                            <td class="py-2">
+                                <a
+                                    href="https://pkg.go.dev/github.com/airlockapp/gateway-clients/tree/main/src/go"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="text-link hover:underline">pkg.go.dev (Go package docs)</a
+                                >
+                            </td>
+                            <td class="py-2">
+                                <a
+                                    href="https://github.com/airlockapp/gateway-clients/tree/main/src/go"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="text-link hover:underline">github.com/airlockapp/gateway-clients</a
+                                >
+                            </td>
+                        </tr>
+                        <tr class="border-b border-border/30">
+                            <td class="py-2">Rust</td>
+                            <td class="py-2">
+                                <a
+                                    href="https://crates.io/crates/airlock-gateway"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="text-link hover:underline">airlock-gateway</a
+                                >
+                            </td>
+                            <td class="py-2">
+                                <a
+                                    href="https://github.com/airlockapp/gateway-clients/tree/main/src/rust"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                    class="text-link hover:underline">github.com/airlockapp/gateway-clients</a
+                                >
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <h3 class="text-lg font-medium mt-6 mb-2">Authentication quick start</h3>
+                <p class="text-muted-foreground">
+                    You’ll typically start with app credentials, then set a user token after login for
+                    user-scoped operations (consent checks, pairing, artifacts).
+                </p>
+
+                <p class="text-muted-foreground mt-2 mb-2"><strong class="text-foreground">Bearer token (Python)</strong></p>
+                <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden">
+                    <Code code={sdkAuthBearerPython} lang="python" theme="github-light" />
+                </div>
+                <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block">
+                    <Code code={sdkAuthBearerPython} lang="python" theme="github-dark" />
+                </div>
+
+                <p class="text-muted-foreground mt-4 mb-2"><strong class="text-foreground">App credentials (TypeScript)</strong></p>
+                <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden">
+                    <Code code={sdkAuthCredentialsTs} lang="typescript" theme="github-light" />
+                </div>
+                <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block">
+                    <Code code={sdkAuthCredentialsTs} lang="typescript" theme="github-dark" />
+                </div>
+
+                <p class="text-muted-foreground mt-4 mb-2"><strong class="text-foreground">Dual auth (TypeScript)</strong></p>
+                <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden">
+                    <Code code={sdkAuthDualTs} lang="typescript" theme="github-light" />
+                </div>
+                <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block">
+                    <Code code={sdkAuthDualTs} lang="typescript" theme="github-dark" />
+                </div>
+
+                <h3 class="text-lg font-medium mt-4 mb-2">Initialize the client</h3>
+                <p class="text-muted-foreground mt-2 mb-2"><strong class="text-foreground">Python</strong></p>
+                <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden">
+                    <Code code={pythonInitClient} lang="python" theme="github-light" />
+                </div>
+                <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block">
+                    <Code code={pythonInitClient} lang="python" theme="github-dark" />
+                </div>
+
+                <p class="text-muted-foreground mt-4 mb-2"><strong class="text-foreground">.NET</strong></p>
+                <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden">
+                    <Code code={dotnetInitClient} lang="csharp" theme="github-light" />
+                </div>
+                <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block">
+                    <Code code={dotnetInitClient} lang="csharp" theme="github-dark" />
+                </div>
+
+                <p class="text-muted-foreground mt-4 mb-2"><strong class="text-foreground">TypeScript</strong></p>
+                <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden">
+                    <Code code={tsInitClient} lang="typescript" theme="github-light" />
+                </div>
+                <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block">
+                    <Code code={tsInitClient} lang="typescript" theme="github-dark" />
+                </div>
+
+                <p class="text-muted-foreground mt-4 mb-2"><strong class="text-foreground">Go</strong></p>
+                <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden">
+                    <Code code={goInitClient} lang="go" theme="github-light" />
+                </div>
+                <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block">
+                    <Code code={goInitClient} lang="go" theme="github-dark" />
+                </div>
+            </section>
+
+            <section id="step-4" class="scroll-mt-24">
+                <h2 class="text-xl font-semibold mt-8 mb-4">
+                    Step 4 — Implement the Enforcer Lifecycle
+                </h2>
+                <p class="text-muted-foreground">
+                    A complete enforcer typically follows this lifecycle:
+                </p>
+                <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden">
+                    <Code code={lifecycleDiagram} lang="text" theme="github-light" />
+                </div>
+                <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block">
+                    <Code code={lifecycleDiagram} lang="text" theme="github-dark" />
+                </div>
+
+                <h3 class="text-lg font-medium mt-6 mb-2">1. Discovery</h3>
+                <p class="text-muted-foreground">
+                    Discover the gateway’s IdP configuration:
+                </p>
+                <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden">
+                    <Code code={discoveryRequest} lang="http" theme="github-light" />
+                </div>
+                <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block">
+                    <Code code={discoveryRequest} lang="http" theme="github-dark" />
+                </div>
+                <p class="text-muted-foreground mt-2 mb-2">Response:</p>
+                <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden">
+                    <Code code={discoveryResponse} lang="json" theme="github-light" />
+                </div>
+                <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block">
+                    <Code code={discoveryResponse} lang="json" theme="github-dark" />
+                </div>
+
+                <h3 class="text-lg font-medium mt-6 mb-2">
+                    2. User authentication (Device Authorization Grant)
+                </h3>
+                <p class="text-muted-foreground">
+                    Use the OAuth 2.0 Device Authorization Grant (RFC 8628) to sign in a user.
+                    After obtaining an access token, set it on the SDK client:
+                </p>
+                <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden">
+                    <Code code={pythonSetBearer} lang="python" theme="github-light" />
+                </div>
+                <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block">
+                    <Code code={pythonSetBearer} lang="python" theme="github-dark" />
+                </div>
+
+                <h3 class="text-lg font-medium mt-6 mb-2">3. Consent check</h3>
+                <p class="text-muted-foreground">
+                    Check whether the user has consented to your app:
+                </p>
+                <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden">
+                    <Code code={consentCheckRequest} lang="http" theme="github-light" />
+                </div>
+                <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block">
+                    <Code code={consentCheckRequest} lang="http" theme="github-dark" />
+                </div>
+
+                <h3 class="text-lg font-medium mt-6 mb-2">4. Workspace pairing</h3>
+                <p class="text-muted-foreground">
+                    Initiate pairing, display the pairing code, and poll until completed:
+                </p>
+                <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden">
+                    <Code code={pythonInitiatePairing} lang="python" theme="github-light" />
+                </div>
+                <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block">
+                    <Code code={pythonInitiatePairing} lang="python" theme="github-dark" />
+                </div>
+                <p class="text-muted-foreground mt-2 mb-2">Poll for completion:</p>
+                <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden">
+                    <Code code={pythonPairingStatus} lang="python" theme="github-light" />
+                </div>
+                <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block">
+                    <Code code={pythonPairingStatus} lang="python" theme="github-dark" />
+                </div>
+
+                <h3 class="text-lg font-medium mt-6 mb-2">5. Presence heartbeat</h3>
+                <p class="text-muted-foreground">
+                    While paired, send heartbeats periodically (e.g. every 30 seconds):
+                </p>
+                <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden">
+                    <Code code={pythonHeartbeat} lang="python" theme="github-light" />
+                </div>
+                <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block">
+                    <Code code={pythonHeartbeat} lang="python" theme="github-dark" />
+                </div>
+
+                <h3 class="text-lg font-medium mt-6 mb-2">
+                    6. Artifact submission & decision polling
+                </h3>
+                <p class="text-muted-foreground">
+                    Submit an artifact and long-poll for a decision:
+                </p>
+                <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden">
+                    <Code code={pythonSubmitArtifact} lang="python" theme="github-light" />
+                </div>
+                <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block">
+                    <Code code={pythonSubmitArtifact} lang="python" theme="github-dark" />
+                </div>
+                <p class="text-muted-foreground mt-2 mb-2">Wait for a decision:</p>
+                <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden">
+                    <Code code={pythonWaitForDecision} lang="python" theme="github-light" />
+                </div>
+                <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block">
+                    <Code code={pythonWaitForDecision} lang="python" theme="github-dark" />
+                </div>
+                <p class="text-muted-foreground mt-2 mb-2">Withdraw a pending request:</p>
+                <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden">
+                    <Code code={pythonWithdrawExchange} lang="python" theme="github-light" />
+                </div>
+                <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block">
+                    <Code code={pythonWithdrawExchange} lang="python" theme="github-dark" />
+                </div>
+
+                <h3 class="text-lg font-medium mt-6 mb-2">7. Unpairing</h3>
+                <p class="text-muted-foreground">
+                    Revoke pairing when the user unpairs or signs out:
+                </p>
+                <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden">
+                    <Code code={pythonRevokePairing} lang="python" theme="github-light" />
+                </div>
+                <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block">
+                    <Code code={pythonRevokePairing} lang="python" theme="github-dark" />
+                </div>
+            </section>
+
+            <section id="constraints" class="scroll-mt-24">
+                <h2 class="text-xl font-semibold mt-8 mb-4">
+                    Architecture constraints
+                </h2>
+                <p class="text-muted-foreground">
+                    Third-party enforcers must communicate <strong>only</strong> with the
+                    <strong> Integrations Gateway</strong>
+                    (<code class="rounded bg-muted px-1">igw.airlocks.io</code>).
+                </p>
+                <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden">
+                    <Code code={architectureDiagram} lang="text" theme="github-light" />
+                </div>
+                <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block">
+                    <Code code={architectureDiagram} lang="text" theme="github-dark" />
+                </div>
+            </section>
+
+            <section id="test-enforcers" class="scroll-mt-24">
+                <h2 class="text-xl font-semibold mt-8 mb-4">
+                    Test enforcer reference implementations
+                </h2>
+                <p class="text-muted-foreground">
+                    The SDK repo includes interactive test enforcer CLIs that implement the full lifecycle.
+                    These are useful end-to-end references for pairing, presence, artifact submission,
+                    decision polling, withdrawal, unpairing, and sign-out.
+                </p>
+
+                <h3 class="text-lg font-medium mt-4 mb-2">Run the test enforcers</h3>
+                <p class="text-muted-foreground mt-2 mb-2"><strong class="text-foreground">.NET</strong></p>
+                <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden">
+                    <Code code={runDotnetTestEnforcer} lang="bash" theme="github-light" />
+                </div>
+                <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block">
+                    <Code code={runDotnetTestEnforcer} lang="bash" theme="github-dark" />
+                </div>
+
+                <p class="text-muted-foreground mt-4 mb-2"><strong class="text-foreground">TypeScript</strong></p>
+                <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden">
+                    <Code code={runTsTestEnforcer} lang="bash" theme="github-light" />
+                </div>
+                <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block">
+                    <Code code={runTsTestEnforcer} lang="bash" theme="github-dark" />
+                </div>
+
+                <p class="text-muted-foreground mt-4 mb-2"><strong class="text-foreground">Go</strong></p>
+                <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden">
+                    <Code code={runGoTestEnforcer} lang="bash" theme="github-light" />
+                </div>
+                <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block">
+                    <Code code={runGoTestEnforcer} lang="bash" theme="github-dark" />
+                </div>
+
+                <p class="text-muted-foreground mt-4 mb-2"><strong class="text-foreground">Python</strong></p>
+                <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden">
+                    <Code code={runPythonTestEnforcer} lang="bash" theme="github-light" />
+                </div>
+                <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block">
+                    <Code code={runPythonTestEnforcer} lang="bash" theme="github-dark" />
+                </div>
+            </section>
+        </div>
+
+        <div class="mt-8 flex gap-4">
+            <a href="/docs" class="text-sm text-link hover:underline">← All Docs</a>
+            <a href="/" class="text-sm text-muted-foreground hover:underline">Back to Airlock</a>
+        </div>
+    </div>
+</DocsLayout>
+

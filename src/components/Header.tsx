@@ -11,6 +11,7 @@ const docsItems = [
   { label: "Copilot", href: "/docs/copilot", icon: "/enforcers/copilot.png" },
   { label: "CLI", href: "/docs/cli", icon: null },
   { label: "Shells", href: "/docs/shells", icon: null },
+  { label: "Developer Guide", href: "/docs/developer-guide", icon: null },
   { label: "Gateway SDK", href: "/docs/sdk", icon: null },
 ];
 
@@ -87,7 +88,9 @@ export function Header() {
                 <p className="px-3 py-1.5 text-xs font-semibold text-muted-foreground/60 uppercase tracking-wider">
                   Installation Guides
                 </p>
-                {docsItems.filter(i => i.label !== "Gateway SDK").map((item) => (
+                {docsItems
+                  .filter((i) => i.label !== "Gateway SDK" && i.label !== "Developer Guide")
+                  .map((item) => (
                   <a
                     key={item.label}
                     href={item.href}
@@ -108,7 +111,9 @@ export function Header() {
                   <p className="px-3 py-1.5 text-xs font-semibold text-muted-foreground/60 uppercase tracking-wider">
                     Developer
                   </p>
-                  {docsItems.filter(i => i.label === "Gateway SDK").map((item) => (
+                  {docsItems
+                    .filter((i) => i.label === "Developer Guide" || i.label === "Gateway SDK")
+                    .map((item) => (
                     <a
                       key={item.label}
                       href={item.href}
@@ -190,7 +195,9 @@ export function Header() {
               <p className="text-xs font-semibold text-muted-foreground/60 uppercase tracking-wider mb-2">
                 Docs
               </p>
-              {docsItems.filter(i => i.label !== "Gateway SDK").map((item) => (
+              {docsItems
+                .filter((i) => i.label !== "Gateway SDK" && i.label !== "Developer Guide")
+                .map((item) => (
                 <a
                   key={item.label}
                   href={item.href}
@@ -210,7 +217,9 @@ export function Header() {
               <p className="text-xs font-semibold text-muted-foreground/60 uppercase tracking-wider mb-2 mt-3">
                 Developer
               </p>
-              {docsItems.filter(i => i.label === "Gateway SDK").map((item) => (
+              {docsItems
+                .filter((i) => i.label === "Developer Guide" || i.label === "Gateway SDK")
+                .map((item) => (
                 <a
                   key={item.label}
                   href={item.href}

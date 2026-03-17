@@ -2,14 +2,28 @@
 import DocsLayout from "../../layouts/docs.astro";
 import { Code } from "astro:components";
 
+// Code snippets as strings so Astro doesn't parse ${...} as JS expressions
+
 // ── .NET ──
 const dotnetInstall = `dotnet add package Airlock.Gateway.Sdk`;
+const dotnetAuthInitClients = `// Initialize the gateway client with app credentials
+var gwHttp = new HttpClient
+{
+    BaseAddress = new Uri(gatewayUrl.TrimEnd('/')),
+    Timeout = TimeSpan.FromSeconds(120)
+};
+gwHttp.DefaultRequestHeaders.Add("X-Client-Id", clientId);
+gwHttp.DefaultRequestHeaders.Add("X-Client-Secret", clientSecret);
+
+var gwClient = new AirlockGatewayClient(gwHttp);`;
+const dotnetAuthSetBearer = `// After user sign-in (Device Auth Grant):
+gwClient.SetBearerToken(accessToken);`;
 const dotnetQuickStart = `using Airlock.Gateway.Sdk;
 using Airlock.Gateway.Sdk.Models;
 
 var httpClient = new HttpClient
 {
-    BaseAddress = new Uri("https://gw.example.com")
+    BaseAddress = new Uri("https://igw.airlocks.io")
 };
 httpClient.DefaultRequestHeaders.Authorization =
     new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", "your-token");
@@ -20,6 +34,7 @@ var client = new AirlockGatewayClient(httpClient);
 var requestId = await client.SubmitArtifactAsync(new ArtifactSubmitRequest
 {
     EnforcerId = "my-enforcer",
+    ArtifactType = "command.review",
     ArtifactHash = "sha256-hash",
     Ciphertext = new CiphertextRef
     {
@@ -43,6 +58,15 @@ if (decision?.Body?.IsApproved == true)
 
 // ── Python ──
 const pythonInstall = `pip install airlock-gateway`;
+const pythonAuthInitClients = `# Initialize the gateway client with app credentials (headers + base URL)
+gw_client = AirlockGatewayClient(
+    base_url=gateway_url,
+    client_id=client_id,
+    client_secret=client_secret,
+    http_client=gw_http,
+)`;
+const pythonAuthSetBearer = `# After user sign-in (Device Auth Grant):
+gw_client.set_bearer_token(access_token)`;
 const pythonQuickStart = `import asyncio
 from airlock_gateway import (
     AirlockGatewayClient,
@@ -52,12 +76,13 @@ from airlock_gateway import (
 
 async def main():
     async with AirlockGatewayClient(
-        "https://gw.example.com", token="your-token"
+        "https://igw.airlocks.io", token="your-token"
     ) as client:
         # Submit an artifact for approval
         request_id = await client.submit_artifact(
             ArtifactSubmitRequest(
                 enforcer_id="my-enforcer",
+                artifact_type="command.review",
                 artifact_hash="sha256-hash",
                 ciphertext=CiphertextRef(
                     alg="aes-256-gcm",
@@ -78,16 +103,26 @@ asyncio.run(main())`;
 
 // ── TypeScript ──
 const tsInstall = `npm install @airlock/gateway-sdk`;
+const tsAuthInitClients = `import { AirlockGatewayClient } from "@airlock/gateway-sdk";
+
+const gwClient = new AirlockGatewayClient({
+  baseUrl: gatewayUrl,
+  clientId: clientId,
+  clientSecret: clientSecret,
+});`;
+const tsAuthSetBearer = `// After user sign-in (Device Auth Grant):
+gwClient.setBearerToken(accessToken);`;
 const tsQuickStart = `import { AirlockGatewayClient } from "@airlock/gateway-sdk";
 
-const client = new AirlockGatewayClient(
-  "https://gw.example.com",
-  "your-token"
-);
+const client = new AirlockGatewayClient({
+  baseUrl: "https://igw.airlocks.io",
+  token: "your-token",
+});
 
 // Submit an artifact for approval
 const requestId = await client.submitArtifact({
   enforcerId: "my-enforcer",
+  artifactType: "command.review",
   artifactHash: "sha256-hash",
   ciphertext: {
     alg: "aes-256-gcm",
@@ -105,22 +140,31 @@ if (decision?.body?.isApproved) {
 }`;
 
 // ── Go ──
-const goInstall = `go get github.com/airlockapp/gateway-clients/src/go`;
+const goInstall = `go get github.com/airlockapp/gateway-clients/tree/main/src/go`;
+const goAuthInitClients = `// Initialize the gateway client with app credentials
+gwClient := airlock.NewClientWithCredentials(
+    gatewayUrl,
+    clientId,
+    clientSecret,
+)`;
+const goAuthSetBearer = `// After user sign-in (Device Auth Grant):
+gwClient.SetBearerToken(accessToken)`;
 const goQuickStart = `package main
 
 import (
     "context"
     "fmt"
-    airlock "github.com/airlockapp/gateway-clients/src/go/airlock"
+    airlock "github.com/airlockapp/gateway-clients/tree/main/src/go/airlock"
 )
 
 func main() {
-    client := airlock.NewClient("https://gw.example.com", "your-token")
+    client := airlock.NewClient("https://igw.airlocks.io", "your-token")
     ctx := context.Background()
 
     // Submit an artifact for approval
     requestID, err := client.SubmitArtifact(ctx, &airlock.ArtifactSubmitRequest{
         EnforcerID:   "my-enforcer",
+        ArtifactType: "command.review",
         ArtifactHash: "sha256-hash",
         Ciphertext: airlock.CiphertextRef{
             Alg:   "aes-256-gcm",
@@ -145,14 +189,30 @@ func main() {
 }`;
 
 // ── Rust ──
-const rustInstall = `cargo add airlock-gateway`;
+const rustInstall = `[dependencies]
+airlock-gateway = "0.1"`;
+const rustAuthBearer = `use airlock_gateway::*;
+
+let client = AirlockGatewayClient::new(
+    "https://igw.airlocks.io",
+    Some("your-token"),
+);`;
+const rustAuthCredentials = `use airlock_gateway::*;
+
+let client = AirlockGatewayClient::with_credentials(
+    "https://igw.airlocks.io",
+    "your-client-id",
+    "your-client-secret",
+);`;
+const rustAuthDual = `// After user sign-in (Device Auth Grant):
+client.set_bearer_token(Some(access_token));`;
 const rustQuickStart = `use airlock_gateway::{AirlockGatewayClient, ArtifactSubmitRequest, CiphertextRef};
 use std::collections::HashMap;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let client = AirlockGatewayClient::new(
-        "https://gw.example.com",
+        "https://igw.airlocks.io",
         "your-token",
     );
 
@@ -163,6 +223,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let request_id = client
         .submit_artifact(&ArtifactSubmitRequest {
             enforcer_id: "my-enforcer".into(),
+            artifact_type: Some("command.review".into()),
             artifact_hash: "sha256-hash".into(),
             ciphertext: CiphertextRef {
                 alg: "aes-256-gcm".into(),
@@ -192,7 +253,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 Gateway Client SDKs
             </h1>
             <p class="text-muted-foreground mt-2">
-                Multi-language client libraries for the Airlock Gateway,
+                Multi-language client libraries for the Airlock Integrations Gateway,
                 built on the
                 <a
                     href="https://harp-protocol.github.io"
@@ -220,6 +281,29 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     ></path></svg
                 >
                 GitHub Repository
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="w-3.5 h-3.5 text-muted-foreground"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    ><path
+                        d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"
+                    ></path><polyline points="15 3 21 3 21 9"
+                    ></polyline><line x1="10" y1="14" x2="21" y2="3"
+                    ></line></svg
+                >
+            </a>
+            <a
+                href="https://airlock.dev"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-border/50 bg-muted/30 text-sm font-medium text-foreground hover:bg-muted/60 transition-colors"
+            >
+                Integrations Gateway
                 <svg
                     xmlns="http://www.w3.org/2000/svg"
                     class="w-3.5 h-3.5 text-muted-foreground"
@@ -269,11 +353,19 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                 <p class="text-sm text-muted-foreground">
                     All SDKs cover the <strong class="text-foreground"
                         >enforcer-side</strong
-                    > Gateway API: artifact submission, decision polling,
-                    exchange management, pairing, presence heartbeats, and
-                    discovery. Authenticated endpoints require a
+                    > Integrations Gateway API: artifact submission, decision polling,
+                    exchange management, pairing, presence heartbeats, policies,
+                    and discovery. Authenticated endpoints require a
                     <strong class="text-foreground">Bearer JWT</strong> token
                     issued by the Airlock identity provider.
+                </p>
+                <p class="text-sm text-muted-foreground mt-2">
+                    Default production base URL:
+                    <code class="rounded bg-muted px-1">https://igw.airlocks.io</code>
+                </p>
+                <p class="text-sm text-muted-foreground mt-2">
+                    Recommended artifact type for command review flows:
+                    <code class="rounded bg-muted px-1">command.review</code>
                 </p>
             </div>
         </div>
@@ -293,6 +385,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     </tr>
                 </thead>
                 <tbody class="text-muted-foreground">
+                    <!-- Integrations discovery -->
+                    <tr class="border-b border-border/30"
+                        ><td class="py-2"><span class="inline-block rounded px-1.5 py-0.5 text-xs font-semibold bg-emerald-500/15 text-emerald-500">GET</span></td
+                        ><td class="py-2"><code class="rounded bg-muted px-1">/v1/integrations/discovery</code></td
+                        ><td class="py-2">Discover IdP configuration (device auth setup)</td></tr
+                    >
                     <!-- Discovery -->
                     <tr class="border-b border-border/30"
                         ><td class="py-2"><span class="inline-block rounded px-1.5 py-0.5 text-xs font-semibold bg-emerald-500/15 text-emerald-500">GET</span></td
@@ -385,6 +483,12 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                         ><td class="py-2"><code class="rounded bg-muted px-1">/v1/policy/dnd/effective</code></td
                         ><td class="py-2">Fetch effective DND policies for an enforcer/workspace/session</td></tr
                     >
+                    <!-- Consent -->
+                    <tr class="border-b border-border/30"
+                        ><td class="py-2"><span class="inline-block rounded px-1.5 py-0.5 text-xs font-semibold bg-emerald-500/15 text-emerald-500">GET</span></td
+                        ><td class="py-2"><code class="rounded bg-muted px-1">/v1/consents/check</code></td
+                        ><td class="py-2">Check user consent for an enforcer app</td></tr
+                    >
                 </tbody>
             </table>
         </div>
@@ -438,6 +542,24 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block">
                 <Code code={dotnetQuickStart} lang="csharp" theme="github-dark" />
             </div>
+
+            <h3 class="text-base font-medium mt-6 mb-2">Authentication</h3>
+            <p class="text-muted-foreground text-sm mb-3">
+                The test enforcer initializes the gateway client with app credentials and then sets a
+                user Bearer token after device sign-in.
+            </p>
+            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden">
+                <Code code={dotnetAuthInitClients} lang="csharp" theme="github-light" />
+            </div>
+            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block">
+                <Code code={dotnetAuthInitClients} lang="csharp" theme="github-dark" />
+            </div>
+            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden mt-3">
+                <Code code={dotnetAuthSetBearer} lang="csharp" theme="github-light" />
+            </div>
+            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block mt-3">
+                <Code code={dotnetAuthSetBearer} lang="csharp" theme="github-dark" />
+            </div>
         </section>
 
         <!-- ──────────────────────────────────────────── Python SDK ──── -->
@@ -488,6 +610,24 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             </div>
             <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block">
                 <Code code={pythonQuickStart} lang="python" theme="github-dark" />
+            </div>
+
+            <h3 class="text-base font-medium mt-6 mb-2">Authentication</h3>
+            <p class="text-muted-foreground text-sm mb-3">
+                The Python test enforcer configures a gateway client with credentials (headers) and sets
+                the user Bearer token after device sign-in.
+            </p>
+            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden">
+                <Code code={pythonAuthInitClients} lang="python" theme="github-light" />
+            </div>
+            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block">
+                <Code code={pythonAuthInitClients} lang="python" theme="github-dark" />
+            </div>
+            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden mt-3">
+                <Code code={pythonAuthSetBearer} lang="python" theme="github-light" />
+            </div>
+            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block mt-3">
+                <Code code={pythonAuthSetBearer} lang="python" theme="github-dark" />
             </div>
         </section>
 
@@ -540,6 +680,24 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block">
                 <Code code={tsQuickStart} lang="typescript" theme="github-dark" />
             </div>
+
+            <h3 class="text-base font-medium mt-6 mb-2">Authentication</h3>
+            <p class="text-muted-foreground text-sm mb-3">
+                The TypeScript test enforcer initializes the gateway client with credentials and sets
+                the user Bearer token after device sign-in.
+            </p>
+            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden">
+                <Code code={tsAuthInitClients} lang="typescript" theme="github-light" />
+            </div>
+            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block">
+                <Code code={tsAuthInitClients} lang="typescript" theme="github-dark" />
+            </div>
+            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden mt-3">
+                <Code code={tsAuthSetBearer} lang="typescript" theme="github-light" />
+            </div>
+            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block mt-3">
+                <Code code={tsAuthSetBearer} lang="typescript" theme="github-dark" />
+            </div>
         </section>
 
         <!-- ──────────────────────────────────────────── Go SDK ──── -->
@@ -557,7 +715,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             </h2>
             <div class="flex flex-wrap gap-2 mb-4">
                 <a
-                    href="https://pkg.go.dev/github.com/airlockapp/gateway-clients/src/go"
+                    href="https://pkg.go.dev/github.com/airlockapp/gateway-clients/tree/main/src/go"
                     target="_blank"
                     rel="noopener noreferrer"
                     class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-border/50 bg-muted/30 text-xs font-medium hover:bg-muted/60 transition-colors"
@@ -590,6 +748,24 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             </div>
             <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block">
                 <Code code={goQuickStart} lang="go" theme="github-dark" />
+            </div>
+
+            <h3 class="text-base font-medium mt-6 mb-2">Authentication</h3>
+            <p class="text-muted-foreground text-sm mb-3">
+                The Go test enforcer creates a credentialed client and sets the user Bearer token after
+                device sign-in.
+            </p>
+            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden">
+                <Code code={goAuthInitClients} lang="go" theme="github-light" />
+            </div>
+            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block">
+                <Code code={goAuthInitClients} lang="go" theme="github-dark" />
+            </div>
+            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden mt-3">
+                <Code code={goAuthSetBearer} lang="go" theme="github-light" />
+            </div>
+            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block mt-3">
+                <Code code={goAuthSetBearer} lang="go" theme="github-dark" />
             </div>
         </section>
 
@@ -631,10 +807,10 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             </p>
             <h3 class="text-base font-medium mt-4 mb-2">Installation</h3>
             <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden">
-                <Code code={rustInstall} lang="bash" theme="github-light" />
+                <Code code={rustInstall} lang="toml" theme="github-light" />
             </div>
             <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block">
-                <Code code={rustInstall} lang="bash" theme="github-dark" />
+                <Code code={rustInstall} lang="toml" theme="github-dark" />
             </div>
             <h3 class="text-base font-medium mt-6 mb-2">Quick Start</h3>
             <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden">
@@ -642,6 +818,30 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
             </div>
             <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block">
                 <Code code={rustQuickStart} lang="rust" theme="github-dark" />
+            </div>
+
+            <h3 class="text-base font-medium mt-6 mb-2">Authentication</h3>
+            <p class="text-muted-foreground text-sm mb-3">
+                The Rust SDK supports bearer tokens, app credentials, and setting a user token after sign-in.
+                (The Rust test enforcer CLI isn’t present in this repo, so these snippets mirror the SDK README.)
+            </p>
+            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden">
+                <Code code={rustAuthBearer} lang="rust" theme="github-light" />
+            </div>
+            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block">
+                <Code code={rustAuthBearer} lang="rust" theme="github-dark" />
+            </div>
+            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden mt-3">
+                <Code code={rustAuthCredentials} lang="rust" theme="github-light" />
+            </div>
+            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block mt-3">
+                <Code code={rustAuthCredentials} lang="rust" theme="github-dark" />
+            </div>
+            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden mt-3">
+                <Code code={rustAuthDual} lang="rust" theme="github-light" />
+            </div>
+            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block mt-3">
+                <Code code={rustAuthDual} lang="rust" theme="github-dark" />
             </div>
         </section>
 
