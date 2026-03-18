@@ -34,7 +34,6 @@ var client = new AirlockGatewayClient(httpClient);
 var requestId = await client.SubmitArtifactAsync(new ArtifactSubmitRequest
 {
     EnforcerId = "my-enforcer",
-    ArtifactType = "command.review",
     ArtifactHash = "sha256-hash",
     Ciphertext = new EncryptedPayload
     {
