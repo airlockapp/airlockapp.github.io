@@ -101,8 +101,8 @@ async def main():
 asyncio.run(main())`;
 
 // ── TypeScript ──
-const tsInstall = `npm install @airlock/gateway-sdk`;
-const tsAuthInitClients = `import { AirlockGatewayClient } from "@airlock/gateway-sdk";
+const tsInstall = `npm install @airlockapp/gateway-sdk`;
+const tsAuthInitClients = `import { AirlockGatewayClient } from "@airlockapp/gateway-sdk";
 
 const gwClient = new AirlockGatewayClient({
   baseUrl: gatewayUrl,
@@ -111,7 +111,7 @@ const gwClient = new AirlockGatewayClient({
 });`;
 const tsAuthSetBearer = `// After user sign-in (Device Auth Grant):
 gwClient.setBearerToken(accessToken);`;
-const tsQuickStart = `import { AirlockGatewayClient } from "@airlock/gateway-sdk";
+const tsQuickStart = `import { AirlockGatewayClient } from "@airlockapp/gateway-sdk";
 
 const client = new AirlockGatewayClient({
   baseUrl: "https://igw.airlocks.io",
@@ -615,11 +615,11 @@ async fn main() -> Result<(), GatewayError> {
                     >TS</span
                 >
                 TypeScript —
-                <code class="text-base">@airlock/gateway-sdk</code>
+                <code class="text-base">@airlockapp/gateway-sdk</code>
             </h2>
             <div class="flex flex-wrap gap-2 mb-4">
                 <a
-                    href="https://www.npmjs.com/package/@airlock/gateway-sdk"
+                    href="https://www.npmjs.com/package/@airlockapp/gateway-sdk"
                     target="_blank"
                     rel="noopener noreferrer"
                     class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-border/50 bg-muted/30 text-xs font-medium hover:bg-muted/60 transition-colors"
