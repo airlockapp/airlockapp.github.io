@@ -36,7 +36,7 @@ var requestId = await client.SubmitArtifactAsync(new ArtifactSubmitRequest
     EnforcerId = "my-enforcer",
     ArtifactType = "command.review",
     ArtifactHash = "sha256-hash",
-    Ciphertext = new CiphertextRef
+    Ciphertext = new EncryptedPayload
     {
         Alg = "aes-256-gcm",
         Data = "base64-encrypted-content",
@@ -71,7 +71,7 @@ const pythonQuickStart = `import asyncio
 from airlock_gateway import (
     AirlockGatewayClient,
     ArtifactSubmitRequest,
-    CiphertextRef,
+    EncryptedPayload,
 )
 
 async def main():
@@ -82,9 +82,8 @@ async def main():
         request_id = await client.submit_artifact(
             ArtifactSubmitRequest(
                 enforcer_id="my-enforcer",
-                artifact_type="command.review",
                 artifact_hash="sha256-hash",
-                ciphertext=CiphertextRef(
+                ciphertext=EncryptedPayload(
                     alg="aes-256-gcm",
                     data="base64-encrypted-content",
                     nonce="nonce",
@@ -102,8 +101,8 @@ async def main():
 asyncio.run(main())`;
 
 // ── TypeScript ──
-const tsInstall = `npm install @airlockapp/gateway-sdk`;
-const tsAuthInitClients = `import { AirlockGatewayClient } from "@airlockapp/gateway-sdk";
+const tsInstall = `npm install @airlock/gateway-sdk`;
+const tsAuthInitClients = `import { AirlockGatewayClient } from "@airlock/gateway-sdk";
 
 const gwClient = new AirlockGatewayClient({
   baseUrl: gatewayUrl,
@@ -112,7 +111,7 @@ const gwClient = new AirlockGatewayClient({
 });`;
 const tsAuthSetBearer = `// After user sign-in (Device Auth Grant):
 gwClient.setBearerToken(accessToken);`;
-const tsQuickStart = `import { AirlockGatewayClient } from "@airlockapp/gateway-sdk";
+const tsQuickStart = `import { AirlockGatewayClient } from "@airlock/gateway-sdk";
 
 const client = new AirlockGatewayClient({
   baseUrl: "https://igw.airlocks.io",
@@ -122,7 +121,6 @@ const client = new AirlockGatewayClient({
 // Submit an artifact for approval
 const requestId = await client.submitArtifact({
   enforcerId: "my-enforcer",
-  artifactType: "command.review",
   artifactHash: "sha256-hash",
   ciphertext: {
     alg: "aes-256-gcm",
@@ -135,7 +133,7 @@ const requestId = await client.submitArtifact({
 
 // Wait for a decision (long-poll)
 const decision = await client.waitForDecision(requestId, 30);
-if (decision?.body?.isApproved) {
+if (decision?.body?.decision === "approve") {
   console.log(\`Approved: \${decision.body.reason}\`);
 }`;
 
@@ -152,21 +150,18 @@ gwClient.SetBearerToken(accessToken)`;
 const goQuickStart = `package main
 
 import (
-    "context"
     "fmt"
     airlock "github.com/airlockapp/gateway-clients/src/go/airlock"
 )
 
 func main() {
     client := airlock.NewClient("https://igw.airlocks.io", "your-token")
-    ctx := context.Background()
 
     // Submit an artifact for approval
-    requestID, err := client.SubmitArtifact(ctx, &airlock.ArtifactSubmitRequest{
+    requestID, err := client.SubmitArtifact(airlock.ArtifactSubmitRequest{
         EnforcerID:   "my-enforcer",
-        ArtifactType: "command.review",
         ArtifactHash: "sha256-hash",
-        Ciphertext: airlock.CiphertextRef{
+        Ciphertext: airlock.EncryptedPayload{
             Alg:   "aes-256-gcm",
             Data:  "base64-encrypted-content",
             Nonce: "nonce",
@@ -179,11 +174,11 @@ func main() {
     }
 
     // Wait for a decision (long-poll)
-    decision, err := client.WaitForDecision(ctx, requestID, 30)
+    decision, err := client.WaitForDecision(requestID, 30)
     if err != nil {
         panic(err)
     }
-    if decision != nil && decision.Body.IsApproved {
+    if decision != nil && decision.Body.IsApproved() {
         fmt.Printf("Approved: %s\\n", decision.Body.Reason)
     }
 }`;
@@ -206,39 +201,38 @@ let client = AirlockGatewayClient::with_credentials(
 );`;
 const rustAuthDual = `// After user sign-in (Device Auth Grant):
 client.set_bearer_token(Some(access_token));`;
-const rustQuickStart = `use airlock_gateway::{AirlockGatewayClient, ArtifactSubmitRequest, CiphertextRef};
-use std::collections::HashMap;
+const rustQuickStart = `use airlock_gateway::*;
 
 #[tokio::main]
-async fn main() -> Result<(), Box<dyn std::error::Error>> {
+async fn main() -> Result<(), GatewayError> {
     let client = AirlockGatewayClient::new(
         "https://igw.airlocks.io",
-        "your-token",
+        Some("your-token"),
     );
 
     // Submit an artifact for approval
-    let mut metadata = HashMap::new();
-    metadata.insert("routingToken".into(), "rt-abc".into());
-
-    let request_id = client
-        .submit_artifact(&ArtifactSubmitRequest {
-            enforcer_id: "my-enforcer".into(),
-            artifact_type: Some("command.review".into()),
-            artifact_hash: "sha256-hash".into(),
-            ciphertext: CiphertextRef {
-                alg: "aes-256-gcm".into(),
-                data: "base64-encrypted-content".into(),
-                nonce: "nonce".into(),
-                tag: "tag".into(),
-            },
-            metadata,
-        })
-        .await?;
+    let request_id = client.submit_artifact(ArtifactSubmitRequest {
+        enforcer_id: "my-enforcer".into(),
+        artifact_hash: "sha256-hash".into(),
+        ciphertext: EncryptedPayload {
+            alg: "aes-256-gcm".into(),
+            data: "base64-encrypted-content".into(),
+            nonce: Some("nonce".into()),
+            tag: Some("tag".into()),
+            aad: None,
+        },
+        artifact_type: None,
+        expires_at: None,
+        metadata: None,
+        request_id: None,
+    }).await?;
 
     // Wait for a decision (long-poll)
     if let Some(decision) = client.wait_for_decision(&request_id, 30).await? {
-        if decision.body.is_approved {
-            println!("Approved: {}", decision.body.reason);
+        if let Some(body) = &decision.body {
+            if body.is_approved() {
+                println!("Approved: {:?}", body.reason);
+            }
         }
     }
 
@@ -421,24 +415,18 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     <!-- Exchanges -->
                     <tr class="border-b border-border/30"
                         ><td class="py-2"><span class="inline-block rounded px-1.5 py-0.5 text-xs font-semibold bg-emerald-500/15 text-emerald-500">GET</span></td
-                        ><td class="py-2"><code class="rounded bg-muted px-1">/v1/exchanges/&#123;id&#125;</code></td
+                        ><td class="py-2"><code class="rounded bg-muted px-1">/v1/exchanges/&#123;requestId&#125;</code></td
                         ><td class="py-2">Get exchange status</td></tr
                     >
                     <tr class="border-b border-border/30"
                         ><td class="py-2"><span class="inline-block rounded px-1.5 py-0.5 text-xs font-semibold bg-emerald-500/15 text-emerald-500">GET</span></td
-                        ><td class="py-2"><code class="rounded bg-muted px-1">/v1/exchanges/&#123;id&#125;/wait</code></td
+                        ><td class="py-2"><code class="rounded bg-muted px-1">/v1/exchanges/&#123;requestId&#125;/wait</code></td
                         ><td class="py-2">Long-poll for a decision</td></tr
                     >
                     <tr class="border-b border-border/30"
                         ><td class="py-2"><span class="inline-block rounded px-1.5 py-0.5 text-xs font-semibold bg-blue-500/15 text-blue-500">POST</span></td
-                        ><td class="py-2"><code class="rounded bg-muted px-1">/v1/exchanges/&#123;id&#125;/withdraw</code></td
+                        ><td class="py-2"><code class="rounded bg-muted px-1">/v1/exchanges/&#123;requestId&#125;/withdraw</code></td
                         ><td class="py-2">Withdraw a pending exchange</td></tr
-                    >
-                    <!-- Acknowledgements -->
-                    <tr class="border-b border-border/30"
-                        ><td class="py-2"><span class="inline-block rounded px-1.5 py-0.5 text-xs font-semibold bg-blue-500/15 text-blue-500">POST</span></td
-                        ><td class="py-2"><code class="rounded bg-muted px-1">/v1/acks</code></td
-                        ><td class="py-2">Acknowledge an inbox message</td></tr
                     >
                     <!-- Pairing -->
                     <tr class="border-b border-border/30"
@@ -448,28 +436,13 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     >
                     <tr class="border-b border-border/30"
                         ><td class="py-2"><span class="inline-block rounded px-1.5 py-0.5 text-xs font-semibold bg-emerald-500/15 text-emerald-500">GET</span></td
-                        ><td class="py-2"><code class="rounded bg-muted px-1">/v1/pairing/resolve/&#123;code&#125;</code></td
-                        ><td class="py-2">Resolve a pairing code</td></tr
-                    >
-                    <tr class="border-b border-border/30"
-                        ><td class="py-2"><span class="inline-block rounded px-1.5 py-0.5 text-xs font-semibold bg-emerald-500/15 text-emerald-500">GET</span></td
                         ><td class="py-2"><code class="rounded bg-muted px-1">/v1/pairing/&#123;nonce&#125;/status</code></td
                         ><td class="py-2">Poll pairing status</td></tr
                     >
                     <tr class="border-b border-border/30"
                         ><td class="py-2"><span class="inline-block rounded px-1.5 py-0.5 text-xs font-semibold bg-blue-500/15 text-blue-500">POST</span></td
-                        ><td class="py-2"><code class="rounded bg-muted px-1">/v1/pairing/complete</code></td
-                        ><td class="py-2">Complete pairing from approver side</td></tr
-                    >
-                    <tr class="border-b border-border/30"
-                        ><td class="py-2"><span class="inline-block rounded px-1.5 py-0.5 text-xs font-semibold bg-blue-500/15 text-blue-500">POST</span></td
                         ><td class="py-2"><code class="rounded bg-muted px-1">/v1/pairing/revoke</code></td
                         ><td class="py-2">Revoke an active pairing</td></tr
-                    >
-                    <tr class="border-b border-border/30"
-                        ><td class="py-2"><span class="inline-block rounded px-1.5 py-0.5 text-xs font-semibold bg-blue-500/15 text-blue-500">POST</span></td
-                        ><td class="py-2"><code class="rounded bg-muted px-1">/v1/pairing/status-batch</code></td
-                        ><td class="py-2">Batch check pairing statuses</td></tr
                     >
                     <!-- Presence -->
                     <tr class="border-b border-border/30"
@@ -477,22 +450,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                         ><td class="py-2"><code class="rounded bg-muted px-1">/v1/presence/heartbeat</code></td
                         ><td class="py-2">Send a presence heartbeat</td></tr
                     >
-                    <tr class="border-b border-border/30"
-                        ><td class="py-2"><span class="inline-block rounded px-1.5 py-0.5 text-xs font-semibold bg-emerald-500/15 text-emerald-500">GET</span></td
-                        ><td class="py-2"><code class="rounded bg-muted px-1">/v1/presence/enforcers</code></td
-                        ><td class="py-2">List online enforcers</td></tr
-                    >
-                    <tr class="border-b border-border/30"
-                        ><td class="py-2"><span class="inline-block rounded px-1.5 py-0.5 text-xs font-semibold bg-emerald-500/15 text-emerald-500">GET</span></td
-                        ><td class="py-2"><code class="rounded bg-muted px-1">/v1/presence/enforcers/&#123;id&#125;</code></td
-                        ><td class="py-2">Get a single enforcer's presence</td></tr
-                    >
                     <!-- DND Policies -->
-                    <tr class="border-b border-border/30"
-                        ><td class="py-2"><span class="inline-block rounded px-1.5 py-0.5 text-xs font-semibold bg-blue-500/15 text-blue-500">POST</span></td
-                        ><td class="py-2"><code class="rounded bg-muted px-1">/v1/policy/dnd</code></td
-                        ><td class="py-2">Submit a signed DND policy object</td></tr
-                    >
                     <tr class="border-b border-border/30"
                         ><td class="py-2"><span class="inline-block rounded px-1.5 py-0.5 text-xs font-semibold bg-emerald-500/15 text-emerald-500">GET</span></td
                         ><td class="py-2"><code class="rounded bg-muted px-1">/v1/policy/dnd/effective</code></td
@@ -657,11 +615,11 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
                     >TS</span
                 >
                 TypeScript —
-                <code class="text-base">@airlockapp/gateway-sdk</code>
+                <code class="text-base">@airlock/gateway-sdk</code>
             </h2>
             <div class="flex flex-wrap gap-2 mb-4">
                 <a
-                    href="https://www.npmjs.com/package/@airlockapp/gateway-sdk"
+                    href="https://www.npmjs.com/package/@airlock/gateway-sdk"
                     target="_blank"
                     rel="noopener noreferrer"
                     class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-border/50 bg-muted/30 text-xs font-medium hover:bg-muted/60 transition-colors"
