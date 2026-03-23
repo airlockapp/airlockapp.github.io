@@ -255,6 +255,10 @@ async fn main() -> Result<(), GatewayError> {
                     class="text-link hover:underline">HARP protocol</a
                 >.
             </p>
+            <p class="text-muted-foreground mt-2 text-sm">
+                For PAT-first auth, pre-generated pairing codes, and the full enforcer lifecycle, see the
+                <a href="/docs/developer-guide" class="text-link hover:underline">Developer Guide</a>.
+            </p>
         </div>
 
         <div class="flex flex-wrap gap-3 mt-4">
@@ -324,10 +328,12 @@ async fn main() -> Result<(), GatewayError> {
                     All SDKs cover the <strong class="text-foreground"
                         >enforcer-side</strong
                     > Integrations Gateway API: artifact submission, decision polling,
-                    exchange management, pairing, presence heartbeats, policies,
-                    and discovery. Authenticated endpoints require a
-                    <strong class="text-foreground">Bearer JWT</strong> token
-                    issued by the Airlock identity provider.
+                    exchange management, pairing (including pre-generated codes),
+                    presence heartbeats, policies, and discovery. For user-scoped
+                    calls, use a <strong class="text-foreground">Personal Access Token (PAT)</strong>
+                    via the <code class="rounded bg-muted px-1">X-PAT</code> header (recommended for
+                    CLIs/scripts), or a <strong class="text-foreground">Bearer JWT</strong> from the
+                    Device Authorization Grant, together with your app credentials where required.
                 </p>
                 <p class="text-sm text-muted-foreground mt-2">
                     Default production base URL:
@@ -442,6 +448,16 @@ async fn main() -> Result<(), GatewayError> {
                         ><td class="py-2"><span class="inline-block rounded px-1.5 py-0.5 text-xs font-semibold bg-blue-500/15 text-blue-500">POST</span></td
                         ><td class="py-2"><code class="rounded bg-muted px-1">/v1/pairing/revoke</code></td
                         ><td class="py-2">Revoke an active pairing</td></tr
+                    >
+                    <tr class="border-b border-border/30"
+                        ><td class="py-2"><span class="inline-block rounded px-1.5 py-0.5 text-xs font-semibold bg-blue-500/15 text-blue-500">POST</span></td
+                        ><td class="py-2"><code class="rounded bg-muted px-1">/v1/pairing/pre-generate</code></td
+                        ><td class="py-2">Pre-generate a pairing code (30-minute TTL)</td></tr
+                    >
+                    <tr class="border-b border-border/30"
+                        ><td class="py-2"><span class="inline-block rounded px-1.5 py-0.5 text-xs font-semibold bg-blue-500/15 text-blue-500">POST</span></td
+                        ><td class="py-2"><code class="rounded bg-muted px-1">/v1/pairing/claim</code></td
+                        ><td class="py-2">Claim a pre-generated pairing code</td></tr
                     >
                     <!-- Presence -->
                     <tr class="border-b border-border/30"
@@ -795,7 +811,8 @@ async fn main() -> Result<(), GatewayError> {
             <h3 class="text-base font-medium mt-6 mb-2">Authentication</h3>
             <p class="text-muted-foreground text-sm mb-3">
                 The Rust SDK supports bearer tokens, app credentials, and setting a user token after sign-in.
-                (The Rust test enforcer CLI isn’t present in this repo, so these snippets mirror the SDK README.)
+                The Rust repo includes <code class="rounded bg-muted px-1">cargo run --bin test_enforcer</code>
+                from <code class="rounded bg-muted px-1">src/rust</code>; these snippets mirror the SDK README.
             </p>
             <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden">
                 <Code code={rustAuthBearer} lang="rust" theme="github-light" />
