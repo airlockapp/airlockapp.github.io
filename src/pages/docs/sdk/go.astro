@@ -1,0 +1,256 @@
+---
+import DocsLayout from "../../../layouts/docs.astro";
+import { Code } from "astro:components";
+
+const install = `go get github.com/airlockapp/gateway-clients/src/go/airlock`;
+const quickStartBearer = `package main
+
+import (
+    "fmt"
+    airlock "github.com/airlockapp/gateway-clients/src/go/airlock"
+)
+
+func main() {
+    client := airlock.NewClient("https://igw.airlocks.io", "your-token")
+    echo, err := client.Echo()
+    if err != nil {
+        panic(err)
+    }
+    fmt.Println(echo)
+}`;
+
+const quickStartCredentials = `client := airlock.NewClientWithCredentials(
+    "https://igw.airlocks.io",
+    "your-client-id",
+    "your-client-secret",
+)`;
+
+const authPat = `// After obtaining a PAT from the mobile app (Settings → Access Tokens)
+client.SetPat("airlock_pat_...")
+
+// Clear PAT when no longer needed
+client.SetPat("")`;
+
+const authDual = `// After user login (Device Auth Grant or Auth Code + PKCE)
+client.SetBearerToken(accessToken)`;
+
+const pairingStandard = `// 1. Initiate a pairing session
+resp, err := client.InitiatePairing(airlock.PairingInitiateRequest{
+    EnforcerID:     "my-enforcer",
+    WorkspaceName:  "my-project",
+    X25519PublicKey: myPublicKey,
+})
+
+// 2. Display pairing code to user
+fmt.Printf("Pairing code: %s\\n", resp.PairingCode)
+
+// 3. Poll for approval from the mobile app
+status, err := client.GetPairingStatus(resp.Nonce)
+// status.State == "Completed" → save status.RoutingToken`;
+
+const pairingClaim = `claim, err := client.ClaimPairing(airlock.PairingClaimRequest{
+    Code:           "ABCD-1234",
+    EnforcerID:     "my-enforcer",
+    WorkspaceName:  "my-project",
+    X25519PublicKey: myPublicKey,
+})
+// claim.RoutingToken is ready to use`;
+
+const consent = `status, err := client.CheckConsent()
+if err != nil {
+    var gwErr *airlock.GatewayError
+    if errors.As(err, &gwErr) {
+        switch gwErr.ErrorCode {
+        case "app_consent_required":
+            // User hasn't granted consent
+        case "app_consent_pending":
+            // Consent request sent, waiting for approval
+        }
+    }
+}`;
+
+const submitPoll = `// Submit an artifact for approval
+requestID, err := client.SubmitArtifact(airlock.ArtifactSubmitRequest{
+    EnforcerID:   "my-enforcer",
+    ArtifactHash: "sha256-hash",
+    Ciphertext: airlock.EncryptedPayload{
+        Alg:   "aes-256-gcm",
+        Data:  "base64-encrypted-content",
+        Nonce: "nonce",
+        Tag:   "tag",
+    },
+    Metadata: map[string]string{"routingToken": "rt-abc"},
+})
+if err != nil {
+    panic(err)
+}
+
+// Wait for a decision (long-poll)
+decision, err := client.WaitForDecision(requestID, 30)
+if err != nil {
+    panic(err)
+}
+if decision != nil && decision.Body.IsApproved() {
+    fmt.Printf("Approved: %s\\n", decision.Body.Reason)
+}`;
+
+const errorHandling = `requestID, err := client.SubmitArtifact(req)
+if err != nil {
+    var gwErr *airlock.GatewayError
+    if errors.As(err, &gwErr) {
+        if gwErr.IsQuotaExceeded() { /* 429 */ }
+        if gwErr.IsPairingRevoked() { /* 403 pairing_revoked */ }
+        if gwErr.IsConflict() { /* 409 */ }
+    }
+}`;
+
+const testEnforcer = `# From the repo root
+cd src/go
+
+go run ./cmd/test-enforcer`;
+---
+
+<DocsLayout title="Go SDK — airlock">
+    <div class="space-y-8">
+        <div>
+            <a href="/docs/sdk" class="text-sm text-link hover:underline">← Back to SDKs</a>
+            <h1 class="text-3xl md:text-4xl font-bold mt-4 flex items-center gap-3">
+                <span class="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-cyan-500/15 text-cyan-500 text-sm font-bold">Go</span>
+                Go — <code class="text-2xl">airlock</code>
+            </h1>
+            <p class="text-muted-foreground mt-2">A Go client SDK for the Airlock Integrations Gateway API. Requires Go 1.21+.</p>
+        </div>
+        <div class="flex flex-wrap gap-2">
+            <a href="https://pkg.go.dev/github.com/airlockapp/gateway-clients/src/go/airlock" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-border/50 bg-muted/30 text-xs font-medium hover:bg-muted/60 transition-colors">pkg.go.dev ↗</a>
+            <a href="https://github.com/airlockapp/gateway-clients/tree/main/src/go" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-border/50 bg-muted/30 text-xs font-medium hover:bg-muted/60 transition-colors">Source ↗</a>
+        </div>
+
+        <section class="prose dark:prose-invert max-w-none">
+            <h2 class="text-xl font-semibold mb-4 flex items-center gap-2"><span class="w-1.5 h-6 rounded-full bg-cyan-500"></span>Installation</h2>
+            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={install} lang="bash" theme="github-light" /></div>
+            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={install} lang="bash" theme="github-dark" /></div>
+        </section>
+
+        <section class="prose dark:prose-invert max-w-none pt-6 border-t border-border/30">
+            <h2 class="text-xl font-semibold mb-4 flex items-center gap-2"><span class="w-1.5 h-6 rounded-full bg-cyan-500"></span>Quick Start</h2>
+            <h3 class="text-base font-medium mb-2">With Bearer Token</h3>
+            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={quickStartBearer} lang="go" theme="github-light" /></div>
+            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={quickStartBearer} lang="go" theme="github-dark" /></div>
+            <h3 class="text-base font-medium mt-6 mb-2">With Enforcer App Credentials</h3>
+            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={quickStartCredentials} lang="go" theme="github-light" /></div>
+            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={quickStartCredentials} lang="go" theme="github-dark" /></div>
+        </section>
+
+        <section class="prose dark:prose-invert max-w-none pt-6 border-t border-border/30">
+            <h2 class="text-xl font-semibold mb-4 flex items-center gap-2"><span class="w-1.5 h-6 rounded-full bg-cyan-500"></span>Authentication</h2>
+            <h3 class="text-base font-medium mb-2">Personal Access Token (PAT)</h3>
+            <p class="text-muted-foreground text-sm mb-3">PAT is the recommended authentication for user-scoped operations. Sent via the <code class="rounded bg-muted px-1">X-PAT</code> header.</p>
+            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={authPat} lang="go" theme="github-light" /></div>
+            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={authPat} lang="go" theme="github-dark" /></div>
+            <h3 class="text-base font-medium mt-6 mb-2">Dual Auth (SetBearerToken)</h3>
+            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={authDual} lang="go" theme="github-light" /></div>
+            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={authDual} lang="go" theme="github-dark" /></div>
+            <h3 class="text-base font-medium mt-6 mb-2">Authentication by Enforcer App Kind</h3>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm border-collapse">
+                    <thead><tr class="border-b border-border/50"><th class="text-left py-2 font-medium">Kind</th><th class="text-left py-2 font-medium">OAuth2 Flow</th><th class="text-left py-2 font-medium">SDK Methods</th></tr></thead>
+                    <tbody class="text-muted-foreground">
+                        <tr class="border-b border-border/30"><td class="py-1.5 font-medium text-foreground">Agent / Desktop / VsCode</td><td class="py-1.5">Device Auth Grant (RFC 8628)</td><td class="py-1.5"><code class="rounded bg-muted px-1 text-xs">Login(onUserCode)</code></td></tr>
+                        <tr class="border-b border-border/30"><td class="py-1.5 font-medium text-foreground">Web</td><td class="py-1.5">Auth Code + PKCE (RFC 7636)</td><td class="py-1.5"><code class="rounded bg-muted px-1 text-xs">LoginWithAuthCode</code> or <code class="rounded bg-muted px-1 text-xs">GetAuthorizationURL</code> + <code class="rounded bg-muted px-1 text-xs">ExchangeCode</code></td></tr>
+                        <tr class="border-b border-border/30"><td class="py-1.5 font-medium text-foreground">Mobile</td><td class="py-1.5">Auth Code + PKCE (RFC 7636)</td><td class="py-1.5"><code class="rounded bg-muted px-1 text-xs">GetAuthorizationURL</code> + <code class="rounded bg-muted px-1 text-xs">ExchangeCode</code></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="prose dark:prose-invert max-w-none pt-6 border-t border-border/30">
+            <h2 class="text-xl font-semibold mb-4 flex items-center gap-2"><span class="w-1.5 h-6 rounded-full bg-emerald-500"></span>Gateway Client API</h2>
+            <table class="w-full text-sm border-collapse">
+                <thead><tr class="border-b border-border/50"><th class="text-left py-2 font-medium">Method</th><th class="text-left py-2 font-medium">Description</th></tr></thead>
+                <tbody class="text-muted-foreground">
+                    <tr class="border-b border-border/30"><td class="py-1.5"><code class="rounded bg-muted px-1 text-xs">Echo()</code></td><td class="py-1.5">Gateway discovery / health</td></tr>
+                    <tr class="border-b border-border/30"><td class="py-1.5"><code class="rounded bg-muted px-1 text-xs">SetPat(pat)</code></td><td class="py-1.5">Set Personal Access Token (X-PAT header)</td></tr>
+                    <tr class="border-b border-border/30"><td class="py-1.5"><code class="rounded bg-muted px-1 text-xs">SetBearerToken(token)</code></td><td class="py-1.5">Set Bearer token for user-scoped operations</td></tr>
+                    <tr class="border-b border-border/30"><td class="py-1.5"><code class="rounded bg-muted px-1 text-xs">CheckConsent()</code></td><td class="py-1.5">Check user consent for this enforcer app</td></tr>
+                    <tr class="border-b border-border/30"><td class="py-1.5"><code class="rounded bg-muted px-1 text-xs">SubmitArtifact(request)</code></td><td class="py-1.5">Submit artifact for approval</td></tr>
+                    <tr class="border-b border-border/30"><td class="py-1.5"><code class="rounded bg-muted px-1 text-xs">GetExchangeStatus(requestID)</code></td><td class="py-1.5">Get exchange status</td></tr>
+                    <tr class="border-b border-border/30"><td class="py-1.5"><code class="rounded bg-muted px-1 text-xs">WaitForDecision(requestID, timeout)</code></td><td class="py-1.5">Long-poll for decision</td></tr>
+                    <tr class="border-b border-border/30"><td class="py-1.5"><code class="rounded bg-muted px-1 text-xs">WithdrawExchange(requestID)</code></td><td class="py-1.5">Withdraw pending exchange</td></tr>
+                    <tr class="border-b border-border/30"><td class="py-1.5"><code class="rounded bg-muted px-1 text-xs">InitiatePairing(request)</code></td><td class="py-1.5">Start pairing session</td></tr>
+                    <tr class="border-b border-border/30"><td class="py-1.5"><code class="rounded bg-muted px-1 text-xs">ClaimPairing(request)</code></td><td class="py-1.5">Claim a pre-generated pairing code</td></tr>
+                    <tr class="border-b border-border/30"><td class="py-1.5"><code class="rounded bg-muted px-1 text-xs">GetPairingStatus(nonce)</code></td><td class="py-1.5">Poll pairing status</td></tr>
+                    <tr class="border-b border-border/30"><td class="py-1.5"><code class="rounded bg-muted px-1 text-xs">RevokePairing(routingToken)</code></td><td class="py-1.5">Revoke a pairing</td></tr>
+                    <tr class="border-b border-border/30"><td class="py-1.5"><code class="rounded bg-muted px-1 text-xs">SendHeartbeat(request)</code></td><td class="py-1.5">Presence heartbeat</td></tr>
+                    <tr class="border-b border-border/30"><td class="py-1.5"><code class="rounded bg-muted px-1 text-xs">GetEffectiveDndPolicies(enforcerID, workspaceID, sessionID)</code></td><td class="py-1.5">Fetch effective DND policies</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="prose dark:prose-invert max-w-none pt-6 border-t border-border/30">
+            <h2 class="text-xl font-semibold mb-4 flex items-center gap-2"><span class="w-1.5 h-6 rounded-full bg-blue-500"></span>Auth Client (<code class="text-lg">AirlockAuthClient</code>)</h2>
+            <table class="w-full text-sm border-collapse">
+                <thead><tr class="border-b border-border/50"><th class="text-left py-2 font-medium">Method</th><th class="text-left py-2 font-medium">Purpose</th></tr></thead>
+                <tbody class="text-muted-foreground">
+                    <tr class="border-b border-border/30"><td class="py-1.5"><code class="rounded bg-muted px-1 text-xs">Discover</code></td><td class="py-1.5">OIDC discovery</td></tr>
+                    <tr class="border-b border-border/30"><td class="py-1.5"><code class="rounded bg-muted px-1 text-xs">Login</code></td><td class="py-1.5">Device code login</td></tr>
+                    <tr class="border-b border-border/30"><td class="py-1.5"><code class="rounded bg-muted px-1 text-xs">LoginWithAuthCode</code></td><td class="py-1.5">Auth code + PKCE (local callback)</td></tr>
+                    <tr class="border-b border-border/30"><td class="py-1.5"><code class="rounded bg-muted px-1 text-xs">GetAuthorizationURL</code>, <code class="rounded bg-muted px-1 text-xs">ExchangeCode</code></td><td class="py-1.5">Auth code + PKCE (manual redirect)</td></tr>
+                    <tr class="border-b border-border/30"><td class="py-1.5"><code class="rounded bg-muted px-1 text-xs">RefreshToken</code>, <code class="rounded bg-muted px-1 text-xs">GetAccessToken</code></td><td class="py-1.5">Token refresh / access</td></tr>
+                    <tr class="border-b border-border/30"><td class="py-1.5"><code class="rounded bg-muted px-1 text-xs">Logout</code></td><td class="py-1.5">Sign out (revoke)</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="prose dark:prose-invert max-w-none pt-6 border-t border-border/30">
+            <h2 class="text-xl font-semibold mb-4 flex items-center gap-2"><span class="w-1.5 h-6 rounded-full bg-cyan-500"></span>Pairing</h2>
+            <h3 class="text-base font-medium mb-2">Standard Pairing (Enforcer-Initiated)</h3>
+            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={pairingStandard} lang="go" theme="github-light" /></div>
+            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={pairingStandard} lang="go" theme="github-dark" /></div>
+            <h3 class="text-base font-medium mt-6 mb-2">Pre-Generated Code Pairing (Approver-Initiated)</h3>
+            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={pairingClaim} lang="go" theme="github-light" /></div>
+            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={pairingClaim} lang="go" theme="github-dark" /></div>
+        </section>
+
+        <section class="prose dark:prose-invert max-w-none pt-6 border-t border-border/30">
+            <h2 class="text-xl font-semibold mb-4 flex items-center gap-2"><span class="w-1.5 h-6 rounded-full bg-cyan-500"></span>Consent Check</h2>
+            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={consent} lang="go" theme="github-light" /></div>
+            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={consent} lang="go" theme="github-dark" /></div>
+        </section>
+
+        <section class="prose dark:prose-invert max-w-none pt-6 border-t border-border/30">
+            <h2 class="text-xl font-semibold mb-4 flex items-center gap-2"><span class="w-1.5 h-6 rounded-full bg-cyan-500"></span>Submit and Poll</h2>
+            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={submitPoll} lang="go" theme="github-light" /></div>
+            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={submitPoll} lang="go" theme="github-dark" /></div>
+        </section>
+
+        <section class="prose dark:prose-invert max-w-none pt-6 border-t border-border/30">
+            <h2 class="text-xl font-semibold mb-4 flex items-center gap-2"><span class="w-1.5 h-6 rounded-full bg-red-500"></span>Error Handling</h2>
+            <p class="text-muted-foreground text-sm mb-3">All errors use <code class="rounded bg-muted px-1">*GatewayError</code> with helper methods:</p>
+            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={errorHandling} lang="go" theme="github-light" /></div>
+            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={errorHandling} lang="go" theme="github-dark" /></div>
+        </section>
+
+        <section class="prose dark:prose-invert max-w-none pt-6 border-t border-border/30">
+            <h2 class="text-xl font-semibold mb-4 flex items-center gap-2"><span class="w-1.5 h-6 rounded-full bg-indigo-500"></span>Encryption</h2>
+            <p class="text-muted-foreground text-sm">Uses <strong>X25519 ECDH</strong> via <code class="rounded bg-muted px-1">golang.org/x/crypto</code>:</p>
+            <ul class="list-disc pl-6 space-y-1 text-muted-foreground text-sm mt-3">
+                <li><code class="rounded bg-muted px-1 text-xs">GenerateX25519KeyPair()</code> — raw 32-byte X25519 keypair (base64url)</li>
+                <li><code class="rounded bg-muted px-1 text-xs">DeriveSharedKey(myPrivate, peerPublic)</code> — ECDH + HKDF-SHA256 (info: <code class="rounded bg-muted px-1 text-xs">HARP-E2E-AES256GCM</code>)</li>
+                <li><code class="rounded bg-muted px-1 text-xs">AesGcmEncrypt</code> / <code class="rounded bg-muted px-1 text-xs">AesGcmDecrypt</code> — AES-256-GCM with detached nonce and tag</li>
+            </ul>
+        </section>
+
+        <section class="prose dark:prose-invert max-w-none pt-6 border-t border-border/30">
+            <h2 class="text-xl font-semibold mb-4 flex items-center gap-2"><span class="w-1.5 h-6 rounded-full bg-cyan-500"></span>Test Enforcer CLI</h2>
+            <p class="text-muted-foreground text-sm mb-3">A fully interactive TUI that demonstrates the complete enforcer lifecycle.</p>
+            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={testEnforcer} lang="bash" theme="github-light" /></div>
+            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={testEnforcer} lang="bash" theme="github-dark" /></div>
+            <p class="text-muted-foreground text-sm mt-3">Prerequisites: Go 1.21+. Configuration saved to <code class="rounded bg-muted px-1">~/.airlock/test-enforcer-go.json</code>.</p>
+        </section>
+
+        <div class="mt-8 flex gap-4">
+            <a href="/docs/sdk" class="text-sm text-link hover:underline">← All SDKs</a>
+            <a href="/docs/developer-guide" class="text-sm text-muted-foreground hover:underline">Developer Guide</a>
+        </div>
+    </div>
+</DocsLayout>

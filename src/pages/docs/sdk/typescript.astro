@@ -1,0 +1,263 @@
+---
+import DocsLayout from "../../../layouts/docs.astro";
+import { Code } from "astro:components";
+
+const install = `npm install @airlockapp/gateway-sdk`;
+const quickStartBearer = `import { AirlockGatewayClient } from "@airlockapp/gateway-sdk";
+
+const client = new AirlockGatewayClient({
+  baseUrl: "https://igw.airlocks.io",
+  token: "your-token",
+});`;
+
+const quickStartCredentials = `const client = new AirlockGatewayClient({
+  baseUrl: "https://igw.airlocks.io",
+  clientId: "your-client-id",
+  clientSecret: "your-client-secret",
+});`;
+
+const authPat = `// After obtaining a PAT from the mobile app (Settings → Access Tokens)
+client.setPat("airlock_pat_...");
+
+// Clear PAT when no longer needed
+client.setPat(undefined);`;
+
+const authDual = `// After user login (Device Auth Grant or Auth Code + PKCE)
+client.setBearerToken(accessToken);`;
+
+const pairingStandard = `// 1. Initiate a pairing session
+const resp = await client.initiatePairing({
+    enforcerId: "my-enforcer",
+    workspaceName: "my-project",
+    x25519PublicKey: myPublicKey,
+});
+
+// 2. Display pairing code to user
+console.log(\`Pairing code: \${resp.pairingCode}\`);
+
+// 3. Poll for approval from the mobile app
+const status = await client.getPairingStatus(resp.nonce);
+// status.state === "Completed" → save status.routingToken`;
+
+const pairingClaim = `const claim = await client.claimPairing({
+    code: "ABCD-1234",
+    enforcerId: "my-enforcer",
+    workspaceName: "my-project",
+    x25519PublicKey: myPublicKey,
+});
+// claim.routingToken is ready to use`;
+
+const consent = `import { AirlockGatewayError } from "@airlockapp/gateway-sdk";
+
+try {
+    const status = await client.checkConsent();
+    // status === "approved" — proceed normally
+} catch (e) {
+    if (e instanceof AirlockGatewayError) {
+        if (e.errorCode === "app_consent_required") {
+            // User hasn't granted consent
+        } else if (e.errorCode === "app_consent_pending") {
+            // Consent request sent, waiting for approval
+        }
+    }
+}`;
+
+const encryptSubmit = `const requestId = await client.encryptAndSubmitArtifact({
+    enforcerId: "my-enforcer",
+    plaintextPayload: JSON.stringify({ kind: "shell", cmd: "npm publish" }),
+    encryptionKeyBase64Url: derivedAes256KeyFromPairing,
+    metadata: { routingToken: "rt-abc" },
+});`;
+
+const manualSubmit = `// Submit an artifact for approval
+const requestId = await client.submitArtifact({
+    enforcerId: "my-enforcer",
+    artifactHash: "sha256-hash",
+    ciphertext: {
+        alg: "aes-256-gcm",
+        data: "base64-encrypted-content",
+        nonce: "nonce",
+        tag: "tag",
+    },
+    metadata: { routingToken: "rt-abc" },
+});
+
+// Wait for a decision (long-poll)
+const decision = await client.waitForDecision(requestId, 30);
+if (decision?.body?.decision === "approve") {
+    console.log(\`Approved: \${decision.body.reason}\`);
+}`;
+
+const errorHandling = `import { AirlockGatewayError } from "@airlockapp/gateway-sdk";
+
+try {
+    await client.submitArtifact(request);
+} catch (e) {
+    if (e instanceof AirlockGatewayError) {
+        if (e.isQuotaExceeded) { /* 429 */ }
+        if (e.isPairingRevoked) { /* 403 pairing_revoked */ }
+        if (e.isConflict) { /* 409 */ }
+        console.error(\`Error \${e.statusCode}: \${e.message}\`);
+    }
+}`;
+
+const testEnforcer = `# From the repo root — build the SDK first (required once)
+cd src/typescript
+npm install
+npm run build
+
+# Run the test enforcer
+cd test-enforcer
+npm install
+npm start`;
+---
+
+<DocsLayout title="TypeScript SDK — @airlockapp/gateway-sdk">
+    <div class="space-y-8">
+        <div>
+            <a href="/docs/sdk" class="text-sm text-link hover:underline">← Back to SDKs</a>
+            <h1 class="text-3xl md:text-4xl font-bold mt-4 flex items-center gap-3">
+                <span class="inline-flex items-center justify-center w-10 h-10 rounded-lg bg-blue-500/15 text-blue-500 text-sm font-bold">TS</span>
+                TypeScript — <code class="text-2xl">@airlockapp/gateway-sdk</code>
+            </h1>
+            <p class="text-muted-foreground mt-2">A zero-dependency TypeScript client SDK for the Airlock Integrations Gateway API. Uses native <code class="rounded bg-muted px-1">fetch</code> — works in Node.js 18+ and modern browsers.</p>
+        </div>
+        <div class="flex flex-wrap gap-2">
+            <a href="https://www.npmjs.com/package/@airlockapp/gateway-sdk" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-border/50 bg-muted/30 text-xs font-medium hover:bg-muted/60 transition-colors">NPM ↗</a>
+            <a href="https://github.com/airlockapp/gateway-clients/tree/main/src/typescript" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-border/50 bg-muted/30 text-xs font-medium hover:bg-muted/60 transition-colors">Source ↗</a>
+        </div>
+
+        <section class="prose dark:prose-invert max-w-none">
+            <h2 class="text-xl font-semibold mb-4 flex items-center gap-2"><span class="w-1.5 h-6 rounded-full bg-blue-500"></span>Installation</h2>
+            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={install} lang="bash" theme="github-light" /></div>
+            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={install} lang="bash" theme="github-dark" /></div>
+        </section>
+
+        <section class="prose dark:prose-invert max-w-none pt-6 border-t border-border/30">
+            <h2 class="text-xl font-semibold mb-4 flex items-center gap-2"><span class="w-1.5 h-6 rounded-full bg-blue-500"></span>Quick Start</h2>
+            <h3 class="text-base font-medium mb-2">With Bearer Token</h3>
+            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={quickStartBearer} lang="typescript" theme="github-light" /></div>
+            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={quickStartBearer} lang="typescript" theme="github-dark" /></div>
+            <h3 class="text-base font-medium mt-6 mb-2">With Enforcer App Credentials</h3>
+            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={quickStartCredentials} lang="typescript" theme="github-light" /></div>
+            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={quickStartCredentials} lang="typescript" theme="github-dark" /></div>
+        </section>
+
+        <section class="prose dark:prose-invert max-w-none pt-6 border-t border-border/30">
+            <h2 class="text-xl font-semibold mb-4 flex items-center gap-2"><span class="w-1.5 h-6 rounded-full bg-blue-500"></span>Authentication</h2>
+            <h3 class="text-base font-medium mb-2">Personal Access Token (PAT)</h3>
+            <p class="text-muted-foreground text-sm mb-3">PAT is the recommended authentication for user-scoped operations. Sent via the <code class="rounded bg-muted px-1">X-PAT</code> header.</p>
+            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={authPat} lang="typescript" theme="github-light" /></div>
+            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={authPat} lang="typescript" theme="github-dark" /></div>
+            <h3 class="text-base font-medium mt-6 mb-2">Dual Auth (setBearerToken)</h3>
+            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={authDual} lang="typescript" theme="github-light" /></div>
+            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={authDual} lang="typescript" theme="github-dark" /></div>
+            <h3 class="text-base font-medium mt-6 mb-2">Authentication by Enforcer App Kind</h3>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm border-collapse">
+                    <thead><tr class="border-b border-border/50"><th class="text-left py-2 font-medium">Kind</th><th class="text-left py-2 font-medium">OAuth2 Flow</th><th class="text-left py-2 font-medium">SDK Methods</th></tr></thead>
+                    <tbody class="text-muted-foreground">
+                        <tr class="border-b border-border/30"><td class="py-1.5 font-medium text-foreground">Agent / Desktop / VsCode</td><td class="py-1.5">Device Auth Grant (RFC 8628)</td><td class="py-1.5"><code class="rounded bg-muted px-1 text-xs">login(onUserCode)</code></td></tr>
+                        <tr class="border-b border-border/30"><td class="py-1.5 font-medium text-foreground">Web</td><td class="py-1.5">Auth Code + PKCE (RFC 7636)</td><td class="py-1.5"><code class="rounded bg-muted px-1 text-xs">loginWithAuthCode</code> or <code class="rounded bg-muted px-1 text-xs">getAuthorizationUrl</code> + <code class="rounded bg-muted px-1 text-xs">exchangeCode</code></td></tr>
+                        <tr class="border-b border-border/30"><td class="py-1.5 font-medium text-foreground">Mobile</td><td class="py-1.5">Auth Code + PKCE (RFC 7636)</td><td class="py-1.5"><code class="rounded bg-muted px-1 text-xs">getAuthorizationUrl</code> + <code class="rounded bg-muted px-1 text-xs">exchangeCode</code></td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="prose dark:prose-invert max-w-none pt-6 border-t border-border/30">
+            <h2 class="text-xl font-semibold mb-4 flex items-center gap-2"><span class="w-1.5 h-6 rounded-full bg-emerald-500"></span>Gateway Client API</h2>
+            <table class="w-full text-sm border-collapse">
+                <thead><tr class="border-b border-border/50"><th class="text-left py-2 font-medium">Method</th><th class="text-left py-2 font-medium">Description</th></tr></thead>
+                <tbody class="text-muted-foreground">
+                    <tr class="border-b border-border/30"><td class="py-1.5"><code class="rounded bg-muted px-1 text-xs">echo()</code></td><td class="py-1.5">Gateway discovery / health</td></tr>
+                    <tr class="border-b border-border/30"><td class="py-1.5"><code class="rounded bg-muted px-1 text-xs">setPat(pat)</code></td><td class="py-1.5">Set Personal Access Token (X-PAT header)</td></tr>
+                    <tr class="border-b border-border/30"><td class="py-1.5"><code class="rounded bg-muted px-1 text-xs">setBearerToken(token)</code></td><td class="py-1.5">Set Bearer token for user-scoped operations</td></tr>
+                    <tr class="border-b border-border/30"><td class="py-1.5"><code class="rounded bg-muted px-1 text-xs">checkConsent()</code></td><td class="py-1.5">Check user consent for this enforcer app</td></tr>
+                    <tr class="border-b border-border/30"><td class="py-1.5"><code class="rounded bg-muted px-1 text-xs">submitArtifact(request)</code></td><td class="py-1.5">Submit artifact for approval</td></tr>
+                    <tr class="border-b border-border/30"><td class="py-1.5"><code class="rounded bg-muted px-1 text-xs">encryptAndSubmitArtifact(request)</code></td><td class="py-1.5">JCS + SHA-256 + AES-GCM encrypt, then submit (Node.js)</td></tr>
+                    <tr class="border-b border-border/30"><td class="py-1.5"><code class="rounded bg-muted px-1 text-xs">getExchangeStatus(requestId)</code></td><td class="py-1.5">Get exchange status</td></tr>
+                    <tr class="border-b border-border/30"><td class="py-1.5"><code class="rounded bg-muted px-1 text-xs">waitForDecision(requestId, timeout)</code></td><td class="py-1.5">Long-poll for decision</td></tr>
+                    <tr class="border-b border-border/30"><td class="py-1.5"><code class="rounded bg-muted px-1 text-xs">withdrawExchange(requestId)</code></td><td class="py-1.5">Withdraw pending exchange</td></tr>
+                    <tr class="border-b border-border/30"><td class="py-1.5"><code class="rounded bg-muted px-1 text-xs">initiatePairing(request)</code></td><td class="py-1.5">Start pairing session</td></tr>
+                    <tr class="border-b border-border/30"><td class="py-1.5"><code class="rounded bg-muted px-1 text-xs">claimPairing(request)</code></td><td class="py-1.5">Claim a pre-generated pairing code</td></tr>
+                    <tr class="border-b border-border/30"><td class="py-1.5"><code class="rounded bg-muted px-1 text-xs">getPairingStatus(nonce)</code></td><td class="py-1.5">Poll pairing status</td></tr>
+                    <tr class="border-b border-border/30"><td class="py-1.5"><code class="rounded bg-muted px-1 text-xs">revokePairing(routingToken)</code></td><td class="py-1.5">Revoke a pairing</td></tr>
+                    <tr class="border-b border-border/30"><td class="py-1.5"><code class="rounded bg-muted px-1 text-xs">sendHeartbeat(request)</code></td><td class="py-1.5">Presence heartbeat</td></tr>
+                    <tr class="border-b border-border/30"><td class="py-1.5"><code class="rounded bg-muted px-1 text-xs">getEffectiveDndPolicies(enforcerId, workspaceId, sessionId?)</code></td><td class="py-1.5">Fetch effective DND policies</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="prose dark:prose-invert max-w-none pt-6 border-t border-border/30">
+            <h2 class="text-xl font-semibold mb-4 flex items-center gap-2"><span class="w-1.5 h-6 rounded-full bg-blue-500"></span>Auth Client (<code class="text-lg">AirlockAuthClient</code>)</h2>
+            <table class="w-full text-sm border-collapse">
+                <thead><tr class="border-b border-border/50"><th class="text-left py-2 font-medium">Method</th><th class="text-left py-2 font-medium">Purpose</th></tr></thead>
+                <tbody class="text-muted-foreground">
+                    <tr class="border-b border-border/30"><td class="py-1.5"><code class="rounded bg-muted px-1 text-xs">discover</code></td><td class="py-1.5">OIDC discovery</td></tr>
+                    <tr class="border-b border-border/30"><td class="py-1.5"><code class="rounded bg-muted px-1 text-xs">login</code></td><td class="py-1.5">Device code login</td></tr>
+                    <tr class="border-b border-border/30"><td class="py-1.5"><code class="rounded bg-muted px-1 text-xs">loginWithAuthCode</code></td><td class="py-1.5">Auth code + PKCE (local callback)</td></tr>
+                    <tr class="border-b border-border/30"><td class="py-1.5"><code class="rounded bg-muted px-1 text-xs">getAuthorizationUrl</code>, <code class="rounded bg-muted px-1 text-xs">exchangeCode</code></td><td class="py-1.5">Auth code + PKCE (manual redirect)</td></tr>
+                    <tr class="border-b border-border/30"><td class="py-1.5"><code class="rounded bg-muted px-1 text-xs">refreshTokenAsync</code>, <code class="rounded bg-muted px-1 text-xs">getAccessToken</code></td><td class="py-1.5">Token refresh / access</td></tr>
+                    <tr class="border-b border-border/30"><td class="py-1.5"><code class="rounded bg-muted px-1 text-xs">logout</code></td><td class="py-1.5">Sign out (revoke)</td></tr>
+                </tbody>
+            </table>
+        </section>
+
+        <section class="prose dark:prose-invert max-w-none pt-6 border-t border-border/30">
+            <h2 class="text-xl font-semibold mb-4 flex items-center gap-2"><span class="w-1.5 h-6 rounded-full bg-blue-500"></span>Pairing</h2>
+            <h3 class="text-base font-medium mb-2">Standard Pairing (Enforcer-Initiated)</h3>
+            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={pairingStandard} lang="typescript" theme="github-light" /></div>
+            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={pairingStandard} lang="typescript" theme="github-dark" /></div>
+            <h3 class="text-base font-medium mt-6 mb-2">Pre-Generated Code Pairing (Approver-Initiated)</h3>
+            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={pairingClaim} lang="typescript" theme="github-light" /></div>
+            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={pairingClaim} lang="typescript" theme="github-dark" /></div>
+        </section>
+
+        <section class="prose dark:prose-invert max-w-none pt-6 border-t border-border/30">
+            <h2 class="text-xl font-semibold mb-4 flex items-center gap-2"><span class="w-1.5 h-6 rounded-full bg-blue-500"></span>Consent Check</h2>
+            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={consent} lang="typescript" theme="github-light" /></div>
+            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={consent} lang="typescript" theme="github-dark" /></div>
+        </section>
+
+        <section class="prose dark:prose-invert max-w-none pt-6 border-t border-border/30">
+            <h2 class="text-xl font-semibold mb-4 flex items-center gap-2"><span class="w-1.5 h-6 rounded-full bg-blue-500"></span>Submit and Poll</h2>
+            <h3 class="text-base font-medium mb-2">Encrypt and Submit (Node.js)</h3>
+            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={encryptSubmit} lang="typescript" theme="github-light" /></div>
+            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={encryptSubmit} lang="typescript" theme="github-dark" /></div>
+            <h3 class="text-base font-medium mt-6 mb-2">Manual Ciphertext</h3>
+            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={manualSubmit} lang="typescript" theme="github-light" /></div>
+            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={manualSubmit} lang="typescript" theme="github-dark" /></div>
+        </section>
+
+        <section class="prose dark:prose-invert max-w-none pt-6 border-t border-border/30">
+            <h2 class="text-xl font-semibold mb-4 flex items-center gap-2"><span class="w-1.5 h-6 rounded-full bg-red-500"></span>Error Handling</h2>
+            <p class="text-muted-foreground text-sm mb-3">All errors throw <code class="rounded bg-muted px-1">AirlockGatewayError</code> with helper getters:</p>
+            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={errorHandling} lang="typescript" theme="github-light" /></div>
+            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={errorHandling} lang="typescript" theme="github-dark" /></div>
+        </section>
+
+        <section class="prose dark:prose-invert max-w-none pt-6 border-t border-border/30">
+            <h2 class="text-xl font-semibold mb-4 flex items-center gap-2"><span class="w-1.5 h-6 rounded-full bg-indigo-500"></span>Encryption</h2>
+            <p class="text-muted-foreground text-sm">Uses <strong>X25519 ECDH</strong> via <a href="https://github.com/nickovs/libsodium-wrappers-sumo" target="_blank" rel="noopener noreferrer" class="text-link hover:underline">libsodium-wrappers-sumo</a>:</p>
+            <ul class="list-disc pl-6 space-y-1 text-muted-foreground text-sm mt-3">
+                <li><code class="rounded bg-muted px-1 text-xs">sodium.crypto_box_keypair()</code> — generate X25519 keypair</li>
+                <li><code class="rounded bg-muted px-1 text-xs">sodium.crypto_scalarmult()</code> — X25519 ECDH scalar multiplication</li>
+                <li><code class="rounded bg-muted px-1 text-xs">crypto.hkdfSync('sha256', ...)</code> — HKDF-SHA256 (info: <code class="rounded bg-muted px-1 text-xs">HARP-E2E-AES256GCM</code>)</li>
+            </ul>
+        </section>
+
+        <section class="prose dark:prose-invert max-w-none pt-6 border-t border-border/30">
+            <h2 class="text-xl font-semibold mb-4 flex items-center gap-2"><span class="w-1.5 h-6 rounded-full bg-blue-500"></span>Test Enforcer CLI</h2>
+            <p class="text-muted-foreground text-sm mb-3">A fully interactive TUI that demonstrates the complete enforcer lifecycle.</p>
+            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={testEnforcer} lang="bash" theme="github-light" /></div>
+            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={testEnforcer} lang="bash" theme="github-dark" /></div>
+            <p class="text-muted-foreground text-sm mt-3">Prerequisites: Node.js 18+. Configuration saved to <code class="rounded bg-muted px-1">~/.airlock/test-enforcer-typescript.json</code>.</p>
+        </section>
+
+        <div class="mt-8 flex gap-4">
+            <a href="/docs/sdk" class="text-sm text-link hover:underline">← All SDKs</a>
+            <a href="/docs/developer-guide" class="text-sm text-muted-foreground hover:underline">Developer Guide</a>
+        </div>
+    </div>
+</DocsLayout>
