@@ -14,9 +14,15 @@ const docsItems = [
   { label: "Developer Guide", href: "/docs/developer-guide", icon: null },
   { label: "Airlock Apps", href: "/docs/airlock-apps", icon: null },
   { label: "Gateway SDK", href: "/docs/sdk", icon: null },
+  { label: "n8n", href: "/docs/n8n", icon: null },
 ];
 
-const docsDeveloperLabels = new Set(["Developer Guide", "Airlock Apps", "Gateway SDK"]);
+const docsDeveloperLabels = new Set([
+  "Developer Guide",
+  "Airlock Apps",
+  "Gateway SDK",
+  "n8n",
+]);
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
