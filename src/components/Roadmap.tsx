@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { Users, Workflow, Shield, Clock } from "lucide-react";
+import { Users, Workflow, Shield, Bot, Clock } from "lucide-react";
 
 const roadmapItems = [
     {
@@ -7,6 +7,13 @@ const roadmapItems = [
         title: "n8n multiple approver support",
         description:
             "Add multiple device pairing and approver support for n8n.",
+        status: "in-progress",
+    },
+    {
+        icon: Bot,
+        title: "OpenClaw support",
+        description:
+            "Enforcer integration for OpenClaw agents: sensitive browser automation and tool steps pause on the Integrations Gateway for mobile approval—the same human-in-the-loop pattern as our n8n nodes.",
         status: "in-progress",
     },
     {
