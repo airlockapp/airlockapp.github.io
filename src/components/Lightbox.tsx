@@ -13,9 +13,11 @@ interface LightboxProps {
     initialIndex: number;
     isOpen: boolean;
     onClose: () => void;
+    /** Larger image bounds for screenshots / docs (default keeps hero-style sizing). */
+    variant?: "default" | "fullscreen";
 }
 
-export function Lightbox({ images, initialIndex, isOpen, onClose }: LightboxProps) {
+export function Lightbox({ images, initialIndex, isOpen, onClose, variant = "default" }: LightboxProps) {
     const [currentIndex, setCurrentIndex] = useState(initialIndex);
 
     useEffect(() => {
@@ -53,6 +55,11 @@ export function Lightbox({ images, initialIndex, isOpen, onClose }: LightboxProp
 
     if (!isOpen) return null;
 
+    const imageClassName =
+        variant === "fullscreen"
+            ? "max-h-[min(92vh,calc(100dvh-7rem))] max-w-[min(98vw,1600px)] w-auto rounded-2xl shadow-2xl object-contain"
+            : "max-h-[70vh] max-w-[90vw] md:max-w-[60vw] rounded-2xl shadow-2xl object-contain";
+
     return (
         <AnimatePresence>
             {isOpen && (
@@ -75,7 +82,11 @@ export function Lightbox({ images, initialIndex, isOpen, onClose }: LightboxProp
 
                     {/* Main image area */}
                     <div
-                        className="flex-1 flex items-center justify-center w-full px-16 py-8"
+                        className={
+                            variant === "fullscreen"
+                                ? "flex-1 flex items-center justify-center w-full px-4 md:px-10 py-6 min-h-0"
+                                : "flex-1 flex items-center justify-center w-full px-16 py-8"
+                        }
                         onClick={(e) => e.stopPropagation()}
                     >
                         {/* Previous button */}
@@ -100,7 +111,7 @@ export function Lightbox({ images, initialIndex, isOpen, onClose }: LightboxProp
                                 <img
                                     src={images[currentIndex].src}
                                     alt={images[currentIndex].alt}
-                                    className="max-h-[70vh] max-w-[90vw] md:max-w-[60vw] rounded-2xl shadow-2xl object-contain"
+                                    className={imageClassName}
                                 />
                                 {images[currentIndex].caption && (
                                     <p className="mt-4 text-white/80 text-sm font-medium">

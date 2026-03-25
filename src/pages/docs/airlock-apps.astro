@@ -1,0 +1,112 @@
+---
+import DocsLayout from "../../layouts/docs.astro";
+---
+
+<DocsLayout title="What Are Airlock Apps?">
+    <div class="space-y-8">
+        <div>
+            <h1 class="text-3xl md:text-4xl font-bold">What Are Airlock Apps?</h1>
+            <p class="text-muted-foreground mt-2">
+                How registered enforcer applications relate to the Integrations Gateway, credentials, and user consent.
+            </p>
+        </div>
+
+        <div class="flex flex-wrap gap-3">
+            <a
+                href="/docs/developer-guide"
+                class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-border/50 bg-muted/30 text-sm font-medium text-foreground hover:bg-muted/60 transition-colors"
+            >
+                Developer Guide — register &amp; integrate
+            </a>
+            <a
+                href="https://github.com/airlockapp/gateway-clients"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-border/50 bg-muted/30 text-sm font-medium text-foreground hover:bg-muted/60 transition-colors"
+            >
+                Gateway client SDKs (source)
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    class="w-3.5 h-3.5 text-muted-foreground"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    ><path
+                        d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"
+                    ></path><polyline points="15 3 21 3 21 9"></polyline><line
+                        x1="10"
+                        y1="14"
+                        x2="21"
+                        y2="3"></line></svg
+                >
+            </a>
+        </div>
+
+        <div class="prose dark:prose-invert max-w-none space-y-8">
+            <section>
+                <h2 class="text-xl font-semibold mt-8 mb-4">Enforcer apps on the platform</h2>
+                <p class="text-muted-foreground">
+                    An <strong class="text-foreground">Airlock App</strong> (also called an <strong class="text-foreground">enforcer app</strong>) is a record you create in the Airlock Platform under <strong class="text-foreground">Developer Programme → My Apps</strong>. It represents <em>your</em> integration — a plugin, automation, IDE extension, or custom tool — that talks to the <strong class="text-foreground">Integrations Gateway</strong> to send approval requests to the mobile approver.
+                </p>
+                <p class="text-muted-foreground">
+                    When you register an app, you receive an <strong class="text-foreground">App ID</strong>, a <strong class="text-foreground">Client ID</strong>, and (for <em>confidential</em> client types) a <strong class="text-foreground">Client Secret</strong> that is shown only once. Those values are how the gateway knows which product is calling and which OAuth rules, origins, and consent state apply.
+                </p>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-semibold mt-8 mb-4">Why a Client ID?</h2>
+                <p class="text-muted-foreground">
+                    Every gateway request from a third-party enforcer is attributed to a registered app via <code class="rounded bg-muted px-1.5 py-0.5">X-Client-Id</code> (and, for public clients, origin validation). The Client ID lets Airlock:
+                </p>
+                <ul class="list-disc pl-6 space-y-2 text-muted-foreground">
+                    <li>Bind traffic to the correct app registration and developer programme profile.</li>
+                    <li>Enforce the right client type (public vs confidential) and allowed OAuth flows.</li>
+                    <li>Resolve <strong class="text-foreground">user consent</strong> — the user approves a specific app identity, not an anonymous client.</li>
+                </ul>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-semibold mt-8 mb-4">Why a Client Secret?</h2>
+                <p class="text-muted-foreground">
+                    <strong class="text-foreground">Confidential</strong> app kinds (for example Agent, Desktop, and VS Code extension enforcers) cannot rely on a browser origin alone. They send <code class="rounded bg-muted px-1.5 py-0.5">X-Client-Secret</code> alongside the Client ID so the gateway can verify that the caller possesses the secret issued when the app was registered. That pattern matches common OAuth confidential-client practice: secrets must live only in components you control (servers, native binaries, secure storage), not in public web assets.
+                </p>
+                <p class="text-muted-foreground">
+                    <strong class="text-foreground">Public</strong> clients (typical Web and Mobile enforcer UIs) use Client ID plus origin validation instead of a long-lived secret, because embedded secrets would be extractable from the client.
+                </p>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-semibold mt-8 mb-4">User identity is separate from the app</h2>
+                <p class="text-muted-foreground">
+                    App credentials identify <em>the product</em>. Most operations are still <strong class="text-foreground">user-scoped</strong>: the gateway also needs to know <em>which user</em> the enforcer is acting for. That is usually supplied with a <strong class="text-foreground">Personal Access Token</strong> (<code class="rounded bg-muted px-1.5 py-0.5">X-PAT</code>, recommended) or an OAuth <strong class="text-foreground">Bearer</strong> access token after sign-in. The gateway checks PAT first, then falls back to Bearer. See the <a href="/docs/developer-guide" class="text-link hover:underline">Developer Guide</a> for the full lifecycle.
+                </p>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-semibold mt-8 mb-4">How users give consent</h2>
+                <p class="text-muted-foreground">
+                    Before your enforcer can submit artifacts or complete certain flows, the user must consent to <em>your</em> app. During that flow, information from your developer programme profile (such as name, organization, and contact details) may be shown so the user understands who operates the integration.
+                </p>
+                <p class="text-muted-foreground">
+                    Your integration should call the gateway consent check (for example <code class="rounded bg-muted px-1.5 py-0.5">GET /v1/consent/status</code> via the SDK’s <code class="rounded bg-muted px-1.5 py-0.5">checkConsent</code>) before relying on approval workflows. Typical outcomes include:
+                </p>
+                <ul class="list-disc pl-6 space-y-2 text-muted-foreground">
+                    <li>
+                        <strong class="text-foreground">Approved</strong> — the user has consented; you can proceed with pairing, heartbeats, and artifacts as described in the Developer Guide.
+                    </li>
+                    <li>
+                        <strong class="text-foreground">Consent required / pending / denied</strong> — the API returns error codes such as <code class="rounded bg-muted px-1.5 py-0.5">app_consent_required</code>, <code class="rounded bg-muted px-1.5 py-0.5">app_consent_pending</code>, or <code class="rounded bg-muted px-1.5 py-0.5">app_consent_denied</code>. Your UI should prompt the user to complete or review consent (the response may include a consent URL where applicable).
+                    </li>
+                </ul>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-semibold mt-8 mb-4">What to read next</h2>
+                <p class="text-muted-foreground">
+                    For joining the programme, registering an app, app-kind tables, HTTP examples, and the full enforcer lifecycle (discovery, PAT, pairing, heartbeats, artifacts), use the <a href="/docs/developer-guide" class="text-link hover:underline">Developer Guide</a>. For language-specific APIs, see <a href="/docs/sdk" class="text-link hover:underline">Gateway Client SDKs</a>.
+                </p>
+            </section>
+        </div>
+    </div>
+</DocsLayout>

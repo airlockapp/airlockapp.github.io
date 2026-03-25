@@ -1,13 +1,20 @@
 import { motion } from "framer-motion";
-import { Smartphone, Users, Puzzle, CheckCircle, Clock } from "lucide-react";
+import { Users, Workflow, Shield, Clock } from "lucide-react";
 
 const roadmapItems = [
     {
-        icon: Smartphone,
-        title: "Airlock Apps",
+        icon: Workflow,
+        title: "n8n multiple approver support",
         description:
-            "Allow developers to register 3rd party Airlock Enforcer applications integrated directly to the Airlock Mobile Approver through the Airlock Gateway.",
+            "Add multiple device pairing and approver support for n8n.",
         status: "in-progress",
+    },
+    {
+        icon: Shield,
+        title: "Enterprise Support",
+        description:
+            "Multi-Approver, Workspace Trust Model and Master key / root of trust support.",
+        status: "planned",
     },
     {
         icon: Users,
@@ -16,16 +23,9 @@ const roadmapItems = [
             "Build teams, invite teammates, and configure flexible review and approval policies — \"at least one\", \"at most X\", or \"everyone must review/approve\".",
         status: "planned",
     },
-    {
-        icon: Puzzle,
-        title: "n8n Use Case Samples",
-        description:
-            "Ready-to-use n8n workflow templates that demonstrate Airlock integration for common automation scenarios.",
-        status: "planned",
-    },
 ];
 
-const statusConfig: Record<string, { label: string; color: string; icon: typeof CheckCircle }> = {
+const statusConfig: Record<string, { label: string; color: string; icon: typeof Clock }> = {
     "in-progress": { label: "In Progress", color: "text-airlock-cyan", icon: Clock },
     planned: { label: "Planned", color: "text-muted-foreground", icon: Clock },
 };

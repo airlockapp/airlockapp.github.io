@@ -12,8 +12,11 @@ const docsItems = [
   { label: "CLI", href: "/docs/cli", icon: null },
   { label: "Shells", href: "/docs/shells", icon: null },
   { label: "Developer Guide", href: "/docs/developer-guide", icon: null },
+  { label: "Airlock Apps", href: "/docs/airlock-apps", icon: null },
   { label: "Gateway SDK", href: "/docs/sdk", icon: null },
 ];
+
+const docsDeveloperLabels = new Set(["Developer Guide", "Airlock Apps", "Gateway SDK"]);
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -89,7 +92,7 @@ export function Header() {
                   Installation Guides
                 </p>
                 {docsItems
-                  .filter((i) => i.label !== "Gateway SDK" && i.label !== "Developer Guide")
+                  .filter((i) => !docsDeveloperLabels.has(i.label))
                   .map((item) => (
                   <a
                     key={item.label}
@@ -112,7 +115,7 @@ export function Header() {
                     Developer
                   </p>
                   {docsItems
-                    .filter((i) => i.label === "Developer Guide" || i.label === "Gateway SDK")
+                    .filter((i) => docsDeveloperLabels.has(i.label))
                     .map((item) => (
                     <a
                       key={item.label}
@@ -196,7 +199,7 @@ export function Header() {
                 Docs
               </p>
               {docsItems
-                .filter((i) => i.label !== "Gateway SDK" && i.label !== "Developer Guide")
+                .filter((i) => !docsDeveloperLabels.has(i.label))
                 .map((item) => (
                 <a
                   key={item.label}
@@ -218,7 +221,7 @@ export function Header() {
                 Developer
               </p>
               {docsItems
-                .filter((i) => i.label === "Developer Guide" || i.label === "Gateway SDK")
+                .filter((i) => docsDeveloperLabels.has(i.label))
                 .map((item) => (
                 <a
                   key={item.label}
