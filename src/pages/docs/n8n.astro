@@ -106,6 +106,9 @@ import n8nDark from "../../img/screenshots/n8n_dark.png";
                     <li>
                         <strong class="text-foreground">Requested Actions</strong> — Presets such as Allow/Deny or custom buttons (e.g. primary/danger styles mapped to allow/deny decisions).
                     </li>
+                    <li>
+                        <strong class="text-foreground">Decision delivery ack</strong> — After a decision is received, the node sends a non-blocking <code class="rounded bg-muted px-1.5 py-0.5">POST /v1/acks</code> to the gateway so delivery is recorded (same pattern as the Gateway SDKs’ fire-and-forget ack).
+                    </li>
                 </ul>
             </section>
 

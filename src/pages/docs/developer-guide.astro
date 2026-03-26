@@ -69,7 +69,7 @@ client.setPat("airlock_pat_...");`;
 
 const lifecycleDiagram = `Discovery → Set PAT (or Sign In) → Consent Check → Pair → Heartbeat ↺
                                                               ↓
-                                                  Submit Artifact → Wait for Decision
+                                                  Submit Artifact → Wait for Decision → Ack delivery
                                                               ↓
                                                       Unpair → Sign Out`;
 
@@ -140,6 +140,9 @@ if decision and decision.body:
     else:
         # Block the agent's action
         reason = decision.body.reason  # Optional reason from the approver`;
+
+const pythonSubmitAck = `# After receiving a decision: confirm delivery to the gateway (fire-and-forget)
+await client.submit_ack(msg_id, request_id)`;
 
 const pythonWithdrawExchange = `client.withdraw_exchange(request_id)`;
 
@@ -218,7 +221,7 @@ cargo run --bin test_enforcer`;
                     <li>Join the Developer Programme</li>
                     <li>Register an Enforcer App</li>
                     <li>Integrate using the Gateway SDK</li>
-                    <li>Implement the enforcer lifecycle (PAT or OAuth, consent, pairing, presence, artifacts)</li>
+                    <li>Implement the enforcer lifecycle (PAT or OAuth, consent, pairing, presence, artifacts, decision ack)</li>
                 </ol>
             </section>
 
@@ -675,6 +678,20 @@ cargo run --bin test_enforcer`;
                 <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block">
                     <Code code={pythonWaitForDecision} lang="python" theme="github-dark" />
                 </div>
+                <p class="text-muted-foreground mt-4 mb-2">
+                    <strong class="text-foreground">Acknowledge decision delivery.</strong>
+                    After the approver’s decision is delivered, call
+                    <code class="rounded bg-muted px-1">POST /v1/acks</code>
+                    (via <code class="rounded bg-muted px-1">submit_ack</code> / <code class="rounded bg-muted px-1">submitAck</code> / etc.) so the gateway records receipt.
+                    Pass the decision envelope’s <code class="rounded bg-muted px-1">msgId</code> and the exchange
+                    <code class="rounded bg-muted px-1">request_id</code>. This is fire-and-forget: log failures but do not block your main flow.
+                </p>
+                <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden">
+                    <Code code={pythonSubmitAck} lang="python" theme="github-light" />
+                </div>
+                <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block">
+                    <Code code={pythonSubmitAck} lang="python" theme="github-dark" />
+                </div>
                 <p class="text-muted-foreground mt-2 mb-2">Withdraw a pending request:</p>
                 <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden">
                     <Code code={pythonWithdrawExchange} lang="python" theme="github-light" />
@@ -720,7 +737,8 @@ cargo run --bin test_enforcer`;
                 <p class="text-muted-foreground">
                     The SDK repo includes interactive test enforcer CLIs that implement the full lifecycle.
                     These are useful end-to-end references for pairing, presence, artifact submission,
-                    decision polling, withdrawal, unpairing, and sign-out.
+                    decision polling, delivery acknowledgment (<code class="rounded bg-muted px-1">POST /v1/acks</code>),
+                    withdrawal, unpairing, and sign-out.
                 </p>
 
                 <h3 class="text-lg font-medium mt-4 mb-2">Run the test enforcers</h3>
