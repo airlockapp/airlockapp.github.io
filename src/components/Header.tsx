@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X, Shield, ChevronDown, Github, Home } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { BrandLogo } from "@/components/BrandLogo";
 
 const docsItems = [
   { label: "Claude Code", href: "/docs/claude-code", icon: "/enforcers/claude-code.svg" },
@@ -51,17 +52,10 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-xl">
-      <nav className="container flex h-16 items-center justify-between">
+      <nav className="container flex min-h-20 h-20 md:h-[6.5rem] lg:h-28 items-center justify-between gap-2">
         {/* Logo */}
-        <a href="/" className="flex items-center space-x-3">
-          <img
-            src="/airlock-logo.png"
-            alt="Airlock"
-            className="h-8 w-8 rounded-lg"
-          />
-          <span className="font-bold text-xl bg-gradient-to-r from-airlock-violet-light to-airlock-cyan bg-clip-text text-transparent">
-            Airlock
-          </span>
+        <a href="/" className="flex items-center gap-3 min-w-0" aria-label="Airlock home">
+          <BrandLogo variant="header" />
         </a>
 
         {/* Desktop Navigation */}
