@@ -57,7 +57,7 @@ import n8nDark from "../../img/screenshots/n8n_dark.png";
                     <li>
                         <strong class="text-foreground">Fail Mode</strong> —
                         <em>Fail Closed</em> stops the workflow on timeout or connection errors;
-                        <em>Fail Open</em> treats failures like an allow and continues.
+                        <em>Fail Open</em> treats failures like an approval and continues.
                     </li>
                 </ul>
 
@@ -96,7 +96,7 @@ import n8nDark from "../../img/screenshots/n8n_dark.png";
             <section>
                 <h2 class="text-xl font-semibold mt-8 mb-4">Airlock Enforcer node</h2>
                 <p class="text-muted-foreground">
-                    Pauses the workflow, sends an encrypted payload to the approver’s device, polls with heartbeats, and resumes only after allow/deny (or custom actions).
+                    Pauses the workflow, sends an encrypted payload to the approver’s device, polls with heartbeats, and resumes only after an approve/reject decision (or custom actions mapped to the same HARP values).
                 </p>
                 <ul class="list-disc pl-6 space-y-2 text-muted-foreground">
                     <li><strong class="text-foreground">Artifact Type &amp; Request Label</strong> — Drive how the request appears in the app.</li>
@@ -104,7 +104,7 @@ import n8nDark from "../../img/screenshots/n8n_dark.png";
                         <strong class="text-foreground">Payload Mode</strong> — <em>Raw Text</em> shows monospace content; <em>JSON</em> (e.g. from an n8n expression like <code class="rounded bg-muted px-1.5 py-0.5">{"={{ $json }}"}</code>) renders top-level keys as labeled rows.
                     </li>
                     <li>
-                        <strong class="text-foreground">Requested Actions</strong> — Presets such as Allow/Deny or custom buttons (e.g. primary/danger styles mapped to allow/deny decisions).
+                        <strong class="text-foreground">Requested Actions</strong> — Presets such as Approve/Reject or custom buttons (e.g. primary/danger styles mapped to HARP <code class="rounded bg-muted px-1.5 py-0.5">approve</code> / <code class="rounded bg-muted px-1.5 py-0.5">reject</code>).
                     </li>
                     <li>
                         <strong class="text-foreground">Decision delivery ack</strong> — After a decision is received, the node sends a non-blocking <code class="rounded bg-muted px-1.5 py-0.5">POST /v1/acks</code> to the gateway so delivery is recorded (same pattern as the Gateway SDKs’ fire-and-forget ack).

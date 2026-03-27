@@ -95,8 +95,8 @@ $env:AIRLOCK_FAIL_MODE = "open"
                     plugin sends it to Airlock (via <code
                         class="rounded bg-muted px-1.5 py-0.5">airlock-cli</code
                     >). A notification appears on your Airlock mobile app. You
-                    tap <strong>Approve</strong> or <strong>Deny</strong>. If
-                    you approve, the command runs; if you deny or don't respond
+                    tap <strong>Approve</strong> or <strong>Reject</strong>. If
+                    you approve, the command runs; if you reject or don't respond
                     in time, it does not run. You get a second check before
                     risky commands (e.g. <code
                         class="rounded bg-muted px-1.5 py-0.5">git push</code
@@ -402,7 +402,7 @@ $env:AIRLOCK_FAIL_MODE = "open"
                                 ></td
                             ><td class="py-2"
                                 ><code class="rounded bg-muted px-1">open</code> =
-                                allow command when CLI fails/timeout; <code
+                                run the command when CLI fails/timeout; <code
                                     class="rounded bg-muted px-1">closed</code
                                 > = block</td
                             ></tr
