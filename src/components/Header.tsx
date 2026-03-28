@@ -30,7 +30,7 @@ export function Header() {
   const [isDocsOpen, setIsDocsOpen] = useState(false);
   const docsRef = useRef<HTMLDivElement>(null);
 
-  const navItems = [
+  const sectionNavItems = [
     { label: "Supported IDEs", href: "/#ide-support" },
     { label: "How It Works", href: "/#how-it-works" },
     { label: "Features", href: "/#features" },
@@ -67,7 +67,7 @@ export function Header() {
           >
             <Home className="h-4 w-4" />
           </a>
-          {navItems.map((item) => (
+          {sectionNavItems.map((item) => (
             <a
               key={item.label}
               href={item.href}
@@ -156,7 +156,7 @@ export function Header() {
         </div>
 
         {/* Actions */}
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center gap-4 sm:gap-5">
           <a
             href="https://github.com/airlockapp"
             target="_blank"
@@ -195,7 +195,7 @@ export function Header() {
               <Home className="h-4 w-4" />
               Home
             </a>
-            {navItems.map((item) => (
+            {sectionNavItems.map((item) => (
               <a
                 key={item.label}
                 href={item.href}

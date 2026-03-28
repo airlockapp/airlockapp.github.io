@@ -72,6 +72,14 @@ export function Footer() {
             <ul className="space-y-3">
               <li>
                 <a
+                  href="/contact"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Contact Us
+                </a>
+              </li>
+              <li>
+                <a
                   href="https://github.com/airlockapp"
                   target="_blank"
                   rel="noopener noreferrer"

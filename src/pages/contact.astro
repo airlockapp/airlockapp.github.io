@@ -1,155 +1,415 @@
 ---
-import Layout from '../layouts/main.astro';
-import { Button } from '@/components/ui/button';
-import { Mail, MapPin, Phone, Send } from 'lucide-react';
+import Layout from "../layouts/main.astro";
+
+const title = "Contact — Airlock";
+const web3formsAccessKey =
+    import.meta.env.PUBLIC_WEB3FORMS_ACCESS_KEY ??
+    "d59be842-00de-45a7-b622-00432c340e91";
 ---
 
-<Layout title="Contact Us - GenAI">
-	<section class="py-20 md:py-32">
-		<div class="container mx-auto px-4">
-			<div class="max-w-5xl mx-auto">
-				<div class="text-center space-y-4 mb-16">
-					<h1 class="text-4xl md:text-6xl font-bold">
-						Get in{" "}
-						<span class="bg-gradient-to-r from-purple-600 to-pink-600 dark:from-purple-400 dark:to-pink-400 bg-clip-text text-transparent">
-							Touch
-						</span>
-					</h1>
-					<p class="text-xl text-muted-foreground max-w-2xl mx-auto">
-						Have a question or want to work together? We'd love to hear from you.
-					</p>
-				</div>
+<Layout {title}>
+    <section class="py-20 md:py-32">
+        <div class="container mx-auto px-4">
+            <div class="max-w-3xl mx-auto">
+                <div class="text-center space-y-4 mb-12">
+                    <h1 class="text-4xl md:text-5xl font-bold">
+                        Contact{" "}
+                        <span
+                            class="bg-gradient-to-r from-airlock-violet-light to-airlock-cyan bg-clip-text text-transparent"
+                        >
+                            us
+                        </span>
+                    </h1>
+                    <p class="text-lg text-muted-foreground max-w-xl mx-auto">
+                        Questions about Airlock, HARP, or enterprise use? Send a
+                        message and we will get back to you.
+                    </p>
+                </div>
 
-				<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-					<!-- Contact Form -->
-					<div class="lg:col-span-2">
-						<div class="p-8 rounded-2xl border bg-card">
-							<h2 class="text-2xl font-bold mb-6">Send us a message</h2>
-							<form class="space-y-6">
-								<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-									<div>
-										<label for="name" class="block text-sm font-medium mb-2">
-											Name
-										</label>
-										<input
-											type="text"
-											id="name"
-											name="name"
-											class="flex h-10 w-full rounded-md border bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-											placeholder="John Doe"
-											required
-										/>
-									</div>
-									<div>
-										<label for="email" class="block text-sm font-medium mb-2">
-											Email
-										</label>
-										<input
-											type="email"
-											id="email"
-											name="email"
-											class="flex h-10 w-full rounded-md border bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-											placeholder="john@example.com"
-											required
-										/>
-									</div>
-								</div>
+                <div
+                    class="p-8 md:p-10 rounded-2xl border border-border/50 bg-card/50 backdrop-blur-sm shadow-lg shadow-airlock-violet/5"
+                >
+                    <h2 class="text-xl font-semibold mb-6">Send a message</h2>
 
-								<div>
-									<label for="subject" class="block text-sm font-medium mb-2">
-										Subject
-									</label>
-									<input
-										type="text"
-										id="subject"
-										name="subject"
-										class="flex h-10 w-full rounded-md border bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-										placeholder="How can we help?"
-										required
-									/>
-								</div>
+                    <div
+                        id="contact-toast"
+                        role="status"
+                        aria-live="polite"
+                        aria-atomic="true"
+                        class="mb-0 flex gap-3 items-start rounded-xl border border-transparent p-0 shadow-sm transition-all duration-300 ease-out opacity-0 max-h-0 overflow-hidden -translate-y-1 pointer-events-none [&.is-open]:mb-6 [&.is-open]:max-h-56 [&.is-open]:translate-y-0 [&.is-open]:overflow-visible [&.is-open]:p-4 [&.is-open]:opacity-100 [&.is-open]:pointer-events-auto [&.is-success]:border-airlock-cyan/35 [&.is-success]:bg-airlock-cyan/8 dark:[&.is-success]:bg-airlock-cyan/12 [&.is-error]:border-destructive/40 [&.is-error]:bg-destructive/6"
+                    >
+                        <span
+                            id="contact-toast-icon"
+                            class="shrink-0 mt-0.5 w-9 h-9 rounded-lg flex items-center justify-center"
+                            aria-hidden="true"
+                        ></span>
+                        <div class="min-w-0 flex-1 pt-0.5">
+                            <p
+                                id="contact-toast-title"
+                                class="text-sm font-semibold text-foreground"
+                            ></p>
+                            <p
+                                id="contact-toast-body"
+                                class="text-sm text-muted-foreground mt-1"
+                            ></p>
+                        </div>
+                        <button
+                            type="button"
+                            id="contact-toast-dismiss"
+                            class="shrink-0 rounded-md p-1.5 text-muted-foreground hover:text-foreground hover:bg-muted/80 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-airlock-violet-light/50"
+                            aria-label="Dismiss notification"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="h-4 w-4"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="2"
+                                stroke="currentColor"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M6 18 18 6M6 6l12 12"></path>
+                            </svg>
+                        </button>
+                    </div>
 
-								<div>
-									<label for="message" class="block text-sm font-medium mb-2">
-										Message
-									</label>
-									<textarea
-										id="message"
-										name="message"
-										rows="6"
-										class="flex w-full rounded-md border bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring resize-none"
-										placeholder="Tell us more about your project..."
-										required
-									></textarea>
-								</div>
+                    <form id="form" class="space-y-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label
+                                    for="name"
+                                    class="block text-sm font-medium mb-2 text-foreground"
+                                >
+                                    Name
+                                </label>
+                                <input
+                                    type="text"
+                                    id="name"
+                                    name="name"
+                                    class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-airlock-violet-light/50 focus-visible:ring-offset-2"
+                                    placeholder="Your name"
+                                    required
+                                    autocomplete="name"
+                                />
+                            </div>
+                            <div>
+                                <label
+                                    for="email"
+                                    class="block text-sm font-medium mb-2 text-foreground"
+                                >
+                                    Email
+                                </label>
+                                <input
+                                    type="email"
+                                    id="email"
+                                    name="email"
+                                    class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-airlock-violet-light/50 focus-visible:ring-offset-2"
+                                    placeholder="you@example.com"
+                                    required
+                                    autocomplete="email"
+                                />
+                            </div>
+                        </div>
 
-								<button
-									type="submit"
-									class="inline-flex items-center justify-center gap-2 h-10 px-6 rounded-md bg-primary text-primary-foreground font-medium hover:bg-primary/90 transition-colors w-full md:w-auto"
-								>
-									<Send class="h-4 w-4" />
-									Send Message
-								</button>
-							</form>
-						</div>
-					</div>
+                        <div>
+                            <label
+                                for="subject"
+                                class="block text-sm font-medium mb-2 text-foreground"
+                            >
+                                Subject
+                            </label>
+                            <input
+                                type="text"
+                                id="subject"
+                                name="subject"
+                                class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-airlock-violet-light/50 focus-visible:ring-offset-2"
+                                placeholder="How can we help?"
+                                required
+                            />
+                        </div>
 
-					<!-- Contact Info -->
-					<div class="space-y-6">
-						<div class="p-6 rounded-2xl border bg-card">
-							<div class="inline-flex p-3 rounded-xl bg-gradient-to-br from-purple-500 to-pink-500 mb-4">
-								<Mail class="h-6 w-6 text-white" />
-							</div>
-							<h3 class="text-lg font-semibold mb-2">Email</h3>
-							<p class="text-muted-foreground">hello@genai.com</p>
-							<p class="text-muted-foreground">support@genai.com</p>
-						</div>
+                        <div>
+                            <label
+                                for="message"
+                                class="block text-sm font-medium mb-2 text-foreground"
+                            >
+                                Message
+                            </label>
+                            <textarea
+                                id="message"
+                                name="message"
+                                rows="6"
+                                class="flex w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-airlock-violet-light/50 focus-visible:ring-offset-2 resize-y min-h-[140px]"
+                                placeholder="Your message…"
+                                required
+                            ></textarea>
+                        </div>
 
-						<div class="p-6 rounded-2xl border bg-card">
-							<div class="inline-flex p-3 rounded-xl bg-gradient-to-br from-blue-500 to-cyan-500 mb-4">
-								<Phone class="h-6 w-6 text-white" />
-							</div>
-							<h3 class="text-lg font-semibold mb-2">Phone</h3>
-							<p class="text-muted-foreground">+1 (555) 123-4567</p>
-							<p class="text-sm text-muted-foreground mt-1">Mon-Fri 9am-6pm EST</p>
-						</div>
+                        <!-- hCaptcha: enable for this form in https://app.web3forms.com (Spam protection) -->
+                        <div class="space-y-2">
+                            <span class="block text-sm font-medium text-foreground">
+                                Verification
+                            </span>
+                            <p class="text-xs text-muted-foreground">
+                                Complete the challenge below to send your message.
+                            </p>
+                            <div
+                                id="hcaptcha-widget"
+                                class="h-captcha"
+                                data-captcha="true"
+                                data-size="compact"
+                            ></div>
+                        </div>
 
-						<div class="p-6 rounded-2xl border bg-card">
-							<div class="inline-flex p-3 rounded-xl bg-gradient-to-br from-green-500 to-emerald-500 mb-4">
-								<MapPin class="h-6 w-6 text-white" />
-							</div>
-							<h3 class="text-lg font-semibold mb-2">Office</h3>
-							<p class="text-muted-foreground">
-								123 AI Street<br />
-								San Francisco, CA 94102<br />
-								United States
-							</p>
-						</div>
+                        <button
+                            type="submit"
+                            class="inline-flex items-center justify-center gap-2 h-10 px-6 rounded-md bg-gradient-to-r from-airlock-violet to-airlock-violet-light hover:from-airlock-violet-light hover:to-airlock-violet text-white text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-airlock-violet-light/50 focus-visible:ring-offset-2 w-full md:w-auto disabled:opacity-60 disabled:pointer-events-none"
+                        >
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="h-4 w-4 shrink-0"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke-width="2"
+                                stroke="currentColor"
+                                aria-hidden="true"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    d="M6 12 3.269 3.125A59.769 59.769 0 0 1 21.485 12 59.768 59.768 0 0 1 3.27 20.875L5.999 12Zm0 0h7.5"
+                                ></path>
+                            </svg>
+                            Send message
+                        </button>
+                    </form>
+                </div>
 
-						<!-- Social Links -->
-						<div class="p-6 rounded-2xl border bg-card">
-							<h3 class="text-lg font-semibold mb-4">Follow Us</h3>
-							<div class="flex gap-3">
-								<a href="https://twitter.com" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center h-10 w-10 rounded-md border bg-background hover:bg-accent transition-colors">
-									<svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-										<path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-									</svg>
-								</a>
-								<a href="https://github.com" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center h-10 w-10 rounded-md border bg-background hover:bg-accent transition-colors">
-									<svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-										<path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-									</svg>
-								</a>
-								<a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" class="inline-flex items-center justify-center h-10 w-10 rounded-md border bg-background hover:bg-accent transition-colors">
-									<svg class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24">
-										<path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-									</svg>
-								</a>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</section>
+                <p class="text-center text-sm text-muted-foreground mt-10">
+                    Prefer self-serve? Browse the{" "}
+                    <a href="/docs" class="text-link hover:underline">documentation</a>
+                    {" "}or{" "}
+                    <a
+                        href="https://github.com/airlockapp"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        class="text-link hover:underline">GitHub org</a
+                    >.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <script is:inline>
+        function syncWeb3FormsHcaptchaTheme() {
+            const el = document.getElementById("hcaptcha-widget");
+            if (!el) return;
+            el.setAttribute(
+                "data-theme",
+                document.documentElement.classList.contains("dark")
+                    ? "dark"
+                    : "light",
+            );
+        }
+        syncWeb3FormsHcaptchaTheme();
+        new MutationObserver(syncWeb3FormsHcaptchaTheme).observe(
+            document.documentElement,
+            { attributes: true, attributeFilter: ["class"] },
+        );
+    </script>
+    <script
+        src="https://web3forms.com/client/script.js"
+        async
+        defer></script>
+
+    <script define:vars={{ web3formsAccessKey }} is:inline>
+        const form = document.getElementById("form");
+        const submitBtn = form?.querySelector('button[type="submit"]');
+        const toast = document.getElementById("contact-toast");
+        const toastIcon = document.getElementById("contact-toast-icon");
+        const toastTitle = document.getElementById("contact-toast-title");
+        const toastBody = document.getElementById("contact-toast-body");
+        const toastDismiss = document.getElementById("contact-toast-dismiss");
+
+        if (
+            !form ||
+            !(submitBtn instanceof HTMLButtonElement) ||
+            !toast ||
+            !toastIcon ||
+            !toastTitle ||
+            !toastBody ||
+            !toastDismiss
+        )
+            return;
+
+        let toastTimer = null;
+
+        const successSvg =
+            '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-airlock-cyan" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>';
+        const errorSvg =
+            '<svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-destructive" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" /></svg>';
+
+        function hideToast() {
+            if (toastTimer) {
+                clearTimeout(toastTimer);
+                toastTimer = null;
+            }
+            toast.classList.remove("is-open", "is-success", "is-error");
+            toast.setAttribute("role", "status");
+            toast.removeAttribute("aria-labelledby");
+        }
+
+        function showToast(kind, title, body, autoHideMs) {
+            hideToast();
+            toastTitle.textContent = title;
+            toastBody.textContent = body;
+            toast.classList.remove("is-success", "is-error");
+            toast.classList.add("is-open", kind === "success" ? "is-success" : "is-error");
+            toast.setAttribute("role", kind === "error" ? "alert" : "status");
+
+            toastIcon.className =
+                "shrink-0 mt-0.5 w-9 h-9 rounded-lg flex items-center justify-center " +
+                (kind === "success"
+                    ? "bg-airlock-cyan/15 text-airlock-cyan"
+                    : "bg-destructive/10 text-destructive");
+            toastIcon.innerHTML = kind === "success" ? successSvg : errorSvg;
+
+            if (autoHideMs > 0) {
+                toastTimer = window.setTimeout(hideToast, autoHideMs);
+            }
+        }
+
+        toastDismiss.addEventListener("click", hideToast);
+
+        /**
+         * hCaptcha stores widget id on a node under the form (not always on .h-captcha).
+         * Reset can fail if called before the id is attached — retry with delays.
+         */
+        function resetHcaptchaInForm(formEl) {
+            const hc = window.hcaptcha;
+            if (!hc || typeof hc.reset !== "function") return false;
+
+            const roots = new Set([formEl]);
+            const mount = document.getElementById("hcaptcha-widget");
+            if (mount) roots.add(mount);
+
+            const ids = [];
+            const seen = new Set();
+            roots.forEach(function (root) {
+                const nodes = root.querySelectorAll("[data-hcaptcha-widget-id]");
+                for (let i = 0; i < nodes.length; i++) {
+                    const raw = nodes[i].getAttribute("data-hcaptcha-widget-id");
+                    if (raw == null || raw === "" || seen.has(raw)) continue;
+                    seen.add(raw);
+                    ids.push(raw);
+                }
+            });
+
+            for (let j = 0; j < ids.length; j++) {
+                const raw = ids[j];
+                const asNum = Number(raw);
+                const variants =
+                    Number.isFinite(asNum) && String(asNum) === String(raw).trim()
+                        ? [asNum, raw]
+                        : [raw, asNum];
+                for (let k = 0; k < variants.length; k++) {
+                    try {
+                        hc.reset(variants[k]);
+                        return true;
+                    } catch {
+                        /* try next variant */
+                    }
+                }
+            }
+
+            /* Single-widget fallback (some embeds omit data-hcaptcha-widget-id briefly) */
+            try {
+                hc.reset(0);
+                return true;
+            } catch {
+                /* ignore */
+            }
+            return false;
+        }
+
+        function scheduleHcaptchaReset(formEl) {
+            const run = function () {
+                resetHcaptchaInForm(formEl);
+            };
+            run();
+            queueMicrotask(run);
+            window.setTimeout(run, 50);
+            window.setTimeout(run, 200);
+            window.setTimeout(run, 500);
+            window.setTimeout(run, 1200);
+        }
+
+        form.addEventListener("submit", async (e) => {
+            e.preventDefault();
+            hideToast();
+
+            const hCaptchaField = form.querySelector(
+                'textarea[name="h-captcha-response"]',
+            );
+            if (!hCaptchaField || !hCaptchaField.value.trim()) {
+                showToast(
+                    "error",
+                    "Verification required",
+                    "Please complete the captcha before sending your message.",
+                    0,
+                );
+                return;
+            }
+
+            const formData = new FormData(form);
+            formData.append("access_key", web3formsAccessKey);
+
+            const originalText = submitBtn.textContent;
+
+            submitBtn.textContent = "Sending…";
+            submitBtn.disabled = true;
+
+            try {
+                const response = await fetch("https://api.web3forms.com/submit", {
+                    method: "POST",
+                    body: formData,
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    form.reset();
+                    scheduleHcaptchaReset(form);
+                    showToast(
+                        "success",
+                        "Message sent",
+                        "Thanks for reaching out. We will get back to you soon.",
+                        7000,
+                    );
+                } else {
+                    showToast(
+                        "error",
+                        "Could not send",
+                        typeof data.message === "string" && data.message
+                            ? data.message
+                            : "Please try again in a moment.",
+                        0,
+                    );
+                }
+            } catch (error) {
+                showToast(
+                    "error",
+                    "Something went wrong",
+                    "Check your connection and try again.",
+                    0,
+                );
+            } finally {
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }
+        });
+    </script>
 </Layout>
