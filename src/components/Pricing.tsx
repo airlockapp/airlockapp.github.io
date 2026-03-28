@@ -100,8 +100,8 @@ export function Pricing() {
                 <span className="text-4xl font-bold">$0</span>
               </div>
 
-              <Button className="w-full" variant="outline">
-                Get Started
+              <Button className="w-full" variant="outline" asChild>
+                <a href="/docs/getting-started">Get Started</a>
               </Button>
 
               <div className="pt-4 space-y-3">
@@ -211,8 +211,11 @@ export function Pricing() {
                 })}
               </div>
 
-              <Button className="w-full bg-gradient-to-r from-airlock-violet to-airlock-violet-light hover:from-airlock-violet-light hover:to-airlock-violet text-white">
-                Get Started
+              <Button
+                className="w-full bg-gradient-to-r from-airlock-violet to-airlock-violet-light hover:from-airlock-violet-light hover:to-airlock-violet text-white"
+                asChild
+              >
+                <a href="/docs/getting-started">Get Started</a>
               </Button>
 
               <div className="pt-2 space-y-3">

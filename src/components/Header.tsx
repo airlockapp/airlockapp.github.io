@@ -88,6 +88,17 @@ export function Header() {
             </button>
             {isDocsOpen && (
               <div className="absolute right-0 top-full mt-2 w-56 rounded-xl border border-border/50 bg-background/95 backdrop-blur-xl shadow-lg shadow-black/10 py-2 z-50">
+                <a
+                  href="/docs/getting-started"
+                  className="flex items-center gap-3 px-3 py-2 text-sm font-medium text-foreground hover:bg-muted/50 transition-colors"
+                  onClick={() => setIsDocsOpen(false)}
+                >
+                  <span className="w-5 h-5 rounded bg-airlock-violet/20 flex items-center justify-center flex-shrink-0">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="w-3 h-3 text-airlock-violet-light" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                  </span>
+                  Getting Started
+                </a>
+                <div className="border-t border-border/40 my-1" />
                 <p className="px-3 py-1.5 text-xs font-semibold text-muted-foreground/60 uppercase tracking-wider">
                   Installation Guides
                 </p>
@@ -198,6 +209,16 @@ export function Header() {
               <p className="text-xs font-semibold text-muted-foreground/60 uppercase tracking-wider mb-2">
                 Docs
               </p>
+              <a
+                href="/docs/getting-started"
+                className="flex items-center gap-3 py-2 text-sm font-medium text-foreground hover:text-airlock-violet-light transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                <span className="w-5 h-5 rounded bg-airlock-violet/20 flex items-center justify-center flex-shrink-0">
+                  <svg xmlns="http://www.w3.org/2000/svg" className="w-3 h-3 text-airlock-violet-light" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
+                </span>
+                Getting Started
+              </a>
               {docsItems
                 .filter((i) => !docsDeveloperLabels.has(i.label))
                 .map((item) => (

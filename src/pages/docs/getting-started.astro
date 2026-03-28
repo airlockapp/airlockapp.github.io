@@ -1,0 +1,183 @@
+---
+import DocsLayout from "../../layouts/docs.astro";
+---
+
+<DocsLayout title="Getting Started with Airlock">
+    <div class="space-y-8">
+        <div>
+            <h1 class="text-3xl md:text-4xl font-bold">Getting started</h1>
+            <p class="text-muted-foreground mt-2 max-w-2xl">
+                Install the Airlock Mobile Approver, create your account, pick a
+                plan, then pair your IDE or automation tools so approvals reach your
+                phone.
+            </p>
+        </div>
+
+        <div class="prose dark:prose-invert max-w-none">
+            <h2 class="text-xl font-semibold mt-2 mb-4">1. Download the app</h2>
+            <p class="text-muted-foreground">
+                Install <strong class="text-foreground">Airlock Approver</strong> on
+                your phone. Store listings will be linked here when available.
+            </p>
+            <ul class="space-y-2 text-muted-foreground list-disc pl-5">
+                <li>
+                    <strong class="text-foreground">Apple App Store</strong> —
+                    coming soon
+                </li>
+                <li>
+                    <strong class="text-foreground">Google Play</strong> — coming
+                    soon
+                </li>
+            </ul>
+
+            <h2 class="text-xl font-semibold mt-10 mb-4">
+                2. Create an Airlock account
+            </h2>
+            <ol class="space-y-3 text-muted-foreground list-decimal pl-5">
+                <li>Open the Airlock Approver app.</li>
+                <li>
+                    Sign in with <strong class="text-foreground">Google</strong>,
+                    <strong class="text-foreground">Apple</strong>, or
+                    <strong class="text-foreground">GitHub</strong> (browser-based
+                    OIDC), or use <strong class="text-foreground">Create Account</strong>
+                    for email registration on the login screen.
+                </li>
+            </ol>
+
+            <h2 class="text-xl font-semibold mt-10 mb-4">
+                3. Subscription and plans
+            </h2>
+            <ul class="space-y-3 text-muted-foreground list-disc pl-5">
+                <li>
+                    New accounts are assigned the
+                    <strong class="text-foreground">Free</strong> plan automatically
+                    (default subscription on registration).
+                </li>
+                <li>
+                    To change your plan, open
+                    <strong class="text-foreground">Settings</strong> in the app
+                    (gear icon on the Workspaces screen).
+                </li>
+                <li>
+                    Under the <strong class="text-foreground">SUBSCRIPTION</strong>
+                    section, you will see your current plan, workspace limit, and
+                    monthly approval usage. Tap that card to open the upgrade screen
+                    and choose a plan that fits your budget and usage.
+                </li>
+            </ul>
+            <p class="text-sm text-muted-foreground mt-4">
+                On the Free plan, adding a second workspace opens the subscription
+                flow when you tap
+                <strong class="text-foreground">Pair Another Workspace</strong>.
+            </p>
+
+            <h2 class="text-xl font-semibold mt-10 mb-4">
+                4. Install an enforcer (before pairing)
+            </h2>
+            <p class="text-muted-foreground">
+                Before pairing, install the Host Enforcer that matches where your AI
+                agent runs. The mobile app completes pairing by scanning a QR code
+                or entering a 6-character code shown by the enforcer.
+            </p>
+            <ul class="space-y-2 text-muted-foreground list-disc pl-5 mt-3">
+                <li>
+                    <a href="/docs/claude-code" class="text-link hover:underline"
+                        >Claude Code</a
+                    >
+                    — plugin and pairing commands
+                </li>
+                <li>
+                    <a href="/docs/cursor" class="text-link hover:underline">Cursor</a>,
+                    <a href="/docs/windsurf" class="text-link hover:underline"
+                        >Windsurf</a
+                    >,
+                    <a href="/docs/antigravity" class="text-link hover:underline"
+                        >Antigravity</a
+                    >,
+                    <a href="/docs/copilot" class="text-link hover:underline"
+                        >GitHub Copilot</a
+                    >
+                    — VS Code–style extensions
+                </li>
+                <li>
+                    <a href="/docs/cli" class="text-link hover:underline"
+                        >Airlock CLI</a
+                    >
+                    and
+                    <a href="/docs/shells" class="text-link hover:underline"
+                        >shell plugins</a
+                    >
+                    — terminal workflows
+                </li>
+                <li>
+                    <a href="/docs/n8n" class="text-link hover:underline">n8n</a> —
+                    workflow automation nodes
+                </li>
+                <li>
+                    <a href="/docs/developer-guide" class="text-link hover:underline"
+                        >Developer guide</a
+                    >
+                    — custom apps and Gateway integration
+                </li>
+            </ul>
+
+            <h2 class="text-xl font-semibold mt-10 mb-4">5. Pair your workspace</h2>
+            <ol class="space-y-4 text-muted-foreground list-decimal pl-5">
+                <li>
+                    After you sign in, the app walks you through
+                    <strong class="text-foreground">initial pairing</strong> if you
+                    have not paired a workspace yet (QR scan or enter code). When you
+                    already have a pairing, the home screen is
+                    <strong class="text-foreground">Workspaces</strong>.
+                </li>
+                <li>
+                    From <strong class="text-foreground">Workspaces</strong>, open
+                    pairings in either way:
+                    <ul class="list-disc pl-5 mt-2 space-y-1">
+                        <li>
+                            Tap the <strong class="text-foreground">settings</strong> icon
+                            (top left), then <strong class="text-foreground"
+                                >Workspace Pairings</strong
+                            >, or
+                        </li>
+                        <li>
+                            Tap the floating action button (link icon) at the bottom —
+                            tooltip <strong class="text-foreground"
+                                >Workspace Pairings</strong
+                            >.
+                        </li>
+                    </ul>
+                </li>
+                <li>
+                    On <strong class="text-foreground">Workspace Pairings</strong>,
+                    tap <strong class="text-foreground">Pair Another Workspace</strong>.
+                </li>
+                <li>
+                    Choose <strong class="text-foreground">Scan QR</strong> or
+                    <strong class="text-foreground">Enter Code</strong> (segmented
+                    control on the pairing screen). Scan the QR shown by your enforcer,
+                    or type the 6-character pairing code.
+                </li>
+                <li>
+                    <strong class="text-foreground">Claude Code</strong> typically
+                    shows a text pairing code — use
+                    <strong class="text-foreground">Enter Code</strong> and submit.
+                </li>
+                <li>
+                    For <strong class="text-foreground">n8n</strong>, follow the
+                    workflow and credential steps in the
+                    <a href="/docs/n8n" class="text-link hover:underline"
+                        >n8n integration guide</a
+                    >.
+                </li>
+            </ol>
+        </div>
+
+        <div class="mt-8 flex gap-4 flex-wrap">
+            <a href="/docs" class="text-sm text-link hover:underline">← All Docs</a>
+            <a href="/" class="text-sm text-muted-foreground hover:underline"
+                >Back to Airlock</a
+            >
+        </div>
+    </div>
+</DocsLayout>
