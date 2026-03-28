@@ -120,6 +120,14 @@ export function Footer() {
               </li>
               <li>
                 <a
+                  href="/docs/eula"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  End User License Agreement
+                </a>
+              </li>
+              <li>
+                <a
                   href="/docs/data-security"
                   className="text-sm text-muted-foreground hover:text-foreground transition-colors"
                 >
