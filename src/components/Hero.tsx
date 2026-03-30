@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, Shield, Bot, Smartphone, CheckCircle, ChevronLeft, ChevronRight } from "lucide-react";
 import { Lightbox } from "@/components/Lightbox";
+import { StoreBadges } from "@/components/StoreBadges";
 
 const heroScreenshots = [
   {
@@ -156,11 +157,24 @@ export function Hero() {
               })}
             </motion.div>
 
+            {/* Mobile app */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.32 }}
+              className="flex flex-col items-center lg:items-start gap-3 w-full pt-4"
+            >
+              <span className="text-xs text-muted-foreground/50 uppercase tracking-widest font-semibold">
+                Mobile app
+              </span>
+              <StoreBadges />
+            </motion.div>
+
             {/* Supported IDEs */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.35 }}
+              transition={{ duration: 0.5, delay: 0.36 }}
               className="flex flex-col items-center lg:items-start gap-3 pt-4 w-full"
             >
               <span className="text-xs text-muted-foreground/50 uppercase tracking-widest font-semibold">Works with</span>

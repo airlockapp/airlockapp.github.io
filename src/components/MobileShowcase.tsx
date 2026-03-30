@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Lightbox } from "@/components/Lightbox";
+import { StoreBadges } from "@/components/StoreBadges";
 
 const screenshots = [
     {
@@ -137,6 +138,15 @@ export function MobileShowcase() {
                         notifications, review artifacts, and sign decisions — all from your
                         phone.
                     </motion.p>
+                    <motion.div
+                        initial={{ opacity: 0, y: 12 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ duration: 0.45, delay: 0.15 }}
+                        className="pt-2 w-full flex justify-center lg:justify-start"
+                    >
+                        <StoreBadges />
+                    </motion.div>
                 </div>
 
                 {/* Carousel: prev / current / next */}

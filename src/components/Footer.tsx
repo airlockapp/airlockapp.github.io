@@ -1,5 +1,6 @@
 import { Github } from "lucide-react";
 import { BrandLogo } from "@/components/BrandLogo";
+import { APP_STORE_URL, PLAY_STORE_URL } from "@/lib/store-badges";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
@@ -7,9 +8,9 @@ export function Footer() {
   return (
     <footer className="border-t border-border/40 bg-muted/20">
       <div className="container mx-auto px-4 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-8">
           {/* Brand */}
-          <div className="space-y-4">
+          <div className="space-y-4 md:col-span-2 lg:col-span-1">
             <div className="flex items-center">
               <BrandLogo variant="footer" />
             </div>
@@ -66,8 +67,35 @@ export function Footer() {
             </ul>
           </div>
 
-          {/* Resources */}
+          {/* Apps — mobile */}
           <div>
+            <h3 className="font-semibold mb-4 text-sm">Apps</h3>
+            <ul className="space-y-3">
+              <li>
+                <a
+                  href={APP_STORE_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Apple AppStore
+                </a>
+              </li>
+              <li>
+                <a
+                  href={PLAY_STORE_URL}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  Google Play
+                </a>
+              </li>
+            </ul>
+          </div>
+
+          {/* Resources */}
+          <div className="md:col-span-2 lg:col-span-1">
             <h3 className="font-semibold mb-4 text-sm">Resources</h3>
             <ul className="space-y-3">
               <li>
