@@ -1,19 +1,12 @@
 import { motion } from "framer-motion";
-import { Users, Workflow, Shield, Bot, Clock } from "lucide-react";
+import { Users, Shield, Clock, MessagesSquare } from "lucide-react";
 
 const roadmapItems = [
     {
-        icon: Workflow,
-        title: "n8n multiple approver support",
+        icon: MessagesSquare,
+        title: "AI session companion (conversation-first)",
         description:
-            "Add multiple device pairing and approver support for n8n.",
-        status: "in-progress",
-    },
-    {
-        icon: Bot,
-        title: "OpenClaw support",
-        description:
-            "Enforcer integration for OpenClaw agents: sensitive browser automation and tool steps pause on the Integrations Gateway for mobile approval—the same human-in-the-loop pattern as our n8n nodes.",
+            "Chat-thread UX on mobile for live agent sessions: actionable cards for agent questions, progress, plan review, and diff review—each backed by typed artifacts. Ductor-compatible transport bridge, HARP-aligned prompt/session/review mapping, and Requests reframed as a filtered inbox into the conversation.",
         status: "in-progress",
     },
     {

@@ -16,6 +16,7 @@ const docsItems = [
   { label: "Airlock Apps", href: "/docs/airlock-apps", icon: null },
   { label: "Gateway SDK", href: "/docs/sdk", icon: null },
   { label: "n8n", href: "/docs/n8n", icon: null },
+  { label: "OpenClaw", href: "/docs/openclaw", icon: null },
 ];
 
 const docsDeveloperLabels = new Set([
@@ -23,6 +24,7 @@ const docsDeveloperLabels = new Set([
   "Airlock Apps",
   "Gateway SDK",
   "n8n",
+  "OpenClaw",
 ]);
 
 export function Header() {
