@@ -2,9 +2,11 @@
 import DocsLayout from "../../layouts/docs.astro";
 import { Code } from "astro:components";
 
-const installPlugin = `openclaw plugins install ./openclaw-airlock`;
+const installNpm = `npm install @airlockapp/openclaw-airlock`;
 
-const buildFromSource = `cd plugins/openclaw-airlock
+const installOpenclaw = `openclaw plugins install @airlockapp/openclaw-airlock`;
+
+const buildFromSource = `cd src/openclaw-airlock
 npm install
 npm run build`;
 
@@ -53,18 +55,22 @@ openclaw airlock pair`;
 
         <div class="flex flex-wrap gap-2">
             <a
-                href="https://github.com/airlockapp/extensions/tree/main/plugins/openclaw-airlock"
+                href="https://www.npmjs.com/package/@airlockapp/openclaw-airlock"
                 target="_blank"
                 rel="noopener noreferrer"
-                class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-border/50 bg-muted/30 text-xs font-medium hover:bg-muted/60 transition-colors"
-                >Source ↗</a>
+                class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-border/50 bg-muted/30 text-xs font-medium hover:bg-muted/60 transition-colors">NPM ↗</a>
+            <a
+                href="https://github.com/airlockapp/gateway-clients/tree/main/src/openclaw-airlock"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-border/50 bg-muted/30 text-xs font-medium hover:bg-muted/60 transition-colors">Source ↗</a>
         </div>
 
         <div class="prose dark:prose-invert max-w-none space-y-8">
             <section>
                 <h2 class="text-xl font-semibold mt-8 mb-4">Overview</h2>
                 <p class="text-muted-foreground">
-                    The <strong class="text-foreground">openclaw-airlock</strong> plugin adds Airlock Gateway integration to an OpenClaw-compatible agent runtime. It can intercept configured tools before they run, send encrypted approval requests to the <a href="https://apps.apple.com/us/app/airlock-approver/id6760250865" target="_blank" rel="noopener noreferrer" class="text-link hover:underline">Airlock mobile app</a> (<a href="https://play.google.com/store/apps/details?id=com.airlockapp.io" target="_blank" rel="noopener noreferrer" class="text-link hover:underline">Google Play</a>), and verify signed decisions. Pairing uses pre-generated codes and X25519 ECDH; payloads use AES-256-GCM per the HARP model used across Airlock clients.
+                    The <strong class="text-foreground">@airlockapp/openclaw-airlock</strong> package adds Airlock Gateway integration to an OpenClaw-compatible agent runtime. It can intercept configured tools before they run, send encrypted approval requests to the <a href="https://apps.apple.com/us/app/airlock-approver/id6760250865" target="_blank" rel="noopener noreferrer" class="text-link hover:underline">Airlock mobile app</a> (<a href="https://play.google.com/store/apps/details?id=com.airlockapp.io" target="_blank" rel="noopener noreferrer" class="text-link hover:underline">Google Play</a>), and verify signed decisions. Pairing uses pre-generated codes and X25519 ECDH; payloads use AES-256-GCM per the HARP model used across Airlock clients.
                 </p>
             </section>
 
@@ -86,12 +92,17 @@ openclaw airlock pair`;
             <section>
                 <h2 class="text-xl font-semibold mt-8 mb-4">Install the plugin</h2>
                 <p class="text-muted-foreground">
-                    From your OpenClaw workspace, install the plugin directory (path may vary if you vendor the repo):
+                    From npm (recommended), add the package to your project:
                 </p>
-                <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden not-prose"><Code code={installPlugin} lang="bash" theme="github-light" /></div>
-                <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block not-prose"><Code code={installPlugin} lang="bash" theme="github-dark" /></div>
+                <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden not-prose"><Code code={installNpm} lang="bash" theme="github-light" /></div>
+                <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block not-prose"><Code code={installNpm} lang="bash" theme="github-dark" /></div>
                 <p class="text-muted-foreground mt-4">
-                    To build from a clone of <a href="https://github.com/airlockapp/extensions" target="_blank" rel="noopener noreferrer" class="text-link hover:underline">airlockapp/extensions</a>:
+                    From your OpenClaw workspace, install via the OpenClaw CLI:
+                </p>
+                <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden not-prose"><Code code={installOpenclaw} lang="bash" theme="github-light" /></div>
+                <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block not-prose"><Code code={installOpenclaw} lang="bash" theme="github-dark" /></div>
+                <p class="text-muted-foreground mt-4">
+                    To build from a clone of <a href="https://github.com/airlockapp/gateway-clients" target="_blank" rel="noopener noreferrer" class="text-link hover:underline">airlockapp/gateway-clients</a>:
                 </p>
                 <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden not-prose"><Code code={buildFromSource} lang="bash" theme="github-light" /></div>
                 <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block not-prose"><Code code={buildFromSource} lang="bash" theme="github-dark" /></div>
@@ -100,7 +111,7 @@ openclaw airlock pair`;
             <section>
                 <h2 class="text-xl font-semibold mt-8 mb-4">Configure the plugin</h2>
                 <p class="text-muted-foreground">
-                    Add an <code class="rounded bg-muted px-1.5 py-0.5">airlock</code> entry under OpenClaw plugin config (see <a href="https://github.com/airlockapp/extensions/blob/main/plugins/openclaw-airlock/openclaw.plugin.json" target="_blank" rel="noopener noreferrer" class="text-link hover:underline">openclaw.plugin.json</a> for the schema). Example:
+                    Add an <code class="rounded bg-muted px-1.5 py-0.5">airlock</code> entry under OpenClaw plugin config (see <a href="https://github.com/airlockapp/gateway-clients/blob/main/src/openclaw-airlock/openclaw.plugin.json" target="_blank" rel="noopener noreferrer" class="text-link hover:underline">openclaw.plugin.json</a> for the schema). Example:
                 </p>
                 <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden not-prose"><Code code={pluginConfig} lang="json" theme="github-light" /></div>
                 <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block not-prose"><Code code={pluginConfig} lang="json" theme="github-dark" /></div>
@@ -166,7 +177,7 @@ openclaw airlock pair`;
                     <li><strong class="text-foreground">Gateway errors</strong> — Run <code class="rounded bg-muted px-1.5 py-0.5">openclaw airlock setup</code> and check URL and network policy.</li>
                 </ul>
                 <p class="text-muted-foreground mt-4">
-                    Full detail, architecture diagram, and development commands are in the <a href="https://github.com/airlockapp/extensions/blob/main/plugins/openclaw-airlock/README.md" target="_blank" rel="noopener noreferrer" class="text-link hover:underline">plugin README on GitHub</a>.
+                    Full detail, architecture diagram, and development commands are in the <a href="https://github.com/airlockapp/gateway-clients/blob/main/src/openclaw-airlock/README.md" target="_blank" rel="noopener noreferrer" class="text-link hover:underline">package README on GitHub</a>.
                 </p>
             </section>
 
