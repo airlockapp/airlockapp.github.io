@@ -1,0 +1,294 @@
+---
+import DocsLayout from "../../layouts/docs.astro";
+import { Code } from "astro:components";
+
+const archAscii = `┌─────────────┐    ┌──────────────────┐    ┌─────────────────────┐    ┌─────────────────┐
+│  Telegram   │───▶│  OpenClaw Agent   │───▶│  Airlock Plugin     │───▶│ Airlock Gateway │
+│  User Chat  │    │  (VPS)           │    │  (enforcer)         │    │ (igw.airlocks.io)│
+└─────────────┘    └──────────────────┘    └─────────────────────┘    └────────┬────────┘
+                          ▲                                                     │
+                          │                                                     ▼
+                          │                                           ┌─────────────────┐
+                          └───────────────────────────────────────────│ Airlock Mobile   │
+                                        decision (approve/reject)     │ App (phone)      │
+                                                                      └─────────────────┘`;
+
+const pluginConfig = `{
+  "plugins": {
+    "entries": {
+      "airlock": {
+        "enabled": true,
+        "config": {
+          "gatewayUrl": "https://igw.airlocks.io",
+          "enforcerId": "my-enforcer-001",
+          "pat": "airpat_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "clientId": "your-client-id",
+          "clientSecret": "your-client-secret",
+          "pairingCode": "XXXXXX",
+          "protectedTools": [
+            "shell.exec",
+            "shell.*",
+            "computer.*"
+          ]
+        }
+      }
+    }
+  }
+}`;
+
+const restartJournal = `systemctl restart openclaw
+
+journalctl -u openclaw --no-pager | grep -i airlock
+# Expected: [Airlock] Plugin loaded — enforcer=my-enforcer-001, failMode=closed, protectedTools=shell.exec,shell.*,computer.*`;
+
+const consentCmd = `openclaw airlock consent`;
+
+const pairCmd = `openclaw airlock pair`;
+
+const telegramPair = `openclaw pairing approve telegram <pairing-code>`;
+
+const setupCmd = `openclaw airlock setup`;
+
+const summaryAscii = `┌───────────────────────────────────────────────────────────────────────┐
+│                        SETUP (one-time)                               │
+├───────────────────────────────────────────────────────────────────────┤
+│                                                                       │
+│  1. Deploy plugin ──► openclaw extensions directory                   │
+│  2. Configure      ──► openclaw.json (credentials + protectedTools)   │
+│  3. Consent        ──► openclaw airlock consent  ──► Mobile: Authorize│
+│  4. Pair           ──► openclaw airlock pair      ──► Mobile: Confirm │
+│  5. Verify         ──► openclaw airlock setup                         │
+│                                                                       │
+├───────────────────────────────────────────────────────────────────────┤
+│                        RUNTIME (per tool call)                        │
+├───────────────────────────────────────────────────────────────────────┤
+│                                                                       │
+│  User ──telegram──► Agent ──tool call──► Airlock Plugin               │
+│                                              │                        │
+│                                              ▼                        │
+│                                    Encrypt (AES-256-GCM)              │
+│                                              │                        │
+│                                              ▼                        │
+│                                    Airlock Gateway                     │
+│                                              │                        │
+│                                              ▼                        │
+│                                    Mobile Push Notification            │
+│                                              │                        │
+│                                         ┌────┴────┐                   │
+│                                     Approve    Reject                 │
+│                                         │         │                   │
+│                                         ▼         ▼                   │
+│  User ◄──telegram──◄ Agent ◄── tool proceeds / tool blocked          │
+│                                                                       │
+└───────────────────────────────────────────────────────────────────────┘`;
+
+const explicitJson = `{
+  "action": "Create system user account",
+  "details": "useradd -m demo-user && passwd demo-user",
+  "risk": "Creates a new user with shell access"
+}`;
+---
+
+<DocsLayout title="OpenClaw + Telegram demo">
+    <div class="space-y-8">
+        <div class="flex items-center gap-4">
+            <div
+                class="w-16 h-16 rounded-xl bg-airlock-violet/20 flex items-center justify-center text-lg font-bold text-airlock-violet-light"
+            >
+                TG
+            </div>
+            <div>
+                <h1 class="text-3xl md:text-4xl font-bold">OpenClaw + Telegram demo</h1>
+                <p class="text-muted-foreground mt-1">
+                    AI agent on Telegram, gated by Airlock mobile approval
+                </p>
+            </div>
+        </div>
+
+        <div class="prose dark:prose-invert max-w-none space-y-8">
+            <section>
+                <p class="text-muted-foreground">
+                    Chat with your OpenClaw agent via Telegram. When the agent runs a sensitive tool (shell, computer control, etc.), Airlock intercepts the call and sends an encrypted approval request to your phone. You approve or reject from the <a href="https://apps.apple.com/us/app/airlock-approver/id6760250865" target="_blank" rel="noopener noreferrer" class="text-link hover:underline">Airlock mobile app</a> (<a href="https://play.google.com/store/apps/details?id=com.airlockapp.io" target="_blank" rel="noopener noreferrer" class="text-link hover:underline">Google Play</a>) in real time.
+                </p>
+                <p class="text-muted-foreground mt-4">
+                    This walkthrough assumes you have already followed <a href="/docs/openclaw" class="text-link hover:underline">OpenClaw &amp; Airlock Gateway</a> for installation, server deployment, and base configuration.
+                </p>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-semibold mt-8 mb-4">Architecture</h2>
+                <pre class="rounded-lg border border-border/50 bg-muted/20 p-4 text-[11px] sm:text-xs overflow-x-auto text-muted-foreground not-prose font-mono leading-snug whitespace-pre">{archAscii}</pre>
+                <p class="text-muted-foreground mt-4">
+                    Payloads are end-to-end encrypted with <strong class="text-foreground">X25519 ECDH + AES-256-GCM</strong>. The gateway routes ciphertext only.
+                </p>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-semibold mt-8 mb-4">Prerequisites</h2>
+                <div class="overflow-x-auto not-prose text-sm">
+                    <table class="w-full border-collapse border border-border/50 rounded-lg">
+                        <thead>
+                            <tr class="bg-muted/40">
+                                <th class="border border-border/50 px-3 py-2 text-left font-medium">Component</th>
+                                <th class="border border-border/50 px-3 py-2 text-left font-medium">Requirement</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-muted-foreground">
+                            <tr><td class="border border-border/50 px-3 py-2">OpenClaw VPS</td><td class="border border-border/50 px-3 py-2">Installed and running (e.g. <a href="https://marketplace.digitalocean.com/apps/openclaw" target="_blank" rel="noopener noreferrer" class="text-link hover:underline">DigitalOcean Marketplace</a>)</td></tr>
+                            <tr><td class="border border-border/50 px-3 py-2">Telegram bot</td><td class="border border-border/50 px-3 py-2">Created via <a href="https://t.me/BotFather" target="_blank" rel="noopener noreferrer" class="text-link hover:underline">@BotFather</a>, token configured in OpenClaw</td></tr>
+                            <tr><td class="border border-border/50 px-3 py-2">Airlock account</td><td class="border border-border/50 px-3 py-2"><a href="https://airlockapp.io" target="_blank" rel="noopener noreferrer" class="text-link hover:underline">airlockapp.io</a> with an enforcer app</td></tr>
+                            <tr><td class="border border-border/50 px-3 py-2">Airlock mobile app</td><td class="border border-border/50 px-3 py-2">Installed on your phone</td></tr>
+                            <tr><td class="border border-border/50 px-3 py-2">Airlock plugin</td><td class="border border-border/50 px-3 py-2">Deployed under <code class="rounded bg-muted px-1">~/.openclaw/extensions/airlock</code> per <a href="/docs/openclaw" class="text-link hover:underline">installation guide</a></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-semibold mt-8 mb-4">Step 1: Configure the Airlock plugin</h2>
+                <p class="text-muted-foreground">
+                    In <code class="rounded bg-muted px-1.5 py-0.5">~/.openclaw/openclaw.json</code>, ensure the Airlock entry matches your credentials and protected tools:
+                </p>
+                <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden not-prose"><Code code={pluginConfig} lang="json" theme="github-light" /></div>
+                <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block not-prose"><Code code={pluginConfig} lang="json" theme="github-dark" /></div>
+
+                <h3 class="text-lg font-medium mt-6 mb-2">Protected tools for this demo</h3>
+                <div class="overflow-x-auto not-prose text-sm">
+                    <table class="w-full border-collapse border border-border/50 rounded-lg">
+                        <thead>
+                            <tr class="bg-muted/40">
+                                <th class="border border-border/50 px-3 py-2 text-left font-medium">Pattern</th>
+                                <th class="border border-border/50 px-3 py-2 text-left font-medium">What it catches</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-muted-foreground">
+                            <tr><td class="border border-border/50 px-3 py-2"><code>shell.exec</code></td><td class="border border-border/50 px-3 py-2">Direct shell execution</td></tr>
+                            <tr><td class="border border-border/50 px-3 py-2"><code>shell.*</code></td><td class="border border-border/50 px-3 py-2">Shell-related tools (exec, read, write, etc.)</td></tr>
+                            <tr><td class="border border-border/50 px-3 py-2"><code>computer.*</code></td><td class="border border-border/50 px-3 py-2">Screen, mouse, keyboard automation</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="text-muted-foreground mt-4">Restart after edits:</p>
+                <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden not-prose"><Code code={restartJournal} lang="bash" theme="github-light" /></div>
+                <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block not-prose"><Code code={restartJournal} lang="bash" theme="github-dark" /></div>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-semibold mt-8 mb-4">Step 2: User consent (Authorized Apps)</h2>
+                <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden not-prose"><Code code={consentCmd} lang="bash" theme="github-light" /></div>
+                <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block not-prose"><Code code={consentCmd} lang="bash" theme="github-dark" /></div>
+                <p class="text-muted-foreground mt-4">
+                    The CLI calls the gateway, sends a push to the mobile app, and polls about every 5 seconds. On the phone: open Airlock, respond to <strong class="text-foreground">New app requesting access</strong> (or <strong class="text-foreground">Settings → Authorized Apps</strong>), review the app and <strong class="text-foreground">Authorize</strong>.
+                </p>
+                <h3 class="text-lg font-medium mt-6 mb-2">Consent states</h3>
+                <div class="overflow-x-auto not-prose text-sm">
+                    <table class="w-full border-collapse border border-border/50 rounded-lg">
+                        <thead>
+                            <tr class="bg-muted/40">
+                                <th class="border border-border/50 px-3 py-2 text-left font-medium">Status</th>
+                                <th class="border border-border/50 px-3 py-2 text-left font-medium">Meaning</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-muted-foreground">
+                            <tr><td class="border border-border/50 px-3 py-2"><code>approved</code></td><td class="border border-border/50 px-3 py-2">Proceed to pairing</td></tr>
+                            <tr><td class="border border-border/50 px-3 py-2"><code>required</code></td><td class="border border-border/50 px-3 py-2">First contact; push sent</td></tr>
+                            <tr><td class="border border-border/50 px-3 py-2"><code>pending</code></td><td class="border border-border/50 px-3 py-2">Waiting for user response</td></tr>
+                            <tr><td class="border border-border/50 px-3 py-2"><code>denied</code></td><td class="border border-border/50 px-3 py-2">User rejected; cannot proceed until resolved</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-semibold mt-8 mb-4">Step 3: Pair with the mobile app</h2>
+                <p class="text-muted-foreground">
+                    Generate a pairing code in the Airlock app (<strong class="text-foreground">Workspaces</strong> → your workspace → pre-generated codes or add enforcer). Put the code in <code class="rounded bg-muted px-1.5 py-0.5">pairingCode</code>, restart OpenClaw if needed, then run:
+                </p>
+                <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden not-prose"><Code code={pairCmd} lang="bash" theme="github-light" /></div>
+                <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block not-prose"><Code code={pairCmd} lang="bash" theme="github-dark" /></div>
+                <p class="text-muted-foreground mt-4">
+                    The CLI validates consent, performs X25519 ECDH, and writes <code class="rounded bg-muted px-1.5 py-0.5">~/.openclaw/.airlock/pairing-state.json</code>. In the app, the enforcer should show as online for the workspace.
+                </p>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-semibold mt-8 mb-4">Step 4: Pair Telegram (DM access)</h2>
+                <ol class="list-decimal pl-6 space-y-2 text-muted-foreground">
+                    <li>Message your bot on Telegram so it issues a pairing code.</li>
+                    <li>On the server, approve that pairing:</li>
+                </ol>
+                <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden not-prose mt-2"><Code code={telegramPair} lang="bash" theme="github-light" /></div>
+                <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block not-prose mt-2"><Code code={telegramPair} lang="bash" theme="github-dark" /></div>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-semibold mt-8 mb-4">Step 5: Verify</h2>
+                <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden not-prose"><Code code={setupCmd} lang="bash" theme="github-light" /></div>
+                <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block not-prose"><Code code={setupCmd} lang="bash" theme="github-dark" /></div>
+                <p class="text-muted-foreground mt-4">
+                    Expect green checks for gateway connectivity, consent, pairing, and your protected tool list.
+                </p>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-semibold mt-8 mb-4">Demo scenario 1: Approve a shell command</h2>
+                <p class="text-muted-foreground">
+                    Ask the bot to check disk usage. The agent may call <code class="rounded bg-muted px-1.5 py-0.5">shell.exec</code> with <code class="rounded bg-muted px-1.5 py-0.5">df -h</code>. Airlock sends a push; approve on the phone; the agent completes and replies on Telegram. If you reject, the agent should explain the action was blocked. If you do not respond, the default fail-closed timeout (often about 5 minutes) blocks the tool.
+                </p>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-semibold mt-8 mb-4">Demo scenario 2: Reject a risky command</h2>
+                <p class="text-muted-foreground">
+                    Ask for a destructive cleanup (for example removing files under <code class="rounded bg-muted px-1.5 py-0.5">/tmp</code>). When the push shows the exact command, reject if it is too risky; the agent should offer a safer follow-up (such as listing directory contents first).
+                </p>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-semibold mt-8 mb-4">Demo scenario 3: Explicit <code class="rounded bg-muted px-1 text-sm">airlock_request_approval</code></h2>
+                <p class="text-muted-foreground">
+                    For high-stakes actions the agent can call <code class="rounded bg-muted px-1.5 py-0.5">airlock_request_approval</code> with structured fields, for example:
+                </p>
+                <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden not-prose"><Code code={explicitJson} lang="json" theme="github-light" /></div>
+                <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block not-prose"><Code code={explicitJson} lang="json" theme="github-dark" /></div>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-semibold mt-8 mb-4">Talking points</h2>
+                <div class="overflow-x-auto not-prose text-sm">
+                    <table class="w-full border-collapse border border-border/50 rounded-lg">
+                        <thead>
+                            <tr class="bg-muted/40">
+                                <th class="border border-border/50 px-3 py-2 text-left font-medium">Topic</th>
+                                <th class="border border-border/50 px-3 py-2 text-left font-medium">Detail</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-muted-foreground">
+                            <tr><td class="border border-border/50 px-3 py-2">E2E encryption</td><td class="border border-border/50 px-3 py-2">X25519 ECDH + AES-256-GCM; gateway sees ciphertext only</td></tr>
+                            <tr><td class="border border-border/50 px-3 py-2">Fail-closed</td><td class="border border-border/50 px-3 py-2">Phone off or timeout blocks the tool by default</td></tr>
+                            <tr><td class="border border-border/50 px-3 py-2">Glob patterns</td><td class="border border-border/50 px-3 py-2"><code class="rounded bg-muted px-1">shell.*</code> groups related tools; tune breadth to your risk model</td></tr>
+                            <tr><td class="border border-border/50 px-3 py-2">Same plugin</td><td class="border border-border/50 px-3 py-2">Shared enforcement model with IDE and CLI enforcers where Airlock is integrated</td></tr>
+                            <tr><td class="border border-border/50 px-3 py-2">DND policies</td><td class="border border-border/50 px-3 py-2">Gateway can auto-approve low-risk requests under configured policies</td></tr>
+                            <tr><td class="border border-border/50 px-3 py-2">Consent</td><td class="border border-border/50 px-3 py-2">Users explicitly authorize enforcer apps before enforcement</td></tr>
+                            <tr><td class="border border-border/50 px-3 py-2">Audit</td><td class="border border-border/50 px-3 py-2">Approvals and rejections are logged with timestamps and signer metadata</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-semibold mt-8 mb-4">Flow summary</h2>
+                <pre class="rounded-lg border border-border/50 bg-muted/20 p-4 text-[10px] sm:text-xs overflow-x-auto text-muted-foreground not-prose font-mono leading-tight whitespace-pre">{summaryAscii}</pre>
+            </section>
+
+            <section>
+                <h2 class="text-xl font-semibold mt-8 mb-4">Related</h2>
+                <ul class="list-disc pl-6 space-y-2 text-muted-foreground">
+                    <li><a href="/docs/openclaw" class="text-link hover:underline">OpenClaw &amp; Airlock Gateway</a> — full installation and configuration</li>
+                    <li><a href="/docs/developer-guide" class="text-link hover:underline">Developer Guide</a></li>
+                    <li><a href="https://github.com/airlockapp/gateway-clients/blob/main/src/openclaw-airlock/README.md" target="_blank" rel="noopener noreferrer" class="text-link hover:underline">openclaw-airlock README ↗</a></li>
+                </ul>
+            </section>
+        </div>
+    </div>
+</DocsLayout>
