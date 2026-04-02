@@ -26,9 +26,10 @@ const pluginConfig = `{
           "clientSecret": "your-client-secret",
           "pairingCode": "XXXXXX",
           "protectedTools": [
-            "shell.exec",
+            "exec",
             "shell.*",
-            "computer.*"
+            "computer.*",
+            "*"
           ]
         }
       }
@@ -39,7 +40,7 @@ const pluginConfig = `{
 const restartJournal = `systemctl restart openclaw
 
 journalctl -u openclaw --no-pager | grep -i airlock
-# Expected: [Airlock] Plugin loaded — enforcer=my-enforcer-001, failMode=closed, protectedTools=shell.exec,shell.*,computer.*`;
+# Expected: [Airlock] Plugin loaded — enforcer=my-enforcer-001, failMode=closed, protectedTools=exec,shell.*,computer.*,*`;
 
 const consentCmd = `openclaw airlock consent`;
 
@@ -162,9 +163,10 @@ const explicitJson = `{
                             </tr>
                         </thead>
                         <tbody class="text-muted-foreground">
-                            <tr><td class="border border-border/50 px-3 py-2"><code>shell.exec</code></td><td class="border border-border/50 px-3 py-2">Direct shell execution</td></tr>
-                            <tr><td class="border border-border/50 px-3 py-2"><code>shell.*</code></td><td class="border border-border/50 px-3 py-2">Shell-related tools (exec, read, write, etc.)</td></tr>
+                            <tr><td class="border border-border/50 px-3 py-2"><code>exec</code></td><td class="border border-border/50 px-3 py-2">OpenClaw's built-in shell/bash execution tool (its internal name is <code class="rounded bg-muted px-1">exec</code>)</td></tr>
+                            <tr><td class="border border-border/50 px-3 py-2"><code>shell.*</code></td><td class="border border-border/50 px-3 py-2">Shell-related tools in the <code class="rounded bg-muted px-1">shell.*</code> namespace</td></tr>
                             <tr><td class="border border-border/50 px-3 py-2"><code>computer.*</code></td><td class="border border-border/50 px-3 py-2">Screen, mouse, keyboard automation</td></tr>
+                            <tr><td class="border border-border/50 px-3 py-2"><code>*</code></td><td class="border border-border/50 px-3 py-2">Every tool call regardless of name — recommended for maximum coverage</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -233,7 +235,7 @@ const explicitJson = `{
             <section>
                 <h2 class="text-xl font-semibold mt-8 mb-4">Demo scenario 1: Approve a shell command</h2>
                 <p class="text-muted-foreground">
-                    Ask the bot to check disk usage. The agent may call <code class="rounded bg-muted px-1.5 py-0.5">shell.exec</code> with <code class="rounded bg-muted px-1.5 py-0.5">df -h</code>. Airlock sends a push; approve on the phone; the agent completes and replies on Telegram. If you reject, the agent should explain the action was blocked. If you do not respond, the default fail-closed timeout (often about 5 minutes) blocks the tool.
+                    Ask the bot to check disk usage. The agent calls the <code class="rounded bg-muted px-1.5 py-0.5">exec</code> tool with <code class="rounded bg-muted px-1.5 py-0.5">df -h</code> (OpenClaw's internal shell tool name). Airlock sends a push; approve on the phone; the agent completes and replies on Telegram. If you reject, the agent should explain the action was blocked. If you do not respond, the default fail-closed timeout (often about 5 minutes) blocks the tool.
                 </p>
             </section>
 
