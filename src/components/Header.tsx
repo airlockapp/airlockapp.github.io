@@ -1,31 +1,16 @@
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Menu, X, Shield, ChevronDown, Github, Home } from "lucide-react";
+import { Menu, X, ChevronDown, Github, Home } from "lucide-react";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { BrandLogo } from "@/components/BrandLogo";
 
 const docsItems = [
-  { label: "Claude Code", href: "/docs/claude-code", icon: "/enforcers/claude-code.svg" },
-  { label: "Cursor", href: "/docs/cursor", icon: "/enforcers/cursor.png" },
-  { label: "Windsurf", href: "/docs/windsurf", icon: "/enforcers/windsurf.png" },
-  { label: "Antigravity", href: "/docs/antigravity", icon: "/enforcers/antigravity.png" },
-  { label: "Copilot", href: "/docs/copilot", icon: "/enforcers/copilot.png" },
-  { label: "CLI", href: "/docs/cli", icon: null },
-  { label: "Shells", href: "/docs/shells", icon: null },
-  { label: "Developer Guide", href: "/docs/developer-guide", icon: null },
-  { label: "Airlock Apps", href: "/docs/airlock-apps", icon: null },
-  { label: "Gateway SDK", href: "/docs/sdk", icon: null },
-  { label: "n8n", href: "/docs/n8n", icon: null },
-  { label: "OpenClaw", href: "/docs/openclaw", icon: null },
+  { label: "Developer Guide", href: "/docs/developer-guide" },
+  { label: "Airlock Apps", href: "/docs/airlock-apps" },
+  { label: "Gateway SDK", href: "/docs/sdk" },
+  { label: "n8n", href: "/docs/n8n" },
+  { label: "OpenClaw", href: "/docs/openclaw" },
 ];
-
-const docsDeveloperLabels = new Set([
-  "Developer Guide",
-  "Airlock Apps",
-  "Gateway SDK",
-  "n8n",
-  "OpenClaw",
-]);
 
 export function Header() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -33,15 +18,13 @@ export function Header() {
   const docsRef = useRef<HTMLDivElement>(null);
 
   const sectionNavItems = [
-    { label: "Supported IDEs", href: "/#ide-support" },
     { label: "How It Works", href: "/#how-it-works" },
     { label: "Features", href: "/#features" },
     { label: "Protocol", href: "/#protocol" },
-    { label: "Pricing", href: "/#pricing" },
     { label: "FAQ", href: "/#faq" },
+    { label: "Contact", href: "/contact" },
   ];
 
-  // Close docs dropdown on outside click
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (docsRef.current && !docsRef.current.contains(event.target as Node)) {
@@ -55,12 +38,10 @@ export function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border/40 bg-background/80 backdrop-blur-xl">
       <nav className="container flex min-h-20 h-20 md:h-[6.5rem] lg:h-28 items-center justify-between gap-2">
-        {/* Logo */}
         <a href="/" className="flex items-center gap-3 min-w-0" aria-label="Airlock home">
           <BrandLogo variant="header" />
         </a>
 
-        {/* Desktop Navigation */}
         <div className="hidden md:flex items-center space-x-8">
           <a
             href="/"
@@ -79,7 +60,6 @@ export function Header() {
             </a>
           ))}
 
-          {/* Docs Dropdown */}
           <div ref={docsRef} className="relative">
             <button
               onClick={() => setIsDocsOpen(!isDocsOpen)}
@@ -90,59 +70,19 @@ export function Header() {
             </button>
             {isDocsOpen && (
               <div className="absolute right-0 top-full mt-2 w-56 rounded-xl border border-border/50 bg-background/95 backdrop-blur-xl shadow-lg shadow-black/10 py-2 z-50">
-                <a
-                  href="/docs/getting-started"
-                  className="flex items-center gap-3 px-3 py-2 text-sm font-medium text-foreground hover:bg-muted/50 transition-colors"
-                  onClick={() => setIsDocsOpen(false)}
-                >
-                  <span className="w-5 h-5 rounded bg-airlock-violet/20 flex items-center justify-center flex-shrink-0">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="w-3 h-3 text-airlock-violet-light" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-                  </span>
-                  Getting Started
-                </a>
-                <div className="border-t border-border/40 my-1" />
-                <p className="px-3 py-1.5 text-xs font-semibold text-muted-foreground/60 uppercase tracking-wider">
-                  Installation Guides
-                </p>
-                {docsItems
-                  .filter((i) => !docsDeveloperLabels.has(i.label))
-                  .map((item) => (
+                {docsItems.map((item) => (
                   <a
                     key={item.label}
                     href={item.href}
                     className="flex items-center gap-3 px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
                     onClick={() => setIsDocsOpen(false)}
                   >
-                    {item.icon ? (
-                      <img src={item.icon} alt={item.label} className="w-5 h-5 rounded" />
-                    ) : (
-                      <span className="w-5 h-5 rounded bg-airlock-cyan/20 flex items-center justify-center flex-shrink-0">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="w-3 h-3 text-airlock-cyan" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-                      </span>
-                    )}
-                    {item.label === "CLI" || item.label === "Shells" ? item.label : `${item.label} Enforcer`}
+                    <span className="w-5 h-5 rounded bg-emerald-500/20 flex items-center justify-center flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="w-3 h-3 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M17.25 6.75 22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3-4.5 16.5" /></svg>
+                    </span>
+                    {item.label}
                   </a>
                 ))}
-                <div className="border-t border-border/40 mt-1 pt-1">
-                  <p className="px-3 py-1.5 text-xs font-semibold text-muted-foreground/60 uppercase tracking-wider">
-                    Developer
-                  </p>
-                  {docsItems
-                    .filter((i) => docsDeveloperLabels.has(i.label))
-                    .map((item) => (
-                    <a
-                      key={item.label}
-                      href={item.href}
-                      className="flex items-center gap-3 px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted/50 transition-colors"
-                      onClick={() => setIsDocsOpen(false)}
-                    >
-                      <span className="w-5 h-5 rounded bg-emerald-500/20 flex items-center justify-center flex-shrink-0">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="w-3 h-3 text-emerald-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M17.25 6.75 22.5 12l-5.25 5.25m-10.5 0L1.5 12l5.25-5.25m7.5-3-4.5 16.5" /></svg>
-                      </span>
-                      {item.label}
-                    </a>
-                  ))}
-                </div>
                 <div className="border-t border-border/40 mt-1 pt-1">
                   <a
                     href="/docs"
@@ -157,7 +97,6 @@ export function Header() {
           </div>
         </div>
 
-        {/* Actions */}
         <div className="flex items-center gap-4 sm:gap-5">
           <a
             href="https://github.com/airlockapp"
@@ -168,9 +107,11 @@ export function Header() {
           >
             <Github className="h-5 w-5" />
           </a>
+          <Button size="sm" className="hidden sm:inline-flex" asChild>
+            <a href="/contact">Contact Sales</a>
+          </Button>
           <ThemeToggle />
 
-          {/* Mobile Menu Button */}
           <button
             className="md:hidden text-foreground"
             onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -185,7 +126,6 @@ export function Header() {
         </div>
       </nav>
 
-      {/* Mobile Menu */}
       {isMenuOpen && (
         <div className="md:hidden border-t border-border/40">
           <div className="container py-4 space-y-4">
@@ -211,41 +151,7 @@ export function Header() {
               <p className="text-xs font-semibold text-muted-foreground/60 uppercase tracking-wider mb-2">
                 Docs
               </p>
-              <a
-                href="/docs/getting-started"
-                className="flex items-center gap-3 py-2 text-sm font-medium text-foreground hover:text-airlock-violet-light transition-colors"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                <span className="w-5 h-5 rounded bg-airlock-violet/20 flex items-center justify-center flex-shrink-0">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="w-3 h-3 text-airlock-violet-light" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" /></svg>
-                </span>
-                Getting Started
-              </a>
-              {docsItems
-                .filter((i) => !docsDeveloperLabels.has(i.label))
-                .map((item) => (
-                <a
-                  key={item.label}
-                  href={item.href}
-                  className="flex items-center gap-3 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {item.icon ? (
-                    <img src={item.icon} alt={item.label} className="w-5 h-5 rounded" />
-                  ) : (
-                    <span className="w-5 h-5 rounded bg-airlock-cyan/20 flex items-center justify-center flex-shrink-0">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="w-3 h-3 text-airlock-cyan" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><path strokeLinecap="round" strokeLinejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" /></svg>
-                    </span>
-                  )}
-                  {item.label === "CLI" || item.label === "Shells" ? item.label : `${item.label} Enforcer`}
-                </a>
-              ))}
-              <p className="text-xs font-semibold text-muted-foreground/60 uppercase tracking-wider mb-2 mt-3">
-                Developer
-              </p>
-              {docsItems
-                .filter((i) => docsDeveloperLabels.has(i.label))
-                .map((item) => (
+              {docsItems.map((item) => (
                 <a
                   key={item.label}
                   href={item.href}
@@ -258,6 +164,13 @@ export function Header() {
                   {item.label}
                 </a>
               ))}
+              <a
+                href="/docs"
+                className="block py-2 text-sm text-link hover:text-foreground transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                All Docs →
+              </a>
             </div>
           </div>
         </div>

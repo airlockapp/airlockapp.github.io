@@ -65,6 +65,7 @@ export default {
       },
       fontFamily: {
         sans: ["Inter var", ...fontFamily.sans],
+        mono: ["JetBrains Mono", ...fontFamily.mono],
       },
       keyframes: {
         marquee: {

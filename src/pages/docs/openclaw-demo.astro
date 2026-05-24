@@ -4,13 +4,13 @@ import { Code } from "astro:components";
 
 const archAscii = `┌─────────────┐    ┌──────────────────┐    ┌─────────────────────┐    ┌─────────────────┐
 │  Telegram   │───▶│  OpenClaw Agent   │───▶│  Airlock Plugin     │───▶│ Airlock Gateway │
-│  User Chat  │    │  (VPS)           │    │  (enforcer)         │    │ (igw.airlocks.io)│
+│  User Chat  │    │  (VPS)           │    │  (enforcer)         │    │ (<your-gateway-host>)│
 └─────────────┘    └──────────────────┘    └─────────────────────┘    └────────┬────────┘
                           ▲                                                     │
                           │                                                     ▼
                           │                                           ┌─────────────────┐
-                          └───────────────────────────────────────────│ Airlock Mobile   │
-                                        decision (approve/reject)     │ App (phone)      │
+                          └───────────────────────────────────────────│ Mobile Approver  │
+                                        decision (approve/reject)     │ (org-distributed)│
                                                                       └─────────────────┘`;
 
 const pluginConfig = `{
@@ -19,7 +19,7 @@ const pluginConfig = `{
       "airlock": {
         "enabled": true,
         "config": {
-          "gatewayUrl": "https://igw.airlocks.io",
+          "gatewayUrl": "https://<your-gateway-host>",
           "enforcerId": "my-enforcer-001",
           "pat": "airpat_xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
           "clientId": "your-client-id",
@@ -101,15 +101,29 @@ const explicitJson = `{
             <div>
                 <h1 class="text-3xl md:text-4xl font-bold">OpenClaw + Telegram demo</h1>
                 <p class="text-muted-foreground mt-1">
-                    AI agent on Telegram, gated by Airlock mobile approval
+                    AI agent on Telegram, gated by Mobile Approver decisions
                 </p>
             </div>
         </div>
 
+
+        <div
+            class="rounded-xl border border-indigo-500/30 bg-indigo-500/10 px-4 py-3 text-sm text-muted-foreground"
+        >
+            <strong class="text-foreground">Enterprise deployment.</strong>
+            Configure integrations against your organization's Gateway at
+            <code class="rounded bg-muted px-1 text-xs">https://&lt;your-gateway-host&gt;</code>
+            and identity at
+            <code class="rounded bg-muted px-1 text-xs">https://&lt;your-auth-host&gt;/realms/&lt;your-realm&gt;</code>.
+            See the <a href="/docs/getting-started" class="text-link hover:underline">Getting started</a>
+            and <a href="/docs/developer-guide" class="text-link hover:underline">Developer Guide</a>.
+        </div>
+
+
         <div class="prose dark:prose-invert max-w-none space-y-8">
             <section>
                 <p class="text-muted-foreground">
-                    Chat with your OpenClaw agent via Telegram. When the agent runs a sensitive tool (shell, computer control, etc.), Airlock intercepts the call and sends an encrypted approval request to your phone. You approve or reject from the <a href="https://apps.apple.com/us/app/airlock-approver/id6760250865" target="_blank" rel="noopener noreferrer" class="text-link hover:underline">Airlock mobile app</a> (<a href="https://play.google.com/store/apps/details?id=com.airlockapp.io" target="_blank" rel="noopener noreferrer" class="text-link hover:underline">Google Play</a>) in real time.
+                    Chat with your OpenClaw agent via Telegram. When the agent runs a sensitive tool (shell, computer control, etc.), Airlock intercepts the call and sends an encrypted approval request to your organization's Mobile Approver. You approve or reject in real time from the approver device.
                 </p>
                 <p class="text-muted-foreground mt-4">
                     This walkthrough assumes you have already followed <a href="/docs/openclaw" class="text-link hover:underline">OpenClaw &amp; Airlock Gateway</a> for installation, server deployment, and base configuration.
@@ -137,8 +151,8 @@ const explicitJson = `{
                         <tbody class="text-muted-foreground">
                             <tr><td class="border border-border/50 px-3 py-2">OpenClaw VPS</td><td class="border border-border/50 px-3 py-2">Installed and running (e.g. <a href="https://marketplace.digitalocean.com/apps/openclaw" target="_blank" rel="noopener noreferrer" class="text-link hover:underline">DigitalOcean Marketplace</a>)</td></tr>
                             <tr><td class="border border-border/50 px-3 py-2">Telegram bot</td><td class="border border-border/50 px-3 py-2">Created via <a href="https://t.me/BotFather" target="_blank" rel="noopener noreferrer" class="text-link hover:underline">@BotFather</a>, token configured in OpenClaw</td></tr>
-                            <tr><td class="border border-border/50 px-3 py-2">Airlock account</td><td class="border border-border/50 px-3 py-2"><a href="https://airlockapp.io" target="_blank" rel="noopener noreferrer" class="text-link hover:underline">airlockapp.io</a> with an enforcer app</td></tr>
-                            <tr><td class="border border-border/50 px-3 py-2">Airlock mobile app</td><td class="border border-border/50 px-3 py-2">Installed on your phone</td></tr>
+                            <tr><td class="border border-border/50 px-3 py-2">Enterprise credentials</td><td class="border border-border/50 px-3 py-2">Registered enforcer app (Client ID/Secret, PAT) from your administrator</td></tr>
+                            <tr><td class="border border-border/50 px-3 py-2">Mobile Approver</td><td class="border border-border/50 px-3 py-2">Distributed via your organization (MDM or internal catalog)</td></tr>
                             <tr><td class="border border-border/50 px-3 py-2">Airlock plugin</td><td class="border border-border/50 px-3 py-2">Deployed under <code class="rounded bg-muted px-1">~/.openclaw/extensions/airlock</code> per <a href="/docs/openclaw" class="text-link hover:underline">installation guide</a></td></tr>
                         </tbody>
                     </table>
@@ -180,7 +194,7 @@ const explicitJson = `{
                 <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden not-prose"><Code code={consentCmd} lang="bash" theme="github-light" /></div>
                 <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block not-prose"><Code code={consentCmd} lang="bash" theme="github-dark" /></div>
                 <p class="text-muted-foreground mt-4">
-                    The CLI calls the gateway, sends a push to the mobile app, and polls about every 5 seconds. On the phone: open Airlock, respond to <strong class="text-foreground">New app requesting access</strong> (or <strong class="text-foreground">Settings → Authorized Apps</strong>), review the app and <strong class="text-foreground">Authorize</strong>.
+                    The CLI calls the gateway, sends a push to the Mobile Approver, and polls about every 5 seconds. On the phone: open Airlock, respond to <strong class="text-foreground">New app requesting access</strong> (or <strong class="text-foreground">Settings → Authorized Apps</strong>), review the app and <strong class="text-foreground">Authorize</strong>.
                 </p>
                 <h3 class="text-lg font-medium mt-6 mb-2">Consent states</h3>
                 <div class="overflow-x-auto not-prose text-sm">
@@ -202,7 +216,7 @@ const explicitJson = `{
             </section>
 
             <section>
-                <h2 class="text-xl font-semibold mt-8 mb-4">Step 3: Pair with the mobile app</h2>
+                <h2 class="text-xl font-semibold mt-8 mb-4">Step 3: Pair with the Mobile Approver</h2>
                 <p class="text-muted-foreground">
                     Generate a pairing code in the Airlock app (<strong class="text-foreground">Workspaces</strong> → your workspace → pre-generated codes or add enforcer). Put the code in <code class="rounded bg-muted px-1.5 py-0.5">pairingCode</code>, restart OpenClaw if needed, then run:
                 </p>

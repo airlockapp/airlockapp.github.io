@@ -1,22 +1,22 @@
 ---
 import DocsLayout from "../../../layouts/docs.astro";
-import { Code } from "astro:components";
+import DocsCodeBlock from "@/components/DocsCodeBlock.astro";
 
 const install = `npm install @airlockapp/gateway-sdk`;
 const quickStartBearer = `import { AirlockGatewayClient } from "@airlockapp/gateway-sdk";
 
 const client = new AirlockGatewayClient({
-  baseUrl: "https://igw.airlocks.io",
+  baseUrl: "https://<your-gateway-host>",
   token: "your-token",
 });`;
 
 const quickStartCredentials = `const client = new AirlockGatewayClient({
-  baseUrl: "https://igw.airlocks.io",
+  baseUrl: "https://<your-gateway-host>",
   clientId: "your-client-id",
   clientSecret: "your-client-secret",
 });`;
 
-const authPat = `// After obtaining a PAT from the mobile app (Settings → Access Tokens)
+const authPat = `// After obtaining a PAT from your org admin or Mobile Approver
 client.setPat("airlock_pat_...");
 
 // Clear PAT when no longer needed
@@ -35,7 +35,7 @@ const resp = await client.initiatePairing({
 // 2. Display pairing code to user
 console.log(\`Pairing code: \${resp.pairingCode}\`);
 
-// 3. Poll for approval from the mobile app
+// 3. Poll for approval from the Mobile Approver
 const status = await client.getPairingStatus(resp.nonce);
 // status.state === "Completed" → save status.routingToken`;
 
@@ -129,29 +129,24 @@ npm start`;
 
         <section class="prose dark:prose-invert max-w-none">
             <h2 class="text-xl font-semibold mb-4 flex items-center gap-2"><span class="w-1.5 h-6 rounded-full bg-blue-500"></span>Installation</h2>
-            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={install} lang="bash" theme="github-light" /></div>
-            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={install} lang="bash" theme="github-dark" /></div>
+            <DocsCodeBlock code={install} lang="bash" />
         </section>
 
         <section class="prose dark:prose-invert max-w-none pt-6 border-t border-border/30">
             <h2 class="text-xl font-semibold mb-4 flex items-center gap-2"><span class="w-1.5 h-6 rounded-full bg-blue-500"></span>Quick Start</h2>
             <h3 class="text-base font-medium mb-2">With Bearer Token</h3>
-            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={quickStartBearer} lang="typescript" theme="github-light" /></div>
-            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={quickStartBearer} lang="typescript" theme="github-dark" /></div>
+            <DocsCodeBlock code={quickStartBearer} lang="typescript" />
             <h3 class="text-base font-medium mt-6 mb-2">With Enforcer App Credentials</h3>
-            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={quickStartCredentials} lang="typescript" theme="github-light" /></div>
-            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={quickStartCredentials} lang="typescript" theme="github-dark" /></div>
+            <DocsCodeBlock code={quickStartCredentials} lang="typescript" />
         </section>
 
         <section class="prose dark:prose-invert max-w-none pt-6 border-t border-border/30">
             <h2 class="text-xl font-semibold mb-4 flex items-center gap-2"><span class="w-1.5 h-6 rounded-full bg-blue-500"></span>Authentication</h2>
             <h3 class="text-base font-medium mb-2">Personal Access Token (PAT)</h3>
             <p class="text-muted-foreground text-sm mb-3">PAT is the recommended authentication for user-scoped operations. Sent via the <code class="rounded bg-muted px-1">X-PAT</code> header.</p>
-            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={authPat} lang="typescript" theme="github-light" /></div>
-            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={authPat} lang="typescript" theme="github-dark" /></div>
+            <DocsCodeBlock code={authPat} lang="typescript" />
             <h3 class="text-base font-medium mt-6 mb-2">Dual Auth (setBearerToken)</h3>
-            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={authDual} lang="typescript" theme="github-light" /></div>
-            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={authDual} lang="typescript" theme="github-dark" /></div>
+            <DocsCodeBlock code={authDual} lang="typescript" />
             <h3 class="text-base font-medium mt-6 mb-2">Authentication by Enforcer App Kind</h3>
             <div class="overflow-x-auto">
                 <table class="w-full text-sm border-collapse">
@@ -208,34 +203,28 @@ npm start`;
         <section class="prose dark:prose-invert max-w-none pt-6 border-t border-border/30">
             <h2 class="text-xl font-semibold mb-4 flex items-center gap-2"><span class="w-1.5 h-6 rounded-full bg-blue-500"></span>Pairing</h2>
             <h3 class="text-base font-medium mb-2">Standard Pairing (Enforcer-Initiated)</h3>
-            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={pairingStandard} lang="typescript" theme="github-light" /></div>
-            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={pairingStandard} lang="typescript" theme="github-dark" /></div>
+            <DocsCodeBlock code={pairingStandard} lang="typescript" />
             <h3 class="text-base font-medium mt-6 mb-2">Pre-Generated Code Pairing (Approver-Initiated)</h3>
-            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={pairingClaim} lang="typescript" theme="github-light" /></div>
-            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={pairingClaim} lang="typescript" theme="github-dark" /></div>
+            <DocsCodeBlock code={pairingClaim} lang="typescript" />
         </section>
 
         <section class="prose dark:prose-invert max-w-none pt-6 border-t border-border/30">
             <h2 class="text-xl font-semibold mb-4 flex items-center gap-2"><span class="w-1.5 h-6 rounded-full bg-blue-500"></span>Consent Check</h2>
-            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={consent} lang="typescript" theme="github-light" /></div>
-            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={consent} lang="typescript" theme="github-dark" /></div>
+            <DocsCodeBlock code={consent} lang="typescript" />
         </section>
 
         <section class="prose dark:prose-invert max-w-none pt-6 border-t border-border/30">
             <h2 class="text-xl font-semibold mb-4 flex items-center gap-2"><span class="w-1.5 h-6 rounded-full bg-blue-500"></span>Submit and Poll</h2>
             <h3 class="text-base font-medium mb-2">Encrypt and Submit (Node.js)</h3>
-            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={encryptSubmit} lang="typescript" theme="github-light" /></div>
-            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={encryptSubmit} lang="typescript" theme="github-dark" /></div>
+            <DocsCodeBlock code={encryptSubmit} lang="typescript" />
             <h3 class="text-base font-medium mt-6 mb-2">Manual Ciphertext</h3>
-            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={manualSubmit} lang="typescript" theme="github-light" /></div>
-            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={manualSubmit} lang="typescript" theme="github-dark" /></div>
+            <DocsCodeBlock code={manualSubmit} lang="typescript" />
         </section>
 
         <section class="prose dark:prose-invert max-w-none pt-6 border-t border-border/30">
             <h2 class="text-xl font-semibold mb-4 flex items-center gap-2"><span class="w-1.5 h-6 rounded-full bg-red-500"></span>Error Handling</h2>
             <p class="text-muted-foreground text-sm mb-3">All errors throw <code class="rounded bg-muted px-1">AirlockGatewayError</code> with helper getters:</p>
-            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={errorHandling} lang="typescript" theme="github-light" /></div>
-            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={errorHandling} lang="typescript" theme="github-dark" /></div>
+            <DocsCodeBlock code={errorHandling} lang="typescript" />
         </section>
 
         <section class="prose dark:prose-invert max-w-none pt-6 border-t border-border/30">
@@ -251,8 +240,7 @@ npm start`;
         <section class="prose dark:prose-invert max-w-none pt-6 border-t border-border/30">
             <h2 class="text-xl font-semibold mb-4 flex items-center gap-2"><span class="w-1.5 h-6 rounded-full bg-blue-500"></span>Test Enforcer CLI</h2>
             <p class="text-muted-foreground text-sm mb-3">A fully interactive TUI that demonstrates the complete enforcer lifecycle.</p>
-            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={testEnforcer} lang="bash" theme="github-light" /></div>
-            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={testEnforcer} lang="bash" theme="github-dark" /></div>
+            <DocsCodeBlock code={testEnforcer} lang="bash" />
             <p class="text-muted-foreground text-sm mt-3">Prerequisites: Node.js 18+. Configuration saved to <code class="rounded bg-muted px-1">~/.airlock/test-enforcer-typescript.json</code>.</p>
         </section>
 

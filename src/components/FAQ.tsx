@@ -23,9 +23,9 @@ const faqs = [
       "When an AI agent produces a sensitive action, the Host Enforcer intercepts it, encrypts it (AES-256-GCM), and submits it to the Gateway. The Gateway relays the ciphertext to the Mobile Approver. The human reviews, then signs an approve/reject decision with Ed25519. The Enforcer verifies the signature locally before allowing execution.",
   },
   {
-    question: "Which IDEs and AI agents are supported?",
+    question: "How is Airlock deployed?",
     answer:
-      "Airlock provides Host Enforcer extensions for VS Code, supporting Google Antigravity, Cursor, Windsurf, and GitHub Copilot. There is also an Airlock plugin for Anthropic's Claude Code CLI agent. The enforcer intercepts AI-generated commands at the IDE or agent level, before they can execute.",
+      "Airlock is an enterprise platform. You deploy the Gateway, Host Enforcers, and Mobile Approver within your own infrastructure — with policies, audit trails, and data residency under your control. Contact us to discuss architecture and licensing for your organization.",
   },
   {
     question: "Can the Gateway see my code?",
@@ -40,7 +40,7 @@ const faqs = [
   {
     question: "Is Airlock open source?",
     answer:
-      "The HARP protocol specification is fully open source. Airlock itself is not open source. However, all Airlock enforcer extensions (Claude Code, Cursor, Windsurf, Antigravity, and Copilot) and the Airlock Gateway API Client are open source. The HARP spec includes test vectors, compliance criteria, and interoperability requirements to enable cross-vendor implementations.",
+      "The HARP protocol specification is fully open source. Airlock platform components are commercially licensed for enterprise deployment. Selected integration libraries and the Gateway API client are published on GitHub. The HARP spec includes test vectors, compliance criteria, and interoperability requirements to enable cross-vendor implementations.",
   },
 ];
 

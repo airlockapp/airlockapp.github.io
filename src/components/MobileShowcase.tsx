@@ -2,7 +2,6 @@ import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Lightbox } from "@/components/Lightbox";
-import { StoreBadges } from "@/components/StoreBadges";
 
 const screenshots = [
     {
@@ -134,19 +133,10 @@ export function MobileShowcase() {
                         transition={{ duration: 0.5, delay: 0.1 }}
                         className="text-lg text-muted-foreground max-w-2xl mx-auto"
                     >
-                        The Airlock Mobile Approver runs on Android and iOS. Receive push
-                        notifications, review artifacts, and sign decisions — all from your
-                        phone.
+                        The Airlock Mobile Approver is deployed within your organization.
+                        Authorized reviewers receive push notifications, inspect encrypted
+                        artifacts, and sign decisions — from any approved device.
                     </motion.p>
-                    <motion.div
-                        initial={{ opacity: 0, y: 12 }}
-                        whileInView={{ opacity: 1, y: 0 }}
-                        viewport={{ once: true }}
-                        transition={{ duration: 0.45, delay: 0.15 }}
-                        className="pt-2 w-full flex justify-center lg:justify-start"
-                    >
-                        <StoreBadges />
-                    </motion.div>
                 </div>
 
                 {/* Carousel: prev / current / next */}

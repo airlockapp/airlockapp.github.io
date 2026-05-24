@@ -1,0 +1,75 @@
+---
+import { Code } from "astro:components";
+import { DocsLangCodeToolbar } from "@/components/DocsLangCodeToolbar.tsx";
+import {
+  buildDevGuideBlocks,
+  type DevGuideBlockId,
+} from "@/lib/dev-guide-snippets";
+import {
+  GATEWAY_URL,
+  GATEWAY_HOST,
+  AUTH_BASE_URL,
+} from "@/lib/deployment-urls";
+
+interface Props {
+  block: DevGuideBlockId;
+}
+
+const { block } = Astro.props;
+const blocks = buildDevGuideBlocks({
+  gatewayUrl: GATEWAY_URL,
+  gatewayHost: GATEWAY_HOST,
+  authBaseUrl: AUTH_BASE_URL,
+});
+const def = blocks[block];
+const defaultLang = "python";
+---
+
+<div
+  class="docs-lang-code-group not-prose"
+  data-multi={def.multi ? "true" : "false"}
+  data-block={block}
+>
+  <DocsLangCodeToolbar
+    client:load
+    multi={def.multi}
+    fixedLabel={def.fixedLabel}
+  />
+  {
+    def.multi ? (
+      def.snippets.map((snippet) => (
+        <div
+          data-lang-panel={snippet.id}
+          class:list={[
+            "docs-lang-panel overflow-hidden",
+            snippet.id !== defaultLang && "hidden",
+          ]}
+        >
+          <div class="dark:hidden">
+            <Code code={snippet.code} lang={snippet.lang} theme="github-light" />
+          </div>
+          <div class="hidden dark:block">
+            <Code code={snippet.code} lang={snippet.lang} theme="github-dark" />
+          </div>
+        </div>
+      ))
+    ) : (
+      <div class="docs-lang-panel overflow-hidden">
+        <div class="dark:hidden">
+          <Code
+            code={def.snippets[0].code}
+            lang={def.snippets[0].lang}
+            theme="github-light"
+          />
+        </div>
+        <div class="hidden dark:block">
+          <Code
+            code={def.snippets[0].code}
+            lang={def.snippets[0].lang}
+            theme="github-dark"
+          />
+        </div>
+      </div>
+    )
+  }
+</div>

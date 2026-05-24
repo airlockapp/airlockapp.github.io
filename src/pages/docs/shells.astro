@@ -29,7 +29,7 @@ $env:AIRLOCK_FAIL_MODE = "open"
 . "$HOME\\.airlock\\shell\\airlock.profile.ps1"`;
 ---
 
-<DocsLayout title="Airlock Shell Integration">
+<DocsLayout title="Shell Integration — Reference Sample">
     <div class="space-y-8">
         <div class="flex items-center gap-4">
             <div
@@ -85,6 +85,20 @@ $env:AIRLOCK_FAIL_MODE = "open"
             </a>
         </div>
 
+
+        <div
+            class="rounded-xl border border-indigo-500/30 bg-indigo-500/10 px-4 py-3 text-sm text-muted-foreground"
+        >
+            <strong class="text-foreground">Enterprise deployment.</strong>
+            Configure integrations against your organization's Gateway at
+            <code class="rounded bg-muted px-1 text-xs">https://&lt;your-gateway-host&gt;</code>
+            and identity at
+            <code class="rounded bg-muted px-1 text-xs">https://&lt;your-auth-host&gt;/realms/&lt;your-realm&gt;</code>.
+            See the <a href="/docs/getting-started" class="text-link hover:underline">Getting started</a>
+            and <a href="/docs/developer-guide" class="text-link hover:underline">Developer Guide</a>.
+        </div>
+
+
         <div class="prose dark:prose-invert max-w-none space-y-8">
             <section>
                 <h2 class="text-xl font-semibold mt-8 mb-4">
@@ -94,7 +108,7 @@ $env:AIRLOCK_FAIL_MODE = "open"
                     When you press <strong>Enter</strong> on a command, the shell
                     plugin sends it to Airlock (via <code
                         class="rounded bg-muted px-1.5 py-0.5">airlock-cli</code
-                    >). A notification appears on your Airlock mobile app. You
+                    >). A notification appears on your Mobile Approver. You
                     tap <strong>Approve</strong> or <strong>Reject</strong>. If
                     you approve, the command runs; if you reject or don't respond
                     in time, it does not run. You get a second check before

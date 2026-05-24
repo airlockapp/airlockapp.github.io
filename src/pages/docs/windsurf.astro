@@ -2,7 +2,7 @@
 import DocsLayout from "../../layouts/docs.astro";
 ---
 
-<DocsLayout title="Install Airlock Windsurf Enforcer">
+<DocsLayout title="Windsurf Enforcer — Reference Sample">
     <div class="space-y-8">
         <div class="flex items-center gap-4">
             <img
@@ -15,7 +15,7 @@ import DocsLayout from "../../layouts/docs.astro";
                     Airlock Windsurf Enforcer
                 </h1>
                 <p class="text-muted-foreground mt-1">
-                    Human approval for AI actions in Windsurf
+                    Open-source reference sample for intercepting AI actions in Windsurf — adapt for your enterprise Gateway deployment
                 </p>
             </div>
         </div>
@@ -104,6 +104,19 @@ import DocsLayout from "../../layouts/docs.astro";
             </a>
         </div>
 
+
+        <div
+            class="rounded-xl border border-indigo-500/30 bg-indigo-500/10 px-4 py-3 text-sm text-muted-foreground"
+        >
+            <strong class="text-foreground">Reference sample, not a consumer install guide.</strong>
+            Source lives on
+            <a href="https://github.com/airlockapp/extensions" target="_blank" rel="noopener noreferrer" class="text-link hover:underline">GitHub</a>.
+            Configure the integration against your organization's Gateway at
+            <code class="rounded bg-muted px-1 text-xs">https://&lt;your-gateway-host&gt;</code>
+            and identity at
+            <code class="rounded bg-muted px-1 text-xs">https://&lt;your-auth-host&gt;/realms/&lt;your-realm&gt;</code>.
+        </div>
+
         <div class="prose dark:prose-invert max-w-none">
             <h2 class="text-xl font-semibold mt-8 mb-4">Prerequisites</h2>
             <ul class="space-y-2 text-muted-foreground">
@@ -120,13 +133,12 @@ import DocsLayout from "../../layouts/docs.astro";
                 </li>
                 <li class="flex items-start gap-2">
                     <span class="text-link mt-1">•</span>
-                    <span>An Airlock account</span>
+                    <span>Deployed Airlock Gateway and identity provider for your organization</span>
                 </li>
                 <li class="flex items-start gap-2">
                     <span class="text-link mt-1">•</span>
                     <span
-                        >The Airlock Mobile Approver app installed on your phone
-                        (Android or iOS)</span
+                        >Mobile Approver distributed to reviewers via your organization's channel (MDM or internal app catalog)</span
                     >
                 </li>
             </ul>
@@ -175,7 +187,7 @@ import DocsLayout from "../../layouts/docs.astro";
                             >) and run <code
                                 class="px-1.5 py-0.5 rounded bg-muted text-xs font-mono"
                                 >Airlock: Sign In</code
-                            >. Authenticate with your Airlock account.
+                            >. Authenticate with your organization's identity provider.
                         </p>
                     </div>
                 </li>
@@ -186,14 +198,14 @@ import DocsLayout from "../../layouts/docs.astro";
                     >
                     <div>
                         <p class="font-medium text-foreground">
-                            Pair with Mobile App
+                            Pair with Mobile Approver
                         </p>
                         <p class="text-sm mt-1">
                             Run <code
                                 class="px-1.5 py-0.5 rounded bg-muted text-xs font-mono"
                                 >Airlock: Start Mobile Pairing</code
                             > from the Command Palette. A QR code will be displayed.
-                            On the Airlock Mobile Approver app, go to <strong
+                            On the Mobile Approver, go to <strong
                                 >Settings → Pair Another Workspace</strong
                             >, scan the QR code or enter the pairing code
                             manually.
@@ -214,7 +226,7 @@ import DocsLayout from "../../layouts/docs.astro";
                                 class="px-1.5 py-0.5 rounded bg-muted text-xs font-mono"
                                 >Airlock: Enable Auto Mode</code
                             > to start intercepting AI actions. All agent commands
-                            will now require your mobile approval.
+                            will now require approver sign-off via the Mobile Approver.
                         </p>
                     </div>
                 </li>
@@ -249,7 +261,7 @@ import DocsLayout from "../../layouts/docs.astro";
                                 >Airlock: Start Mobile Pairing</code
                             ></td
                         ><td class="py-2"
-                            >Pair with the Airlock mobile app (QR code)</td
+                            >Pair with the Mobile Approver (QR code)</td
                         ></tr
                     >
                     <tr class="border-b border-border/30"

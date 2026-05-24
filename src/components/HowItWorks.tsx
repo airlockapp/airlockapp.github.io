@@ -7,7 +7,7 @@ const steps = [
         number: "01",
         title: "AI Agent acts",
         description:
-            "An AI coding agent in your IDE produces a sensitive command — a file mutation, a shell execution, a deployment.",
+            "An AI agent in your environment produces a sensitive command — a file mutation, a shell execution, a deployment.",
         color: "text-purple-400",
         borderColor: "border-purple-500/30",
         bgColor: "bg-purple-500/10",
@@ -45,7 +45,7 @@ const steps = [
 ];
 
 const flowNodes = [
-    { label: "IDE Agent", icon: Bot, color: "text-purple-400", bg: "bg-purple-500/15", border: "border-purple-500/40" },
+    { label: "AI Agent", icon: Bot, color: "text-purple-400", bg: "bg-purple-500/15", border: "border-purple-500/40" },
     { label: "Host Enforcer", icon: Shield, color: "text-airlock-violet-light", bg: "bg-airlock-violet/15", border: "border-airlock-violet-light/40" },
     { label: "Zero-knowledge Gateway", icon: Globe, color: "text-muted-foreground", bg: "bg-muted/30", border: "border-border" },
     { label: "Mobile Approver", icon: Smartphone, color: "text-airlock-cyan", bg: "text-airlock-cyan bg-airlock-cyan/15", border: "border-airlock-cyan/40" },

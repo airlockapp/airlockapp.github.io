@@ -25,9 +25,10 @@ import DocsLayout from "../../layouts/docs.astro";
                         class="text-link hover:underline"
                         >HARP protocol</a
                     > (Human Approval Relay Protocol), designed so that no single
-                    component — including the Airlock Gateway itself — can access
+                    component — including the Integrations Gateway in your deployment — can access
                     sensitive data. Security is enforced through cryptography, not
-                    trust.
+                    trust. In enterprise deployments, Gateway, identity, and Mobile Approver
+                    run under your organization's control.
                 </p>
             </section>
 
@@ -355,9 +356,9 @@ import DocsLayout from "../../layouts/docs.astro";
                 <p class="text-muted-foreground leading-relaxed">
                     In accordance with applicable data protection laws (including GDPR, CCPA, and similar regulations), you have the right to request access to, correction of, or deletion of your personal data that we process. To submit a request for erasure (right to be forgotten) or to exercise other data subject rights, please contact us at
                     <a
-                        href="mailto:support@airlocks.io?subject=Data%20Deletion%20Request"
+                        href="mailto:support@<your-organization>?subject=Data%20Deletion%20Request"
                         class="text-link hover:underline font-medium"
-                        >support@airlocks.io</a
+                        >support@<your-organization></a
                     >. We will process valid requests within the timeframes required by applicable law and will confirm once your data has been deleted or otherwise handled as requested.
                 </p>
             </section>

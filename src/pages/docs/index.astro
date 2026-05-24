@@ -7,8 +7,8 @@ import DocsLayout from "../../layouts/docs.astro";
         <div>
             <h1 class="text-3xl md:text-4xl font-bold">Documentation</h1>
             <p class="text-muted-foreground mt-2">
-                Installation guides, security practices, and reference material
-                for Airlock.
+                Enterprise deployment guides, developer reference, and security
+                documentation for Airlock.
             </p>
         </div>
 
@@ -47,7 +47,7 @@ import DocsLayout from "../../layouts/docs.astro";
                 <a
                     href="/docs/getting-started"
                     class="doc-card group flex items-center gap-4 p-4 rounded-xl border border-border/50 bg-card/50 hover:shadow-md hover:border-airlock-violet-light/30 transition-all md:col-span-2"
-                    data-doc-title="Getting Started Mobile App Account Subscription Pairing"
+                    data-doc-title="Getting Started Enterprise Deployment Gateway"
                 >
                     <div
                         class="w-10 h-10 rounded-lg bg-airlock-violet/15 flex items-center justify-center"
@@ -72,124 +72,8 @@ import DocsLayout from "../../layouts/docs.astro";
                             Getting started
                         </p>
                         <p class="text-xs text-muted-foreground">
-                            Download the app, sign in, choose a plan, and pair your
-                            workspaces
-                        </p>
-                    </div>
-                </a>
-            </div>
-        </div>
-
-        <!-- Installation Guides -->
-        <div class="space-y-4" data-docs-category>
-            <h2 class="text-xl font-semibold flex items-center gap-2">
-                <span class="w-1.5 h-6 rounded-full bg-airlock-violet-light"
-                ></span>
-                Installation Guides
-            </h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <a
-                    href="/docs/claude-code"
-                    class="doc-card group flex items-center gap-4 p-4 rounded-xl border border-border/50 bg-card/50 hover:shadow-md hover:border-airlock-violet-light/30 transition-all"
-                    data-doc-title="Claude Code Enforcer Installation"
-                >
-                    <img
-                        src="/enforcers/claude-code.svg"
-                        alt="Claude Code"
-                        class="w-10 h-10 rounded-lg"
-                    />
-                    <div>
-                        <p
-                            class="font-medium text-sm group-hover:text-airlock-violet-light transition-colors"
-                        >
-                            Claude Code Enforcer
-                        </p>
-                        <p class="text-xs text-muted-foreground">
-                            Install and configure Airlock for Claude Code
-                        </p>
-                    </div>
-                </a>
-                <a
-                    href="/docs/cursor"
-                    class="doc-card group flex items-center gap-4 p-4 rounded-xl border border-border/50 bg-card/50 hover:shadow-md hover:border-airlock-violet-light/30 transition-all"
-                    data-doc-title="Cursor Enforcer Installation"
-                >
-                    <img
-                        src="/enforcers/cursor.png"
-                        alt="Cursor"
-                        class="w-10 h-10 rounded-lg"
-                    />
-                    <div>
-                        <p
-                            class="font-medium text-sm group-hover:text-airlock-violet-light transition-colors"
-                        >
-                            Cursor Enforcer
-                        </p>
-                        <p class="text-xs text-muted-foreground">
-                            Install and configure Airlock for Cursor IDE
-                        </p>
-                    </div>
-                </a>
-                <a
-                    href="/docs/windsurf"
-                    class="doc-card group flex items-center gap-4 p-4 rounded-xl border border-border/50 bg-card/50 hover:shadow-md hover:border-airlock-violet-light/30 transition-all"
-                    data-doc-title="Windsurf Enforcer Installation"
-                >
-                    <img
-                        src="/enforcers/windsurf.png"
-                        alt="Windsurf"
-                        class="w-10 h-10 rounded-lg"
-                    />
-                    <div>
-                        <p
-                            class="font-medium text-sm group-hover:text-airlock-violet-light transition-colors"
-                        >
-                            Windsurf Enforcer
-                        </p>
-                        <p class="text-xs text-muted-foreground">
-                            Install and configure Airlock for Windsurf IDE
-                        </p>
-                    </div>
-                </a>
-                <a
-                    href="/docs/antigravity"
-                    class="doc-card group flex items-center gap-4 p-4 rounded-xl border border-border/50 bg-card/50 hover:shadow-md hover:border-airlock-violet-light/30 transition-all"
-                    data-doc-title="Antigravity Enforcer Installation"
-                >
-                    <img
-                        src="/enforcers/antigravity.png"
-                        alt="Antigravity"
-                        class="w-10 h-10 rounded-lg"
-                    />
-                    <div>
-                        <p
-                            class="font-medium text-sm group-hover:text-airlock-violet-light transition-colors"
-                        >
-                            Antigravity Enforcer
-                        </p>
-                        <p class="text-xs text-muted-foreground">
-                            Install and configure Airlock for Google Antigravity
-                        </p>
-                    </div>
-                </a>
-                <a
-                    href="/docs/copilot"
-                    class="doc-card group flex items-center gap-4 p-4 rounded-xl border border-border/50 bg-card/50 hover:shadow-md hover:border-airlock-violet-light/30 transition-all"
-                    data-doc-title="Copilot Enforcer Installation"
-                >
-                    <img
-                        src="/enforcers/copilot.png"
-                        alt="Copilot"
-                        class="w-10 h-10 rounded-lg"
-                    />
-                    <div>
-                        <p
-                            class="font-medium text-sm group-hover:text-airlock-violet-light transition-colors"
-                        >
-                            Copilot Enforcer
-                        </p>
-                        <p class="text-xs text-muted-foreground">
-                            Install and configure Airlock for GitHub Copilot
+                            Deploy Gateway, enforcers, and Mobile Approver in your
+                            environment
                         </p>
                     </div>
                 </a>
@@ -232,7 +116,7 @@ import DocsLayout from "../../layouts/docs.astro";
                             Airlock CLI
                         </p>
                         <p class="text-xs text-muted-foreground">
-                            Install, sign in, pair, and use approve for sensitive commands
+                            Reference CLI enforcer — pair with your enterprise Gateway
                         </p>
                     </div>
                 </a>
@@ -501,6 +385,58 @@ import DocsLayout from "../../layouts/docs.astro";
             </div>
         </div>
 
+
+        <!-- Enforcer samples -->
+        <div class="space-y-4" data-docs-category>
+            <h2 class="text-xl font-semibold flex items-center gap-2">
+                <span class="w-1.5 h-6 rounded-full bg-indigo-500"></span>
+                Enforcer samples & reference
+            </h2>
+            <p class="text-sm text-muted-foreground max-w-3xl">
+                Open-source Host Enforcer implementations on
+                <a href="https://github.com/airlockapp/extensions" target="_blank" rel="noopener noreferrer" class="text-link hover:underline">GitHub</a>.
+                Fork and adapt them for your enterprise deployment — point each integration at
+                <code class="rounded bg-muted px-1 text-xs">https://&lt;your-gateway-host&gt;</code>.
+            </p>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <a href="/docs/claude-code" class="doc-card group flex items-center gap-4 p-4 rounded-xl border border-border/50 bg-card/50 hover:shadow-md hover:border-indigo-500/30 transition-all" data-doc-title="Claude Code Enforcer Sample Reference">
+                    <img src="/enforcers/claude-code.svg" alt="Claude Code" class="w-10 h-10 rounded-lg" />
+                    <div>
+                        <p class="font-medium text-sm group-hover:text-indigo-400 transition-colors">Claude Code sample</p>
+                        <p class="text-xs text-muted-foreground">Reference enforcer for Anthropic Claude Code agents</p>
+                    </div>
+                </a>
+                <a href="/docs/cursor" class="doc-card group flex items-center gap-4 p-4 rounded-xl border border-border/50 bg-card/50 hover:shadow-md hover:border-indigo-500/30 transition-all" data-doc-title="Cursor Enforcer Sample Reference">
+                    <img src="/enforcers/cursor.png" alt="Cursor" class="w-10 h-10 rounded-lg" />
+                    <div>
+                        <p class="font-medium text-sm group-hover:text-indigo-400 transition-colors">Cursor sample</p>
+                        <p class="text-xs text-muted-foreground">Reference enforcer for Cursor IDE hook interception</p>
+                    </div>
+                </a>
+                <a href="/docs/windsurf" class="doc-card group flex items-center gap-4 p-4 rounded-xl border border-border/50 bg-card/50 hover:shadow-md hover:border-indigo-500/30 transition-all" data-doc-title="Windsurf Enforcer Sample Reference">
+                    <img src="/enforcers/windsurf.png" alt="Windsurf" class="w-10 h-10 rounded-lg" />
+                    <div>
+                        <p class="font-medium text-sm group-hover:text-indigo-400 transition-colors">Windsurf sample</p>
+                        <p class="text-xs text-muted-foreground">Reference enforcer for Windsurf / Codeium IDE</p>
+                    </div>
+                </a>
+                <a href="/docs/antigravity" class="doc-card group flex items-center gap-4 p-4 rounded-xl border border-border/50 bg-card/50 hover:shadow-md hover:border-indigo-500/30 transition-all" data-doc-title="Antigravity Enforcer Sample Reference">
+                    <img src="/enforcers/antigravity.png" alt="Antigravity" class="w-10 h-10 rounded-lg" />
+                    <div>
+                        <p class="font-medium text-sm group-hover:text-indigo-400 transition-colors">Antigravity sample</p>
+                        <p class="text-xs text-muted-foreground">Reference enforcer for Google Antigravity</p>
+                    </div>
+                </a>
+                <a href="/docs/copilot" class="doc-card group flex items-center gap-4 p-4 rounded-xl border border-border/50 bg-card/50 hover:shadow-md hover:border-indigo-500/30 transition-all" data-doc-title="Copilot Enforcer Sample Reference">
+                    <img src="/enforcers/copilot.png" alt="Copilot" class="w-10 h-10 rounded-lg" />
+                    <div>
+                        <p class="font-medium text-sm group-hover:text-indigo-400 transition-colors">Copilot sample</p>
+                        <p class="text-xs text-muted-foreground">Reference enforcer for GitHub Copilot</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+
         <!-- Security & Legal -->
         <div class="space-y-4" data-docs-category>
             <h2 class="text-xl font-semibold flex items-center gap-2">
@@ -604,7 +540,7 @@ import DocsLayout from "../../layouts/docs.astro";
                             End User License Agreement
                         </p>
                         <p class="text-xs text-muted-foreground">
-                            Terms for using the Airlock mobile app and end-user
+                            Terms for using the Mobile Approver and end-user
                             services
                         </p>
                     </div>

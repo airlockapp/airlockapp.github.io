@@ -35,7 +35,7 @@ const pluginConfig = `{
       "airlock": {
         "enabled": true,
         "config": {
-          "gatewayUrl": "https://igw.airlocks.io",
+          "gatewayUrl": "https://<your-gateway-host>",
           "enforcerId": "<your-enforcer-id>",
           "pat": "<your-personal-access-token>",
           "clientId": "<your-client-id>",
@@ -65,11 +65,11 @@ const pairCmd = `openclaw airlock pair`;
 
 const setupCmd = `openclaw airlock setup`;
 
-const flowAscii = `Agent ──► Airlock Plugin ──► Airlock Gateway ──► Mobile App
+const flowAscii = `Agent ──► Airlock Plugin ──► Airlock Gateway ──► Mobile Approver
                                                     │
 Agent ◄── Airlock Plugin ◄── Airlock Gateway ◄── approve/reject`;
 
-const curlEcho = `curl -s https://igw.airlocks.io/echo`;
+const curlEcho = `curl -s https://<your-gateway-host>/echo`;
 ---
 
 <DocsLayout title="OpenClaw & Airlock Gateway">
@@ -101,11 +101,25 @@ const curlEcho = `curl -s https://igw.airlocks.io/echo`;
                 class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-border/50 bg-muted/30 text-xs font-medium hover:bg-muted/60 transition-colors">Source ↗</a>
         </div>
 
+
+        <div
+            class="rounded-xl border border-indigo-500/30 bg-indigo-500/10 px-4 py-3 text-sm text-muted-foreground"
+        >
+            <strong class="text-foreground">Enterprise deployment.</strong>
+            Configure integrations against your organization's Gateway at
+            <code class="rounded bg-muted px-1 text-xs">https://&lt;your-gateway-host&gt;</code>
+            and identity at
+            <code class="rounded bg-muted px-1 text-xs">https://&lt;your-auth-host&gt;/realms/&lt;your-realm&gt;</code>.
+            See the <a href="/docs/getting-started" class="text-link hover:underline">Getting started</a>
+            and <a href="/docs/developer-guide" class="text-link hover:underline">Developer Guide</a>.
+        </div>
+
+
         <div class="prose dark:prose-invert max-w-none space-y-8">
             <section>
                 <h2 class="text-xl font-semibold mt-8 mb-4">Overview</h2>
                 <p class="text-muted-foreground">
-                    The <strong class="text-foreground">@airlockapp/openclaw-airlock</strong> package adds Airlock Gateway integration to an <a href="https://docs.openclaw.ai" target="_blank" rel="noopener noreferrer" class="text-link hover:underline">OpenClaw</a>-compatible agent runtime. It can intercept configured tools before they run, send encrypted approval requests to the <a href="https://apps.apple.com/us/app/airlock-approver/id6760250865" target="_blank" rel="noopener noreferrer" class="text-link hover:underline">Airlock mobile app</a> (<a href="https://play.google.com/store/apps/details?id=com.airlockapp.io" target="_blank" rel="noopener noreferrer" class="text-link hover:underline">Google Play</a>), and verify signed decisions. Pairing uses pre-generated codes and X25519 ECDH; payloads use AES-256-GCM per the HARP model used across Airlock clients.
+                    The <strong class="text-foreground">@airlockapp/openclaw-airlock</strong> package adds Airlock Gateway integration to an <a href="https://docs.openclaw.ai" target="_blank" rel="noopener noreferrer" class="text-link hover:underline">OpenClaw</a>-compatible agent runtime. It can intercept configured tools before they run, send encrypted approval requests to your organization's Mobile Approver, and verify signed decisions. Pairing uses pre-generated codes and X25519 ECDH; payloads use AES-256-GCM per the HARP model used across Airlock clients.
                 </p>
                 <p class="text-muted-foreground mt-4">
                     For an end-to-end scenario (Telegram bot, consent, pairing, and sample approvals), see the <a href="/docs/openclaw-demo" class="text-link hover:underline">OpenClaw + Telegram demo</a>.
@@ -116,12 +130,12 @@ const curlEcho = `curl -s https://igw.airlocks.io/echo`;
                 <h2 class="text-xl font-semibold mt-8 mb-4">Prerequisites</h2>
                 <ul class="list-disc pl-6 space-y-2 text-muted-foreground">
                     <li><strong class="text-foreground">OpenClaw</strong> installed and running (for example via the <a href="https://marketplace.digitalocean.com/apps/openclaw" target="_blank" rel="noopener noreferrer" class="text-link hover:underline">DigitalOcean Marketplace</a>).</li>
-                    <li><strong class="text-foreground">Airlock account</strong> with an enforcer app configured at <a href="https://airlockapp.io" target="_blank" rel="noopener noreferrer" class="text-link hover:underline">airlockapp.io</a>.</li>
-                    <li><strong class="text-foreground">Airlock mobile app</strong> on your phone.</li>
+                    <li><strong class="text-foreground">Enterprise credentials</strong> — enforcer app Client ID/Secret from your administrator, Gateway URL <code class="rounded bg-muted px-1 text-xs">https://&lt;your-gateway-host&gt;</code>, and PAT.</li>
+                    <li><strong class="text-foreground">Mobile Approver</strong> — distributed via your organization (MDM or internal catalog).</li>
                     <li><strong class="text-foreground">Node.js 18+</strong> for npm install or building from source.</li>
                 </ul>
                 <p class="text-muted-foreground mt-4">
-                    For the developer programme, enforcer apps, and tokens, see the <a href="/docs/developer-guide" class="text-link hover:underline">Developer Guide</a> and <a href="/docs/airlock-apps" class="text-link hover:underline">Airlock Apps</a>.
+                    For enterprise deployment, enforcer apps, and tokens, see the <a href="/docs/developer-guide" class="text-link hover:underline">Developer Guide</a> and <a href="/docs/airlock-apps" class="text-link hover:underline">Airlock Apps</a>.
                 </p>
             </section>
 
@@ -194,7 +208,7 @@ const curlEcho = `curl -s https://igw.airlocks.io/echo`;
                             </tr>
                         </thead>
                         <tbody class="text-muted-foreground">
-                            <tr><td class="border border-border/50 px-3 py-2"><code>gatewayUrl</code></td><td class="border border-border/50 px-3 py-2">Yes</td><td class="border border-border/50 px-3 py-2">Airlock Gateway URL (default <code class="rounded bg-muted px-1">https://igw.airlocks.io</code>)</td></tr>
+                            <tr><td class="border border-border/50 px-3 py-2"><code>gatewayUrl</code></td><td class="border border-border/50 px-3 py-2">Yes</td><td class="border border-border/50 px-3 py-2">Airlock Gateway URL (default <code class="rounded bg-muted px-1 text-xs">https://&lt;your-gateway-host&gt;</code>)</td></tr>
                             <tr><td class="border border-border/50 px-3 py-2"><code>enforcerId</code></td><td class="border border-border/50 px-3 py-2">Yes</td><td class="border border-border/50 px-3 py-2">Stable enforcer identifier (e.g. <code class="rounded bg-muted px-1">my-enforcer-001</code>)</td></tr>
                             <tr><td class="border border-border/50 px-3 py-2"><code>pat</code></td><td class="border border-border/50 px-3 py-2">Yes</td><td class="border border-border/50 px-3 py-2">Personal Access Token from the Airlock dashboard (<code class="rounded bg-muted px-1">airpat_…</code>)</td></tr>
                             <tr><td class="border border-border/50 px-3 py-2"><code>clientId</code></td><td class="border border-border/50 px-3 py-2">Yes</td><td class="border border-border/50 px-3 py-2">Enforcer app Client ID</td></tr>
@@ -202,7 +216,7 @@ const curlEcho = `curl -s https://igw.airlocks.io/echo`;
                             <tr><td class="border border-border/50 px-3 py-2"><code>pairingCode</code></td><td class="border border-border/50 px-3 py-2">Yes*</td><td class="border border-border/50 px-3 py-2">Pre-generated pairing code until <code class="rounded bg-muted px-1">openclaw airlock pair</code> completes. *Only required before initial pairing.</td></tr>
                             <tr><td class="border border-border/50 px-3 py-2"><code>protectedTools</code></td><td class="border border-border/50 px-3 py-2">No</td><td class="border border-border/50 px-3 py-2">Tool name patterns to gate (wildcards such as <code class="rounded bg-muted px-1">shell.*</code>). OpenClaw's built-in shell tool is named <code class="rounded bg-muted px-1">exec</code> internally — add <code class="rounded bg-muted px-1">"exec"</code> or use <code class="rounded bg-muted px-1">"*"</code> for all tools. If empty, use the explicit <code class="rounded bg-muted px-1">airlock_request_approval</code> tool.</td></tr>
                             <tr><td class="border border-border/50 px-3 py-2"><code>failMode</code></td><td class="border border-border/50 px-3 py-2">No</td><td class="border border-border/50 px-3 py-2"><code class="rounded bg-muted px-1">closed</code> (default, block on failure) or <code class="rounded bg-muted px-1">open</code> (allow on failure)</td></tr>
-                            <tr><td class="border border-border/50 px-3 py-2"><code>workspaceName</code></td><td class="border border-border/50 px-3 py-2">No</td><td class="border border-border/50 px-3 py-2">Label in the mobile app (default <code class="rounded bg-muted px-1">OpenClaw Workspace</code>)</td></tr>
+                            <tr><td class="border border-border/50 px-3 py-2"><code>workspaceName</code></td><td class="border border-border/50 px-3 py-2">No</td><td class="border border-border/50 px-3 py-2">Label shown in the Mobile Approver (default <code class="rounded bg-muted px-1">OpenClaw Workspace</code>)</td></tr>
                             <tr><td class="border border-border/50 px-3 py-2"><code>timeoutMs</code></td><td class="border border-border/50 px-3 py-2">No</td><td class="border border-border/50 px-3 py-2">Approval wait timeout (default 300000)</td></tr>
                             <tr><td class="border border-border/50 px-3 py-2"><code>pollIntervalMs</code></td><td class="border border-border/50 px-3 py-2">No</td><td class="border border-border/50 px-3 py-2">Decision poll interval, minimum 1000 (default 3000)</td></tr>
                             <tr><td class="border border-border/50 px-3 py-2"><code>executionMode</code></td><td class="border border-border/50 px-3 py-2">No</td><td class="border border-border/50 px-3 py-2"><code class="rounded bg-muted px-1">poll</code> (supported); webhook reserved for future use</td></tr>
@@ -228,14 +242,14 @@ const curlEcho = `curl -s https://igw.airlocks.io/echo`;
                 <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden not-prose"><Code code={consentCmd} lang="bash" theme="github-light" /></div>
                 <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block not-prose"><Code code={consentCmd} lang="bash" theme="github-dark" /></div>
                 <p class="text-muted-foreground mt-4">
-                    This calls <code class="rounded bg-muted px-1.5 py-0.5">GET /v1/consent/status</code>, triggers a push to the Airlock mobile app, and polls about every 5 seconds for up to 5 minutes until approved.
+                    This calls <code class="rounded bg-muted px-1.5 py-0.5">GET /v1/consent/status</code>, triggers a push to the Mobile Approver, and polls about every 5 seconds for up to 5 minutes until approved.
                 </p>
             </section>
 
             <section>
                 <h2 class="text-xl font-semibold mt-8 mb-4">6. Pair the enforcer</h2>
                 <p class="text-muted-foreground">
-                    After consent is granted, pair with the mobile app:
+                    After consent is granted, pair with the Mobile Approver:
                 </p>
                 <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden not-prose"><Code code={pairCmd} lang="bash" theme="github-light" /></div>
                 <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block not-prose"><Code code={pairCmd} lang="bash" theme="github-dark" /></div>
@@ -320,17 +334,17 @@ const curlEcho = `curl -s https://igw.airlocks.io/echo`;
                     <li><strong class="text-foreground">Plugin not loading — suspicious ownership</strong> — OpenClaw rejects plugin files not owned by root. Fix with: <code class="rounded bg-muted px-1.5 py-0.5">chown -R root:root ~/.openclaw/extensions/airlock/</code> then restart. This commonly happens when files are uploaded from a non-root system.</li>
                     <li><strong class="text-foreground">Plugin id mismatch warning</strong> — Message such as <code class="rounded bg-muted px-1.5 py-0.5">plugin airlock: plugin id mismatch</code> is cosmetic; the plugin can still load.</li>
                     <li><strong class="text-foreground">Not paired after restart</strong> — Ensure extension files exist for both users where applicable: <code class="rounded bg-muted px-1.5 py-0.5">/root/.openclaw/extensions/airlock/</code> (CLI) and <code class="rounded bg-muted px-1.5 py-0.5">/home/openclaw/.openclaw/extensions/airlock/</code> (service).</li>
-                    <li><strong class="text-foreground">No approver available (pairing stale)</strong> — The pairing was revoked from the mobile app. Generate a new pre-generated code, update <code class="rounded bg-muted px-1.5 py-0.5">pairingCode</code> in config, then run <code class="rounded bg-muted px-1.5 py-0.5">openclaw airlock pair</code> again.</li>
-                    <li><strong class="text-foreground">Access denied: pairing_revoked</strong> — The mobile app user revoked the pairing. The plugin automatically clears stale state. Generate a new code and re-pair.</li>
-                    <li><strong class="text-foreground">Approval timed out</strong> — The approver did not respond within the timeout. Increase <code class="rounded bg-muted px-1.5 py-0.5">timeoutMs</code> if needed, or check the approver mobile app is reachable.</li>
-                    <li><strong class="text-foreground">Consent denied</strong> — Re-authorize in the mobile app, then run <code class="rounded bg-muted px-1.5 py-0.5">openclaw airlock consent</code> again.</li>
+                    <li><strong class="text-foreground">No approver available (pairing stale)</strong> — The pairing was revoked from the Mobile Approver. Generate a new pre-generated code, update <code class="rounded bg-muted px-1.5 py-0.5">pairingCode</code> in config, then run <code class="rounded bg-muted px-1.5 py-0.5">openclaw airlock pair</code> again.</li>
+                    <li><strong class="text-foreground">Access denied: pairing_revoked</strong> — The Mobile Approver user revoked the pairing. The plugin automatically clears stale state. Generate a new code and re-pair.</li>
+                    <li><strong class="text-foreground">Approval timed out</strong> — The approver did not respond within the timeout. Increase <code class="rounded bg-muted px-1.5 py-0.5">timeoutMs</code> if needed, or check the Mobile Approver is reachable.</li>
+                    <li><strong class="text-foreground">Consent denied</strong> — Re-authorize in the Mobile Approver, then run <code class="rounded bg-muted px-1.5 py-0.5">openclaw airlock consent</code> again.</li>
                     <li><strong class="text-foreground">Gateway connectivity</strong> — Run <code class="rounded bg-muted px-1.5 py-0.5">openclaw airlock setup</code> and test the gateway directly:</li>
                 </ul>
                 <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden not-prose mt-2"><Code code={curlEcho} lang="bash" theme="github-light" /></div>
                 <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block not-prose mt-2"><Code code={curlEcho} lang="bash" theme="github-dark" /></div>
                 <ul class="list-disc pl-6 space-y-2 text-muted-foreground mt-4">
                     <li><strong class="text-foreground">Rate limiting</strong> — After repeated auth failures, wait about 5 minutes before retrying.</li>
-                    <li><strong class="text-foreground">New pairing code</strong> — Codes are single-use. Generate a new one in the Airlock dashboard (Pre-generated Codes) or the mobile app, update <code class="rounded bg-muted px-1.5 py-0.5">pairingCode</code> in config, then run <code class="rounded bg-muted px-1.5 py-0.5">openclaw airlock pair</code>.</li>
+                    <li><strong class="text-foreground">New pairing code</strong> — Codes are single-use. Generate a new one in your enterprise admin console (Pre-generated Codes) or the Mobile Approver, update <code class="rounded bg-muted px-1.5 py-0.5">pairingCode</code> in config, then run <code class="rounded bg-muted px-1.5 py-0.5">openclaw airlock pair</code>.</li>
                     <li><strong class="text-foreground">Tools not intercepted</strong> — OpenClaw's built-in shell execution tool is named <code class="rounded bg-muted px-1.5 py-0.5">exec</code> internally (not <code class="rounded bg-muted px-1.5 py-0.5">bash</code> or <code class="rounded bg-muted px-1.5 py-0.5">shell.exec</code>). Add <code class="rounded bg-muted px-1.5 py-0.5">"exec"</code> to <code class="rounded bg-muted px-1.5 py-0.5">protectedTools</code>, or use <code class="rounded bg-muted px-1.5 py-0.5">"*"</code> to intercept all tools. Use the explicit <code class="rounded bg-muted px-1.5 py-0.5">airlock_request_approval</code> tool for cases where pattern matching isn't sufficient.</li>
                 </ul>
                 <p class="text-muted-foreground mt-4">
@@ -342,7 +356,7 @@ const curlEcho = `curl -s https://igw.airlocks.io/echo`;
                 <h2 class="text-xl font-semibold mt-8 mb-4">Related documentation</h2>
                 <ul class="list-disc pl-6 space-y-2 text-muted-foreground">
                     <li><a href="/docs/openclaw-demo" class="text-link hover:underline">OpenClaw + Telegram demo</a> — Telegram bot, consent, pairing, and sample approval flows.</li>
-                    <li><a href="/docs/developer-guide" class="text-link hover:underline">Developer Guide</a> — platform, gateway, and lifecycle.</li>
+                    <li><a href="/docs/developer-guide" class="text-link hover:underline">Developer Guide</a> — Gateway URL, credentials, and lifecycle.</li>
                     <li><a href="/docs/airlock-apps" class="text-link hover:underline">Airlock Apps</a> — client ID, secrets, and consent concepts.</li>
                     <li><a href="/docs/sdk" class="text-link hover:underline">Gateway Client SDKs</a> — including TypeScript.</li>
                     <li><a href="/docs/claude-code" class="text-link hover:underline">Claude Code Enforcer</a> — related IDE-style enforcement pattern.</li>

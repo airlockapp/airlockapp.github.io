@@ -1,20 +1,20 @@
 ---
 import DocsLayout from "../../../layouts/docs.astro";
-import { Code } from "astro:components";
+import DocsCodeBlock from "@/components/DocsCodeBlock.astro";
 
 const install = `dotnet add package Airlock.Gateway.Sdk`;
 
 const quickStartBearer = `using Airlock.Gateway.Sdk;
 using Airlock.Gateway.Sdk.Models;
 
-var client = new AirlockGatewayClient("https://igw.airlocks.io", bearerToken: "your-jwt-token");`;
+var client = new AirlockGatewayClient("https://<your-gateway-host>", bearerToken: "your-jwt-token");`;
 
 const quickStartCredentials = `var client = new AirlockGatewayClient(
-    "https://igw.airlocks.io",
+    "https://<your-gateway-host>",
     clientId: "your-client-id",
     clientSecret: "your-client-secret");`;
 
-const authPat = `// After obtaining a PAT from the mobile app (Settings → Access Tokens)
+const authPat = `// After obtaining a PAT from your org admin or Mobile Approver
 client.SetPat("airlock_pat_...");
 
 // Clear PAT when no longer needed
@@ -34,17 +34,17 @@ var pairing = await client.InitiatePairingAsync(new PairingInitiateRequest
 // 2. Display pairing code to user (or show QR)
 Console.WriteLine($"Pairing code: {pairing.PairingCode}");
 
-// 3. Poll for approval from the mobile app
+// 3. Poll for approval from the Mobile Approver
 var status = await client.GetPairingStatusAsync(pairing.Nonce);
 if (status.State == "Completed")
 {
     var routingToken = status.RoutingToken; // Save for future requests
 }`;
 
-const pairingClaim = `// Claim a pre-generated code from the mobile app
+const pairingClaim = `// Claim a pre-generated code from the Mobile Approver
 var claim = await client.ClaimPairingAsync(new PairingClaimRequest
 {
-    Code = "ABCD-1234",             // Code from the mobile app
+    Code = "ABCD-1234",             // Code from the Mobile Approver
     EnforcerId = "my-enforcer",
     WorkspaceName = "my-project",
     X25519PublicKey = myPublicKey,
@@ -60,7 +60,7 @@ const consent = `try
 }
 catch (AirlockGatewayException ex) when (ex.ErrorCode == "app_consent_required")
 {
-    // User hasn't granted consent — prompt them to approve in the mobile app
+    // User hasn't granted consent — prompt them to approve in the Mobile Approver
 }
 catch (AirlockGatewayException ex) when (ex.ErrorCode == "app_consent_pending")
 {
@@ -157,8 +157,7 @@ dotnet run --project Airlock.Gateway.Sdk.TestEnforcer`;
             <h2 class="text-xl font-semibold mb-4 flex items-center gap-2">
                 <span class="w-1.5 h-6 rounded-full bg-purple-500"></span>Installation
             </h2>
-            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={install} lang="bash" theme="github-light" /></div>
-            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={install} lang="bash" theme="github-dark" /></div>
+            <DocsCodeBlock code={install} lang="bash" />
         </section>
 
         <!-- Quick Start -->
@@ -167,11 +166,9 @@ dotnet run --project Airlock.Gateway.Sdk.TestEnforcer`;
                 <span class="w-1.5 h-6 rounded-full bg-purple-500"></span>Quick Start
             </h2>
             <h3 class="text-base font-medium mb-2">With Bearer Token</h3>
-            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={quickStartBearer} lang="csharp" theme="github-light" /></div>
-            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={quickStartBearer} lang="csharp" theme="github-dark" /></div>
+            <DocsCodeBlock code={quickStartBearer} lang="csharp" />
             <h3 class="text-base font-medium mt-6 mb-2">With Enforcer App Credentials</h3>
-            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={quickStartCredentials} lang="csharp" theme="github-light" /></div>
-            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={quickStartCredentials} lang="csharp" theme="github-dark" /></div>
+            <DocsCodeBlock code={quickStartCredentials} lang="csharp" />
         </section>
 
         <!-- Authentication -->
@@ -181,12 +178,10 @@ dotnet run --project Airlock.Gateway.Sdk.TestEnforcer`;
             </h2>
             <h3 class="text-base font-medium mb-2">Personal Access Token (PAT)</h3>
             <p class="text-muted-foreground text-sm mb-3">PAT is the recommended authentication for user-scoped operations. Sent via the <code class="rounded bg-muted px-1">X-PAT</code> header.</p>
-            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={authPat} lang="csharp" theme="github-light" /></div>
-            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={authPat} lang="csharp" theme="github-dark" /></div>
+            <DocsCodeBlock code={authPat} lang="csharp" />
             <h3 class="text-base font-medium mt-6 mb-2">Dual Auth (SetBearerToken)</h3>
             <p class="text-muted-foreground text-sm mb-3">After creating a client with credentials, set a user's Bearer token for user-scoped operations.</p>
-            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={authDual} lang="csharp" theme="github-light" /></div>
-            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={authDual} lang="csharp" theme="github-dark" /></div>
+            <DocsCodeBlock code={authDual} lang="csharp" />
 
             <h3 class="text-base font-medium mt-6 mb-2">Authentication by Enforcer App Kind</h3>
             <div class="overflow-x-auto">
@@ -258,11 +253,9 @@ dotnet run --project Airlock.Gateway.Sdk.TestEnforcer`;
                 <span class="w-1.5 h-6 rounded-full bg-purple-500"></span>Pairing
             </h2>
             <h3 class="text-base font-medium mb-2">Standard Pairing (Enforcer-Initiated)</h3>
-            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={pairingStandard} lang="csharp" theme="github-light" /></div>
-            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={pairingStandard} lang="csharp" theme="github-dark" /></div>
+            <DocsCodeBlock code={pairingStandard} lang="csharp" />
             <h3 class="text-base font-medium mt-6 mb-2">Pre-Generated Code Pairing (Approver-Initiated)</h3>
-            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={pairingClaim} lang="csharp" theme="github-light" /></div>
-            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={pairingClaim} lang="csharp" theme="github-dark" /></div>
+            <DocsCodeBlock code={pairingClaim} lang="csharp" />
         </section>
 
         <!-- Consent -->
@@ -270,8 +263,7 @@ dotnet run --project Airlock.Gateway.Sdk.TestEnforcer`;
             <h2 class="text-xl font-semibold mb-4 flex items-center gap-2">
                 <span class="w-1.5 h-6 rounded-full bg-purple-500"></span>Consent Check
             </h2>
-            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={consent} lang="csharp" theme="github-light" /></div>
-            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={consent} lang="csharp" theme="github-dark" /></div>
+            <DocsCodeBlock code={consent} lang="csharp" />
         </section>
 
         <!-- Submit & Poll -->
@@ -279,14 +271,11 @@ dotnet run --project Airlock.Gateway.Sdk.TestEnforcer`;
             <h2 class="text-xl font-semibold mb-4 flex items-center gap-2">
                 <span class="w-1.5 h-6 rounded-full bg-purple-500"></span>Submit and Poll
             </h2>
-            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={submitPoll} lang="csharp" theme="github-light" /></div>
-            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={submitPoll} lang="csharp" theme="github-dark" /></div>
+            <DocsCodeBlock code={submitPoll} lang="csharp" />
             <h3 class="text-base font-medium mt-6 mb-2">Transparent Encryption (Encrypt + Submit)</h3>
-            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={transparentEncrypt} lang="csharp" theme="github-light" /></div>
-            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={transparentEncrypt} lang="csharp" theme="github-dark" /></div>
+            <DocsCodeBlock code={transparentEncrypt} lang="csharp" />
             <h3 class="text-base font-medium mt-6 mb-2">Decision Verification</h3>
-            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={verifyDecision} lang="csharp" theme="github-light" /></div>
-            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={verifyDecision} lang="csharp" theme="github-dark" /></div>
+            <DocsCodeBlock code={verifyDecision} lang="csharp" />
         </section>
 
         <!-- Error Handling -->
@@ -295,8 +284,7 @@ dotnet run --project Airlock.Gateway.Sdk.TestEnforcer`;
                 <span class="w-1.5 h-6 rounded-full bg-red-500"></span>Error Handling
             </h2>
             <p class="text-muted-foreground text-sm mb-3">All errors throw <code class="rounded bg-muted px-1">AirlockGatewayException</code> with helper properties:</p>
-            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={errorHandling} lang="csharp" theme="github-light" /></div>
-            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={errorHandling} lang="csharp" theme="github-dark" /></div>
+            <DocsCodeBlock code={errorHandling} lang="csharp" />
         </section>
 
         <!-- Encryption -->
@@ -318,8 +306,7 @@ dotnet run --project Airlock.Gateway.Sdk.TestEnforcer`;
                 <span class="w-1.5 h-6 rounded-full bg-purple-500"></span>Test Enforcer CLI
             </h2>
             <p class="text-muted-foreground text-sm mb-3">A fully interactive TUI that demonstrates the complete enforcer lifecycle — setup wizard, Device Auth Grant sign-in, PAT configuration, consent check, workspace pairing, artifact submission, and sign-out.</p>
-            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={testEnforcer} lang="bash" theme="github-light" /></div>
-            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={testEnforcer} lang="bash" theme="github-dark" /></div>
+            <DocsCodeBlock code={testEnforcer} lang="bash" />
             <p class="text-muted-foreground text-sm mt-3">Prerequisites: .NET 10 SDK. Configuration saved to <code class="rounded bg-muted px-1">~/.airlock/test-enforcer.json</code>.</p>
         </section>
 

@@ -4,7 +4,7 @@ import {
   ShieldCheck,
   Lock,
   RefreshCw,
-  Monitor,
+  Building2,
   Smartphone,
 } from "lucide-react";
 
@@ -21,14 +21,14 @@ const features = [
     icon: Smartphone,
     title: "Mobile Approval",
     description:
-      "Flutter app for Android & iOS. Receive push notifications, review encrypted artifacts, and sign decisions — all from your phone.",
+      "Organization-deployed mobile approver for Android and iOS. Reviewers receive push notifications, inspect encrypted artifacts, and sign decisions from approved devices.",
     gradient: "from-airlock-cyan to-airlock-cyan-light",
   },
   {
-    icon: Monitor,
-    title: "Multi-IDE Support",
+    icon: Building2,
+    title: "Enterprise Deployment",
     description:
-      "Host Enforcer extensions for VS Code — supporting Antigravity, Cursor, Windsurf, and GitHub Copilot. Intercept and gate AI actions at the source.",
+      "Deploy Airlock inside your infrastructure. Host Enforcers, Gateway, and Mobile Approver run under your control — with policies, audit trails, and data residency you define.",
     gradient: "from-indigo-500 to-airlock-violet",
   },
   {

@@ -1,6 +1,6 @@
 ---
 import DocsLayout from "../../../layouts/docs.astro";
-import { Code } from "astro:components";
+import DocsCodeBlock from "@/components/DocsCodeBlock.astro";
 
 const install = `[dependencies]
 airlock-gateway = "0.1"`;
@@ -8,19 +8,19 @@ airlock-gateway = "0.1"`;
 const quickStartBearer = `use airlock_gateway::*;
 
 let client = AirlockGatewayClient::new(
-    "https://igw.airlocks.io",
+    "https://<your-gateway-host>",
     Some("your-token"),
 );`;
 
 const quickStartCredentials = `use airlock_gateway::*;
 
 let client = AirlockGatewayClient::with_credentials(
-    "https://igw.airlocks.io",
+    "https://<your-gateway-host>",
     "your-client-id",
     "your-client-secret",
 );`;
 
-const authPat = `// After obtaining a PAT from the mobile app (Settings → Access Tokens)
+const authPat = `// After obtaining a PAT from your org admin or Mobile Approver
 client.set_pat(Some("airlock_pat_...".to_string()));
 
 // Clear PAT when no longer needed
@@ -39,7 +39,7 @@ let resp = client.initiate_pairing(PairingInitiateRequest {
 // 2. Display pairing code to user
 println!("Pairing code: {}", resp.pairing_code);
 
-// 3. Poll for approval from the mobile app
+// 3. Poll for approval from the Mobile Approver
 let status = client.get_pairing_status(&resp.nonce).await?;
 // status.state == "Completed" → save status.routing_token`;
 
@@ -132,29 +132,24 @@ cargo run --bin test-enforcer`;
 
         <section class="prose dark:prose-invert max-w-none">
             <h2 class="text-xl font-semibold mb-4 flex items-center gap-2"><span class="w-1.5 h-6 rounded-full bg-orange-500"></span>Installation</h2>
-            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={install} lang="toml" theme="github-light" /></div>
-            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={install} lang="toml" theme="github-dark" /></div>
+            <DocsCodeBlock code={install} lang="toml" />
         </section>
 
         <section class="prose dark:prose-invert max-w-none pt-6 border-t border-border/30">
             <h2 class="text-xl font-semibold mb-4 flex items-center gap-2"><span class="w-1.5 h-6 rounded-full bg-orange-500"></span>Quick Start</h2>
             <h3 class="text-base font-medium mb-2">With Bearer Token</h3>
-            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={quickStartBearer} lang="rust" theme="github-light" /></div>
-            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={quickStartBearer} lang="rust" theme="github-dark" /></div>
+            <DocsCodeBlock code={quickStartBearer} lang="rust" />
             <h3 class="text-base font-medium mt-6 mb-2">With Enforcer App Credentials</h3>
-            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={quickStartCredentials} lang="rust" theme="github-light" /></div>
-            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={quickStartCredentials} lang="rust" theme="github-dark" /></div>
+            <DocsCodeBlock code={quickStartCredentials} lang="rust" />
         </section>
 
         <section class="prose dark:prose-invert max-w-none pt-6 border-t border-border/30">
             <h2 class="text-xl font-semibold mb-4 flex items-center gap-2"><span class="w-1.5 h-6 rounded-full bg-orange-500"></span>Authentication</h2>
             <h3 class="text-base font-medium mb-2">Personal Access Token (PAT)</h3>
             <p class="text-muted-foreground text-sm mb-3">PAT is the recommended authentication for user-scoped operations. Sent via the <code class="rounded bg-muted px-1">X-PAT</code> header.</p>
-            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={authPat} lang="rust" theme="github-light" /></div>
-            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={authPat} lang="rust" theme="github-dark" /></div>
+            <DocsCodeBlock code={authPat} lang="rust" />
             <h3 class="text-base font-medium mt-6 mb-2">Dual Auth (set_bearer_token)</h3>
-            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={authDual} lang="rust" theme="github-light" /></div>
-            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={authDual} lang="rust" theme="github-dark" /></div>
+            <DocsCodeBlock code={authDual} lang="rust" />
             <h3 class="text-base font-medium mt-6 mb-2">Authentication by Enforcer App Kind</h3>
             <div class="overflow-x-auto">
                 <table class="w-full text-sm border-collapse">
@@ -212,33 +207,27 @@ cargo run --bin test-enforcer`;
         <section class="prose dark:prose-invert max-w-none pt-6 border-t border-border/30">
             <h2 class="text-xl font-semibold mb-4 flex items-center gap-2"><span class="w-1.5 h-6 rounded-full bg-orange-500"></span>Pairing</h2>
             <h3 class="text-base font-medium mb-2">Standard Pairing (Enforcer-Initiated)</h3>
-            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={pairingStandard} lang="rust" theme="github-light" /></div>
-            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={pairingStandard} lang="rust" theme="github-dark" /></div>
+            <DocsCodeBlock code={pairingStandard} lang="rust" />
             <h3 class="text-base font-medium mt-6 mb-2">Pre-Generated Code Pairing (Approver-Initiated)</h3>
-            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={pairingClaim} lang="rust" theme="github-light" /></div>
-            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={pairingClaim} lang="rust" theme="github-dark" /></div>
+            <DocsCodeBlock code={pairingClaim} lang="rust" />
         </section>
 
         <section class="prose dark:prose-invert max-w-none pt-6 border-t border-border/30">
             <h2 class="text-xl font-semibold mb-4 flex items-center gap-2"><span class="w-1.5 h-6 rounded-full bg-orange-500"></span>Consent Check</h2>
-            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={consent} lang="rust" theme="github-light" /></div>
-            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={consent} lang="rust" theme="github-dark" /></div>
+            <DocsCodeBlock code={consent} lang="rust" />
         </section>
 
         <section class="prose dark:prose-invert max-w-none pt-6 border-t border-border/30">
             <h2 class="text-xl font-semibold mb-4 flex items-center gap-2"><span class="w-1.5 h-6 rounded-full bg-orange-500"></span>Submit and Poll</h2>
-            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={submitPoll} lang="rust" theme="github-light" /></div>
-            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={submitPoll} lang="rust" theme="github-dark" /></div>
+            <DocsCodeBlock code={submitPoll} lang="rust" />
             <h3 class="text-base font-medium mt-6 mb-2">Transparent Encryption (Encrypt + Submit)</h3>
-            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={encryptSubmit} lang="rust" theme="github-light" /></div>
-            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={encryptSubmit} lang="rust" theme="github-dark" /></div>
+            <DocsCodeBlock code={encryptSubmit} lang="rust" />
         </section>
 
         <section class="prose dark:prose-invert max-w-none pt-6 border-t border-border/30">
             <h2 class="text-xl font-semibold mb-4 flex items-center gap-2"><span class="w-1.5 h-6 rounded-full bg-red-500"></span>Error Handling</h2>
             <p class="text-muted-foreground text-sm mb-3">All errors use <code class="rounded bg-muted px-1">GatewayError</code> enum variants:</p>
-            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={errorHandling} lang="rust" theme="github-light" /></div>
-            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={errorHandling} lang="rust" theme="github-dark" /></div>
+            <DocsCodeBlock code={errorHandling} lang="rust" />
         </section>
 
         <section class="prose dark:prose-invert max-w-none pt-6 border-t border-border/30">
@@ -254,8 +243,7 @@ cargo run --bin test-enforcer`;
         <section class="prose dark:prose-invert max-w-none pt-6 border-t border-border/30">
             <h2 class="text-xl font-semibold mb-4 flex items-center gap-2"><span class="w-1.5 h-6 rounded-full bg-orange-500"></span>Test Enforcer CLI</h2>
             <p class="text-muted-foreground text-sm mb-3">A fully interactive TUI that demonstrates the complete enforcer lifecycle.</p>
-            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={testEnforcer} lang="bash" theme="github-light" /></div>
-            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={testEnforcer} lang="bash" theme="github-dark" /></div>
+            <DocsCodeBlock code={testEnforcer} lang="bash" />
             <p class="text-muted-foreground text-sm mt-3">Prerequisites: Rust 1.75+. Configuration saved to <code class="rounded bg-muted px-1">~/.airlock/test-enforcer-rust.json</code>.</p>
         </section>
 

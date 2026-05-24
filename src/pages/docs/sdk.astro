@@ -82,6 +82,20 @@ import DocsLayout from "../../layouts/docs.astro";
             </a>
         </div>
 
+
+        <div
+            class="rounded-xl border border-indigo-500/30 bg-indigo-500/10 px-4 py-3 text-sm text-muted-foreground"
+        >
+            <strong class="text-foreground">Enterprise deployment.</strong>
+            Configure integrations against your organization's Gateway at
+            <code class="rounded bg-muted px-1 text-xs">https://&lt;your-gateway-host&gt;</code>
+            and identity at
+            <code class="rounded bg-muted px-1 text-xs">https://&lt;your-auth-host&gt;/realms/&lt;your-realm&gt;</code>.
+            See the <a href="/docs/getting-started" class="text-link hover:underline">Getting started</a>
+            and <a href="/docs/developer-guide" class="text-link hover:underline">Developer Guide</a>.
+        </div>
+
+
         <!-- Overview -->
         <div class="prose dark:prose-invert max-w-none">
             <div
@@ -99,8 +113,8 @@ import DocsLayout from "../../layouts/docs.astro";
                     Device Authorization Grant, together with your app credentials where required.
                 </p>
                 <p class="text-sm text-muted-foreground mt-2">
-                    Default production base URL:
-                    <code class="rounded bg-muted px-1">https://igw.airlocks.io</code>
+                    Gateway base URL (your deployment):
+                    <code class="rounded bg-muted px-1 text-xs">https://&lt;your-gateway-host&gt;</code>
                 </p>
                 <p class="text-sm text-muted-foreground mt-2">
                     Recommended artifact type for command review flows:

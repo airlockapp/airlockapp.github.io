@@ -34,14 +34,28 @@ import n8nDark from "../../img/screenshots/n8n_dark.png";
                 class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full border border-border/50 bg-muted/30 text-xs font-medium hover:bg-muted/60 transition-colors">Source ↗</a>
         </div>
 
+
+        <div
+            class="rounded-xl border border-indigo-500/30 bg-indigo-500/10 px-4 py-3 text-sm text-muted-foreground"
+        >
+            <strong class="text-foreground">Enterprise deployment.</strong>
+            Configure integrations against your organization's Gateway at
+            <code class="rounded bg-muted px-1 text-xs">https://&lt;your-gateway-host&gt;</code>
+            and identity at
+            <code class="rounded bg-muted px-1 text-xs">https://&lt;your-auth-host&gt;/realms/&lt;your-realm&gt;</code>.
+            See the <a href="/docs/getting-started" class="text-link hover:underline">Getting started</a>
+            and <a href="/docs/developer-guide" class="text-link hover:underline">Developer Guide</a>.
+        </div>
+
+
         <div class="prose dark:prose-invert max-w-none space-y-8">
             <section>
                 <h2 class="text-xl font-semibold mt-8 mb-4">Overview</h2>
                 <p class="text-muted-foreground">
-                    The <strong class="text-foreground">@airlockapp/n8n-nodes-airlock</strong> package adds Airlock Gateway integration to <a href="https://n8n.io/" target="_blank" rel="noopener noreferrer" class="text-link hover:underline">n8n</a>. It provides two nodes so workflows can pause for encrypted, human-in-the-loop decisions on the Airlock mobile app.
+                    The <strong class="text-foreground">@airlockapp/n8n-nodes-airlock</strong> package adds Airlock Gateway integration to <a href="https://n8n.io/" target="_blank" rel="noopener noreferrer" class="text-link hover:underline">n8n</a>. It provides two nodes so workflows can pause for encrypted, human-in-the-loop decisions on the Mobile Approver.
                 </p>
                 <p class="text-muted-foreground mt-4">
-                    For the developer programme, enforcer apps, gateway credentials, and pairing, see the <a href="/docs/developer-guide" class="text-link hover:underline">Developer Guide</a> and <a href="/docs/airlock-apps" class="text-link hover:underline">Airlock Apps</a>.
+                    For enterprise deployment, enforcer apps, gateway credentials, and pairing, see the <a href="/docs/developer-guide" class="text-link hover:underline">Developer Guide</a> and <a href="/docs/airlock-apps" class="text-link hover:underline">Airlock Apps</a>.
                 </p>
             </section>
 
@@ -55,7 +69,7 @@ import n8nDark from "../../img/screenshots/n8n_dark.png";
                 <ul class="list-disc pl-6 space-y-2 text-muted-foreground">
                     <li><strong class="text-foreground">Gateway URL</strong> — Base URL of your Airlock Integrations Gateway.</li>
                     <li><strong class="text-foreground">Enforcer ID</strong> — Identifies this n8n instance or workflow context.</li>
-                    <li><strong class="text-foreground">Workspace &amp; Repository Name</strong> (optional) — Shown on the mobile context card.</li>
+                    <li><strong class="text-foreground">Workspace &amp; Repository Name</strong> (optional) — Shown on the approver context card.</li>
                     <li><strong class="text-foreground">Wait Timeout (Seconds)</strong> — How long to wait for an approver (default 60).</li>
                     <li>
                         <strong class="text-foreground">Fail Mode</strong> —
@@ -86,13 +100,13 @@ import n8nDark from "../../img/screenshots/n8n_dark.png";
                 </p>
                 <h3 class="text-lg font-medium mt-6 mb-2">Pair Device (one-time)</h3>
                 <ol class="list-decimal pl-6 space-y-2 text-muted-foreground">
-                    <li>Enter the pre-generated device code from the mobile app into the gateway credentials.</li>
+                    <li>Enter the pre-generated device code from the Mobile Approver into the gateway credentials.</li>
                     <li>Run Echo in <strong class="text-foreground">Pair Device</strong> mode.</li>
                     <li>The node completes the X25519 pairing flow and writes the <strong class="text-foreground">Encryption Key</strong> and <strong class="text-foreground">Routing Token</strong> back into the credential.</li>
                 </ol>
                 <h3 class="text-lg font-medium mt-6 mb-2">Echo / consent check</h3>
                 <p class="text-muted-foreground">
-                    Use in live workflows to confirm the gateway is reachable. If <strong class="text-foreground">Fail If Consent Not Approved</strong> is enabled, the node stops when the enforcer has not been granted global permission from the mobile app.
+                    Use in live workflows to confirm the gateway is reachable. If <strong class="text-foreground">Fail If Consent Not Approved</strong> is enabled, the node stops when the enforcer has not been granted global permission from the Mobile Approver.
                 </p>
             </section>
 
@@ -149,7 +163,7 @@ import n8nDark from "../../img/screenshots/n8n_dark.png";
             <section>
                 <h2 class="text-xl font-semibold mt-8 mb-4">Related documentation</h2>
                 <ul class="list-disc pl-6 space-y-2 text-muted-foreground">
-                    <li><a href="/docs/developer-guide" class="text-link hover:underline">Developer Guide</a> — platform, gateway, and lifecycle.</li>
+                    <li><a href="/docs/developer-guide" class="text-link hover:underline">Developer Guide</a> — Gateway URL, credentials, and lifecycle.</li>
                     <li><a href="/docs/airlock-apps" class="text-link hover:underline">Airlock Apps</a> — client ID, secrets, and consent concepts.</li>
                     <li><a href="/docs/sdk" class="text-link hover:underline">Gateway Client SDKs</a> — same APIs from code.</li>
                 </ul>

@@ -43,24 +43,38 @@ import DocsLayout from "../../layouts/docs.astro";
             </a>
         </div>
 
+
+        <div
+            class="rounded-xl border border-indigo-500/30 bg-indigo-500/10 px-4 py-3 text-sm text-muted-foreground"
+        >
+            <strong class="text-foreground">Enterprise deployment.</strong>
+            Configure integrations against your organization's Gateway at
+            <code class="rounded bg-muted px-1 text-xs">https://&lt;your-gateway-host&gt;</code>
+            and identity at
+            <code class="rounded bg-muted px-1 text-xs">https://&lt;your-auth-host&gt;/realms/&lt;your-realm&gt;</code>.
+            See the <a href="/docs/getting-started" class="text-link hover:underline">Getting started</a>
+            and <a href="/docs/developer-guide" class="text-link hover:underline">Developer Guide</a>.
+        </div>
+
+
         <div class="prose dark:prose-invert max-w-none space-y-8">
             <section>
-                <h2 class="text-xl font-semibold mt-8 mb-4">Enforcer apps on the platform</h2>
+                <h2 class="text-xl font-semibold mt-8 mb-4">Enforcer apps in your deployment</h2>
                 <p class="text-muted-foreground">
-                    An <strong class="text-foreground">Airlock App</strong> (also called an <strong class="text-foreground">enforcer app</strong>) is a record you create in the Airlock Platform under <strong class="text-foreground">Developer Programme → My Apps</strong>. It represents <em>your</em> integration — a plugin, automation, IDE extension, or custom tool — that talks to the <strong class="text-foreground">Integrations Gateway</strong> to send approval requests to the mobile approver.
+                    An <strong class="text-foreground">Airlock App</strong> (also called an <strong class="text-foreground">enforcer app</strong>) is a registered integration in your enterprise deployment. Your platform administrator creates the record in the enterprise admin console and issues a <strong class="text-foreground">Client ID</strong> and (for confidential clients) a <strong class="text-foreground">Client Secret</strong>. It represents <em>your</em> product — a plugin, automation, IDE extension sample, or custom tool — that talks to the <strong class="text-foreground">Integrations Gateway</strong> at <code class="rounded bg-muted px-1 text-xs">https://&lt;your-gateway-host&gt;</code> to route approval requests to the Mobile Approver.
                 </p>
                 <p class="text-muted-foreground">
-                    When you register an app, you receive an <strong class="text-foreground">App ID</strong>, a <strong class="text-foreground">Client ID</strong>, and (for <em>confidential</em> client types) a <strong class="text-foreground">Client Secret</strong> that is shown only once. Those values are how the gateway knows which product is calling and which OAuth rules, origins, and consent state apply.
+                    Those credentials are how the gateway knows which integration is calling and which OAuth rules, origins, and consent state apply.
                 </p>
             </section>
 
             <section>
                 <h2 class="text-xl font-semibold mt-8 mb-4">Why a Client ID?</h2>
                 <p class="text-muted-foreground">
-                    Every gateway request from a third-party enforcer is attributed to a registered app via <code class="rounded bg-muted px-1.5 py-0.5">X-Client-Id</code> (and, for public clients, origin validation). The Client ID lets Airlock:
+                    Every gateway request from a Host Enforcer is attributed to a registered app via <code class="rounded bg-muted px-1.5 py-0.5">X-Client-Id</code> (and, for public clients, origin validation). The Client ID lets Airlock:
                 </p>
                 <ul class="list-disc pl-6 space-y-2 text-muted-foreground">
-                    <li>Bind traffic to the correct app registration and developer programme profile.</li>
+                    <li>Bind traffic to the correct app registration and app registration profile.</li>
                     <li>Enforce the right client type (public vs confidential) and allowed OAuth flows.</li>
                     <li>Resolve <strong class="text-foreground">user consent</strong> — the user approves a specific app identity, not an anonymous client.</li>
                 </ul>
@@ -86,7 +100,7 @@ import DocsLayout from "../../layouts/docs.astro";
             <section>
                 <h2 class="text-xl font-semibold mt-8 mb-4">How users give consent</h2>
                 <p class="text-muted-foreground">
-                    Before your enforcer can submit artifacts or complete certain flows, the user must consent to <em>your</em> app. During that flow, information from your developer programme profile (such as name, organization, and contact details) may be shown so the user understands who operates the integration.
+                    Before your enforcer can submit artifacts or complete certain flows, the user must consent to <em>your</em> app. During that flow, information from your app registration profile (such as name, organization, and contact details) may be shown so the user understands who operates the integration.
                 </p>
                 <p class="text-muted-foreground">
                     Your integration should call the gateway consent check (for example <code class="rounded bg-muted px-1.5 py-0.5">GET /v1/consent/status</code> via the SDK’s <code class="rounded bg-muted px-1.5 py-0.5">checkConsent</code>) before relying on approval workflows. Typical outcomes include:
@@ -104,7 +118,7 @@ import DocsLayout from "../../layouts/docs.astro";
             <section>
                 <h2 class="text-xl font-semibold mt-8 mb-4">What to read next</h2>
                 <p class="text-muted-foreground">
-                    For joining the programme, registering an app, app-kind tables, HTTP examples, and the full enforcer lifecycle (discovery, PAT, pairing, heartbeats, artifacts), use the <a href="/docs/developer-guide" class="text-link hover:underline">Developer Guide</a>. For language-specific APIs, see <a href="/docs/sdk" class="text-link hover:underline">Gateway Client SDKs</a>.
+                    For enterprise deployment setup, registering an app, app-kind tables, HTTP examples, and the full enforcer lifecycle (discovery, PAT, pairing, heartbeats, artifacts), use the <a href="/docs/developer-guide" class="text-link hover:underline">Developer Guide</a>. For language-specific APIs, see <a href="/docs/sdk" class="text-link hover:underline">Gateway Client SDKs</a>.
                 </p>
             </section>
         </div>

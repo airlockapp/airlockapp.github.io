@@ -1,0 +1,39 @@
+---
+import { Code } from "astro:components";
+import { DocsLangCodeToolbar } from "@/components/DocsLangCodeToolbar.tsx";
+
+interface Props {
+  code: string;
+  lang: string;
+  label?: string;
+}
+
+const { code, lang, label } = Astro.props;
+
+const LANG_LABELS: Record<string, string> = {
+  python: "Python",
+  typescript: "TypeScript",
+  csharp: ".NET",
+  go: "Go",
+  rust: "Rust",
+  bash: "Bash",
+  shell: "Shell",
+  http: "HTTP",
+  json: "JSON",
+  text: "Text",
+};
+
+const displayLabel = label ?? LANG_LABELS[lang] ?? lang.toUpperCase();
+---
+
+<div class="docs-lang-code-group not-prose" data-multi="false">
+  <DocsLangCodeToolbar client:load multi={false} fixedLabel={displayLabel} />
+  <div class="docs-lang-panel overflow-hidden">
+    <div class="dark:hidden">
+      <Code code={code} lang={lang} theme="github-light" />
+    </div>
+    <div class="hidden dark:block">
+      <Code code={code} lang={lang} theme="github-dark" />
+    </div>
+  </div>
+</div>

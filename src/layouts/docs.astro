@@ -12,11 +12,17 @@ const isProduction = import.meta.env.PROD;
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <meta
             name="description"
-            content="Airlock documentation — installation guides and configuration for enforcer extensions."
+            content="Airlock documentation — enterprise deployment, developer reference, and security practices."
         />
         <link rel="icon" type="image/png" href="/favicon.png" />
         <link rel="preconnect" href="https://rsms.me/" />
         <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+        <link
+            href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap"
+            rel="stylesheet"
+        />
 
         {isProduction && (
             <>
@@ -62,6 +68,7 @@ const isProduction = import.meta.env.PROD;
                 if (!main) return;
                 const pres = main.querySelectorAll("pre");
                 pres.forEach(function (pre) {
+                    if (pre.closest(".docs-lang-code-group")) return;
                     const code = pre.querySelector("code");
                     const text = code ? code.textContent || "" : pre.textContent || "";
                     if (!text.trim()) return;

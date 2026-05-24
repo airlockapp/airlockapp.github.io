@@ -1,6 +1,6 @@
 ---
 import DocsLayout from "../../../layouts/docs.astro";
-import { Code } from "astro:components";
+import DocsCodeBlock from "@/components/DocsCodeBlock.astro";
 
 const install = `pip install airlock-gateway`;
 const quickStartBearer = `import asyncio
@@ -12,20 +12,20 @@ from airlock_gateway import (
 
 async def main():
     async with AirlockGatewayClient(
-        "https://igw.airlocks.io", token="your-token"
+        "https://<your-gateway-host>", token="your-token"
     ) as client:
         echo = await client.echo()
 
 asyncio.run(main())`;
 
 const quickStartCredentials = `async with AirlockGatewayClient(
-    "https://igw.airlocks.io",
+    "https://<your-gateway-host>",
     client_id="your-client-id",
     client_secret="your-client-secret",
 ) as client:
     echo = await client.echo()`;
 
-const authPat = `# After obtaining a PAT from the mobile app (Settings → Access Tokens)
+const authPat = `# After obtaining a PAT from your org admin or Mobile Approver
 client.set_pat("airlock_pat_...")
 
 # Clear PAT when no longer needed
@@ -46,7 +46,7 @@ resp = await client.initiate_pairing(PairingInitiateRequest(
 # 2. Display pairing code to user
 print(f"Pairing code: {resp.pairing_code}")
 
-# 3. Poll for approval from the mobile app
+# 3. Poll for approval from the Mobile Approver
 status = await client.get_pairing_status(resp.nonce)
 # status.state == "Completed" → save status.routing_token`;
 
@@ -117,29 +117,24 @@ python test_enforcer.py`;
 
         <section class="prose dark:prose-invert max-w-none">
             <h2 class="text-xl font-semibold mb-4 flex items-center gap-2"><span class="w-1.5 h-6 rounded-full bg-yellow-500"></span>Installation</h2>
-            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={install} lang="bash" theme="github-light" /></div>
-            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={install} lang="bash" theme="github-dark" /></div>
+            <DocsCodeBlock code={install} lang="bash" />
         </section>
 
         <section class="prose dark:prose-invert max-w-none pt-6 border-t border-border/30">
             <h2 class="text-xl font-semibold mb-4 flex items-center gap-2"><span class="w-1.5 h-6 rounded-full bg-yellow-500"></span>Quick Start</h2>
             <h3 class="text-base font-medium mb-2">With Bearer Token</h3>
-            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={quickStartBearer} lang="python" theme="github-light" /></div>
-            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={quickStartBearer} lang="python" theme="github-dark" /></div>
+            <DocsCodeBlock code={quickStartBearer} lang="python" />
             <h3 class="text-base font-medium mt-6 mb-2">With Enforcer App Credentials</h3>
-            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={quickStartCredentials} lang="python" theme="github-light" /></div>
-            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={quickStartCredentials} lang="python" theme="github-dark" /></div>
+            <DocsCodeBlock code={quickStartCredentials} lang="python" />
         </section>
 
         <section class="prose dark:prose-invert max-w-none pt-6 border-t border-border/30">
             <h2 class="text-xl font-semibold mb-4 flex items-center gap-2"><span class="w-1.5 h-6 rounded-full bg-yellow-500"></span>Authentication</h2>
             <h3 class="text-base font-medium mb-2">Personal Access Token (PAT)</h3>
             <p class="text-muted-foreground text-sm mb-3">PAT is the recommended authentication for user-scoped operations. Sent via the <code class="rounded bg-muted px-1">X-PAT</code> header.</p>
-            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={authPat} lang="python" theme="github-light" /></div>
-            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={authPat} lang="python" theme="github-dark" /></div>
+            <DocsCodeBlock code={authPat} lang="python" />
             <h3 class="text-base font-medium mt-6 mb-2">Dual Auth (set_bearer_token)</h3>
-            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={authDual} lang="python" theme="github-light" /></div>
-            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={authDual} lang="python" theme="github-dark" /></div>
+            <DocsCodeBlock code={authDual} lang="python" />
             <h3 class="text-base font-medium mt-6 mb-2">Authentication by Enforcer App Kind</h3>
             <div class="overflow-x-auto">
                 <table class="w-full text-sm border-collapse">
@@ -195,24 +190,20 @@ python test_enforcer.py`;
         <section class="prose dark:prose-invert max-w-none pt-6 border-t border-border/30">
             <h2 class="text-xl font-semibold mb-4 flex items-center gap-2"><span class="w-1.5 h-6 rounded-full bg-yellow-500"></span>Pairing</h2>
             <h3 class="text-base font-medium mb-2">Standard Pairing (Enforcer-Initiated)</h3>
-            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={pairingStandard} lang="python" theme="github-light" /></div>
-            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={pairingStandard} lang="python" theme="github-dark" /></div>
+            <DocsCodeBlock code={pairingStandard} lang="python" />
             <h3 class="text-base font-medium mt-6 mb-2">Pre-Generated Code Pairing (Approver-Initiated)</h3>
-            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={pairingClaim} lang="python" theme="github-light" /></div>
-            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={pairingClaim} lang="python" theme="github-dark" /></div>
+            <DocsCodeBlock code={pairingClaim} lang="python" />
         </section>
 
         <section class="prose dark:prose-invert max-w-none pt-6 border-t border-border/30">
             <h2 class="text-xl font-semibold mb-4 flex items-center gap-2"><span class="w-1.5 h-6 rounded-full bg-yellow-500"></span>Consent Check</h2>
-            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={consent} lang="python" theme="github-light" /></div>
-            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={consent} lang="python" theme="github-dark" /></div>
+            <DocsCodeBlock code={consent} lang="python" />
         </section>
 
         <section class="prose dark:prose-invert max-w-none pt-6 border-t border-border/30">
             <h2 class="text-xl font-semibold mb-4 flex items-center gap-2"><span class="w-1.5 h-6 rounded-full bg-red-500"></span>Error Handling</h2>
             <p class="text-muted-foreground text-sm mb-3">All errors raise <code class="rounded bg-muted px-1">AirlockGatewayError</code> with helper properties:</p>
-            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={errorHandling} lang="python" theme="github-light" /></div>
-            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={errorHandling} lang="python" theme="github-dark" /></div>
+            <DocsCodeBlock code={errorHandling} lang="python" />
         </section>
 
         <section class="prose dark:prose-invert max-w-none pt-6 border-t border-border/30">
@@ -228,8 +219,7 @@ python test_enforcer.py`;
         <section class="prose dark:prose-invert max-w-none pt-6 border-t border-border/30">
             <h2 class="text-xl font-semibold mb-4 flex items-center gap-2"><span class="w-1.5 h-6 rounded-full bg-yellow-500"></span>Test Enforcer CLI</h2>
             <p class="text-muted-foreground text-sm mb-3">A fully interactive TUI that demonstrates the complete enforcer lifecycle.</p>
-            <div class="rounded-lg border border-border/50 overflow-hidden dark:hidden"><Code code={testEnforcer} lang="bash" theme="github-light" /></div>
-            <div class="rounded-lg border border-border/50 overflow-hidden hidden dark:block"><Code code={testEnforcer} lang="bash" theme="github-dark" /></div>
+            <DocsCodeBlock code={testEnforcer} lang="bash" />
             <p class="text-muted-foreground text-sm mt-3">Prerequisites: Python 3.9+. Configuration saved to <code class="rounded bg-muted px-1">~/.airlock/test-enforcer-python.json</code>.</p>
         </section>
 

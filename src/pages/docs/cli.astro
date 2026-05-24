@@ -26,7 +26,7 @@ else
 fi`;
 ---
 
-<DocsLayout title="Airlock CLI — User Guide">
+<DocsLayout title="Airlock CLI — Reference Sample">
     <div class="space-y-8">
         <div class="flex items-center gap-4">
             <div
@@ -49,7 +49,7 @@ fi`;
             <div>
                 <h1 class="text-3xl md:text-4xl font-bold">Airlock CLI</h1>
                 <p class="text-muted-foreground mt-1">
-                    Human approval for sensitive shell commands
+                    Reference enforcer for shell command approval in enterprise deployments
                 </p>
             </div>
         </div>
@@ -80,26 +80,37 @@ fi`;
             </a>
         </div>
 
+
+        <div
+            class="rounded-xl border border-indigo-500/30 bg-indigo-500/10 px-4 py-3 text-sm text-muted-foreground"
+        >
+            <strong class="text-foreground">Enterprise deployment.</strong>
+            Configure integrations against your organization's Gateway at
+            <code class="rounded bg-muted px-1 text-xs">https://&lt;your-gateway-host&gt;</code>
+            and identity at
+            <code class="rounded bg-muted px-1 text-xs">https://&lt;your-auth-host&gt;/realms/&lt;your-realm&gt;</code>.
+            See the <a href="/docs/getting-started" class="text-link hover:underline">Getting started</a>
+            and <a href="/docs/developer-guide" class="text-link hover:underline">Developer Guide</a>.
+        </div>
+
+
         <div class="prose dark:prose-invert max-w-none space-y-8">
             <section>
                 <h2 class="text-xl font-semibold mt-8 mb-4">
                     What is the Airlock CLI?
                 </h2>
                 <p class="text-muted-foreground">
-                    The Airlock CLI is a standalone enforcer that gates shell
-                    commands through the Airlock gateway. Sign in and pair once;
-                    then use <code class="rounded bg-muted px-1.5 py-0.5"
-                        >airlock-cli approve</code
-                    > to request human approval before running sensitive commands
-                    (e.g. <code class="rounded bg-muted px-1.5 py-0.5"
-                        >git push</code
-                    >, production deploys).
+                    The Airlock CLI is an open-source reference enforcer that gates shell
+                    commands through your organization's Integrations Gateway. Authenticate
+                    and pair once against <code class="rounded bg-muted px-1 text-xs">https://&lt;your-gateway-host&gt;</code>;
+                    then use <code class="rounded bg-muted px-1.5 py-0.5">airlock-cli approve</code>
+                    to request human approval before running sensitive commands.
                 </p>
                 <ul class="list-disc pl-6 space-y-2 text-muted-foreground">
                     <li>
                         <strong>Asks for approval</strong> — Before a command runs,
                         it sends a request to the gateway. You see the request on
-                        the Airlock mobile app and tap Approve or Reject.
+                        the Mobile Approver and tap Approve or Reject.
                     </li>
                     <li>
                         <strong>Blocks until you decide</strong> — The terminal waits
@@ -119,12 +130,16 @@ fi`;
                 <h2 class="text-xl font-semibold mt-8 mb-4">Prerequisites</h2>
                 <ul class="list-disc pl-6 space-y-2 text-muted-foreground">
                     <li>
-                        <strong>An Airlock account</strong> — Same account you use
-                        for the Airlock mobile app or IDE extension.
+                        <strong>Enterprise Gateway URL</strong> — Your deployment's Integrations Gateway
+                        (<code class="rounded bg-muted px-1 text-xs">https://&lt;your-gateway-host&gt;</code>).
                     </li>
                     <li>
-                        <strong>Airlock mobile app</strong> — Installed on your phone,
-                        signed in. Used to approve/reject and to pair the CLI.
+                        <strong>Identity credentials</strong> — User or service account from your
+                        organization's OIDC realm.
+                    </li>
+                    <li>
+                        <strong>Mobile Approver</strong> — Organization-distributed app for reviewers
+                        (MDM or internal catalog), paired with the CLI.
                     </li>
                 </ul>
             </section>
@@ -217,7 +232,7 @@ fi`;
                     <Code code={signIn} lang="bash" theme="github-dark" />
                 </div>
                 <p class="text-muted-foreground mt-2">
-                    Your browser will open; sign in with your Airlock account.
+                    Your browser will open; sign in with your organization's identity provider.
                     Then check: <code class="rounded bg-muted px-1.5 py-0.5"
                         >airlock-cli status</code
                     > — you should see "Signed in: true".
@@ -226,7 +241,7 @@ fi`;
 
             <section>
                 <h2 class="text-xl font-semibold mt-8 mb-4">
-                    Step 3: Pair with your phone
+                    Step 3: Pair with Mobile Approver
                 </h2>
                 <div
                     class="rounded-lg border border-border/50 overflow-hidden dark:hidden"

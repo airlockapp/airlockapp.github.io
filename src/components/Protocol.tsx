@@ -52,7 +52,7 @@ export function Protocol() {
                             className="text-lg text-muted-foreground leading-relaxed max-w-xl"
                         >
                             HARP (Human Authorization & Review Protocol) is a cryptographically
-                            verifiable authorization and control layer for AI coding agents. It
+                            verifiable authorization and control layer for AI agents. It
                             defines deterministic canonicalization, artifact hashing, decision
                             signing, and replay protection as open, interoperable standards.
                         </motion.p>
