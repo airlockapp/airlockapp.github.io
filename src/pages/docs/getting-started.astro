@@ -31,9 +31,18 @@ import DocsLayout from "../../layouts/docs.astro";
             </p>
             <ul class="space-y-2 text-muted-foreground list-disc pl-5 mt-3">
                 <li>
-                    <strong class="text-foreground">Airlock Gateway</strong> — ciphertext
-                    relay and policy enforcement at
-                    <code class="rounded bg-muted px-1 text-xs">https://&lt;your-gateway-host&gt;</code>
+                    <strong class="text-foreground">Platform Gateway</strong> — mobile and IDE host enforcers
+                    (<code class="rounded bg-muted px-1 text-xs">:5145</code> locally)
+                </li>
+                <li>
+                    <strong class="text-foreground">Integrations Gateway</strong> — EnforcerApp+PAT and Enforcer Gateway submit/wait
+                    (<code class="rounded bg-muted px-1 text-xs">:5190</code>)
+                </li>
+                <li>
+                    <strong class="text-foreground">Enforcer Gateway</strong> — LLM reverse proxy
+                    (<code class="rounded bg-muted px-1 text-xs">:8787</code>). Workspace Client ID + secret; never
+                    <code class="rounded bg-muted px-1 text-xs">HTTPS_PROXY</code>.
+                    See <a href="/docs/enforcer-gateway" class="text-link hover:underline">Enforcer Gateway</a>.
                 </li>
                 <li>
                     <strong class="text-foreground">Identity provider</strong> — OIDC

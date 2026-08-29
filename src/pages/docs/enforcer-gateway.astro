@@ -1,0 +1,81 @@
+---
+import DocsLayout from "../../layouts/docs.astro";
+---
+
+<DocsLayout title="Enforcer Gateway">
+    <div class="space-y-8">
+        <div>
+            <h1 class="text-3xl md:text-4xl font-bold">Enforcer Gateway</h1>
+            <p class="text-muted-foreground mt-2 max-w-2xl">
+                Local LLM reverse proxy on port <code class="rounded bg-muted px-1 text-xs">8787</code>.
+                Point coding agents at it as <code class="rounded bg-muted px-1 text-xs">base_url</code>.
+                It talks only to the Integrations Gateway — never to the Platform Gateway.
+            </p>
+        </div>
+
+        <div
+            class="rounded-xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-muted-foreground"
+        >
+            <strong class="text-foreground">Never set HTTPS_PROXY or TLS MITM</strong>
+            to intercept LLM traffic. That breaks certificate pinning and is not a supported
+            deployment. Configure each client’s <code class="rounded bg-muted px-1 text-xs">base_url</code>
+            instead. See <a href="/docs/enforcer-gateway/clients" class="text-link hover:underline">client settings</a>.
+        </div>
+
+        <div class="prose dark:prose-invert max-w-none space-y-8">
+            <h2 class="text-xl font-semibold">Three gateways</h2>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-border/50">
+                            <th class="py-2 pr-4">Product</th>
+                            <th class="py-2 pr-4">Local port</th>
+                            <th class="py-2">Audience</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-muted-foreground">
+                        <tr class="border-b border-border/30">
+                            <td class="py-2 pr-4 text-foreground">Platform Gateway</td>
+                            <td class="py-2 pr-4"><code class="rounded bg-muted px-1 text-xs">:5145</code></td>
+                            <td class="py-2">Mobile Approver and IDE host enforcers (JWT <code class="rounded bg-muted px-1 text-xs">azp</code> includes <code class="rounded bg-muted px-1 text-xs">airlock-enforcer</code>)</td>
+                        </tr>
+                        <tr class="border-b border-border/30">
+                            <td class="py-2 pr-4 text-foreground">Integrations Gateway</td>
+                            <td class="py-2 pr-4"><code class="rounded bg-muted px-1 text-xs">:5190</code></td>
+                            <td class="py-2">EnforcerApp + PAT <em>and</em> Enforcer Gateway artifact submit / wait</td>
+                        </tr>
+                        <tr>
+                            <td class="py-2 pr-4 text-foreground">Enforcer Gateway</td>
+                            <td class="py-2 pr-4"><code class="rounded bg-muted px-1 text-xs">:8787</code></td>
+                            <td class="py-2">LLM reverse proxy. Authenticate to IGW with a <strong class="text-foreground">workspace Client ID + secret</strong> (no PAT, no consent).</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <h2 class="text-xl font-semibold mt-10">What it does</h2>
+            <ul class="space-y-2 text-muted-foreground list-disc pl-5">
+                <li>Forwards OpenAI, Anthropic, Azure OpenAI, Codex Responses, and Bedrock Converse/Invoke paths to the real provider.</li>
+                <li>Inspects tool calls, encrypts a HARP <code class="rounded bg-muted px-1 text-xs">tool-call-approval</code> artifact, waits for a mobile decision, and <strong class="text-foreground">verifies</strong> the decision signature before releasing the response.</li>
+                <li>Returns <code class="rounded bg-muted px-1 text-xs">503 airlock_pairing_pending</code> until pairing (routing token + AES key) is on disk.</li>
+                <li>Does not implement HTTP CONNECT. Do not use it as a generic HTTP proxy.</li>
+            </ul>
+
+            <h2 class="text-xl font-semibold mt-10">Auth to Integrations Gateway</h2>
+            <p class="text-muted-foreground">
+                Mint a workspace credential in Platform.App (org/project Owner or Maintainer).
+                Point Enforcer Gateway at IGW with <code class="rounded bg-muted px-1 text-xs">Airlock__GatewayUrl</code>
+                and store Client ID + secret in the pairing file or environment.
+                Third-party Enforcer Apps still use Client ID + secret <em>plus</em> PAT; that path is unchanged.
+                See <a href="/docs/organizations" class="text-link hover:underline">Organizations</a>
+                and <a href="/docs/airlock-apps" class="text-link hover:underline">Airlock Apps</a>.
+            </p>
+        </div>
+
+        <div class="mt-8 flex gap-4 flex-wrap">
+            <a href="/docs/enforcer-gateway/clients" class="text-sm text-link hover:underline">Client base URLs →</a>
+            <a href="/docs/organizations" class="text-sm text-link hover:underline">Organizations</a>
+            <a href="/docs" class="text-sm text-muted-foreground hover:underline">← All Docs</a>
+        </div>
+    </div>
+</DocsLayout>

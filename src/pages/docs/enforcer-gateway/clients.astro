@@ -1,0 +1,66 @@
+---
+import DocsLayout from "../../../layouts/docs.astro";
+---
+
+<DocsLayout title="Enforcer Gateway clients">
+    <div class="space-y-8">
+        <div>
+            <h1 class="text-3xl md:text-4xl font-bold">Point clients at :8787</h1>
+            <p class="text-muted-foreground mt-2 max-w-2xl">
+                Each tool has its own base-URL setting. Do not set
+                <code class="rounded bg-muted px-1 text-xs">HTTPS_PROXY</code>.
+            </p>
+        </div>
+
+        <div class="prose dark:prose-invert max-w-none space-y-6">
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-border/50">
+                            <th class="py-2 pr-4">Client</th>
+                            <th class="py-2 pr-4">Setting</th>
+                            <th class="py-2">Notes</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-muted-foreground">
+                        <tr class="border-b border-border/30">
+                            <td class="py-2 pr-4 text-foreground">Claude Code</td>
+                            <td class="py-2 pr-4"><code class="rounded bg-muted px-1 text-xs">ANTHROPIC_BASE_URL</code></td>
+                            <td class="py-2">e.g. <code class="rounded bg-muted px-1 text-xs">http://127.0.0.1:8787</code></td>
+                        </tr>
+                        <tr class="border-b border-border/30">
+                            <td class="py-2 pr-4 text-foreground">Codex CLI</td>
+                            <td class="py-2 pr-4"><code class="rounded bg-muted px-1 text-xs">openai_base_url</code> in <code class="rounded bg-muted px-1 text-xs">config.toml</code></td>
+                            <td class="py-2"><strong class="text-foreground">Not</strong> <code class="rounded bg-muted px-1 text-xs">OPENAI_BASE_URL</code> — Codex ignores that env var for this path.</td>
+                        </tr>
+                        <tr class="border-b border-border/30">
+                            <td class="py-2 pr-4 text-foreground">OpenAI SDK / HTTP</td>
+                            <td class="py-2 pr-4"><code class="rounded bg-muted px-1 text-xs">base_url</code> / <code class="rounded bg-muted px-1 text-xs">OPENAI_BASE_URL</code></td>
+                            <td class="py-2">Chat Completions <code class="rounded bg-muted px-1 text-xs">/v1/chat/completions</code></td>
+                        </tr>
+                        <tr class="border-b border-border/30">
+                            <td class="py-2 pr-4 text-foreground">Azure OpenAI</td>
+                            <td class="py-2 pr-4">endpoint host → :8787; keep deployment path</td>
+                            <td class="py-2"><code class="rounded bg-muted px-1 text-xs">/openai/deployments/…/chat/completions</code>. Query strings (including <code class="rounded bg-muted px-1 text-xs">api-version</code>) are forwarded.</td>
+                        </tr>
+                        <tr class="border-b border-border/30">
+                            <td class="py-2 pr-4 text-foreground">.NET OpenAI client</td>
+                            <td class="py-2 pr-4">endpoint URI</td>
+                            <td class="py-2">Same as OpenAI SDK: <code class="rounded bg-muted px-1 text-xs">http://127.0.0.1:8787/v1</code></td>
+                        </tr>
+                        <tr>
+                            <td class="py-2 pr-4 text-foreground">n8n</td>
+                            <td class="py-2 pr-4">LLM node base URL vs control plane</td>
+                            <td class="py-2">LLM completion traffic → Enforcer Gateway. Airlock pairing / artifacts → Integrations Gateway. Do not mix the two URLs on one node.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="mt-8 flex gap-4 flex-wrap">
+            <a href="/docs/enforcer-gateway" class="text-sm text-link hover:underline">← Enforcer Gateway</a>
+            <a href="/docs/n8n" class="text-sm text-link hover:underline">n8n</a>
+        </div>
+    </div>
+</DocsLayout>

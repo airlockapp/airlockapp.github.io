@@ -6,6 +6,8 @@ import { BrandLogo } from "@/components/BrandLogo";
 
 const docsItems = [
   { label: "Developer Guide", href: "/docs/developer-guide" },
+  { label: "Enforcer Gateway", href: "/docs/enforcer-gateway" },
+  { label: "Organizations", href: "/docs/organizations" },
   { label: "Airlock Apps", href: "/docs/airlock-apps" },
   { label: "Gateway SDK", href: "/docs/sdk" },
   { label: "n8n", href: "/docs/n8n" },

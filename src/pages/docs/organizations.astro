@@ -1,0 +1,55 @@
+---
+import DocsLayout from "../../layouts/docs.astro";
+---
+
+<DocsLayout title="Organizations">
+    <div class="space-y-8">
+        <div>
+            <h1 class="text-3xl md:text-4xl font-bold">Organizations, projects, and workspaces</h1>
+            <p class="text-muted-foreground mt-2 max-w-2xl">
+                Platform.App is the control plane for enterprise RBAC and workspace credentials.
+                The Mobile Approver can <em>read</em> membership; it cannot create teams or policies.
+            </p>
+        </div>
+
+        <div class="prose dark:prose-invert max-w-none space-y-6">
+            <h2 class="text-xl font-semibold">Click path in Platform.App</h2>
+            <ol class="space-y-3 text-muted-foreground list-decimal pl-5">
+                <li>Create or open an <strong class="text-foreground">organization</strong>. Invite members and assign org roles.</li>
+                <li>Create a <strong class="text-foreground">project</strong> under the org. Assign Owner / Maintainer / Member.</li>
+                <li>Create a <strong class="text-foreground">workspace</strong> in the project.</li>
+                <li>Optionally create <strong class="text-foreground">teams</strong> and a workspace <strong class="text-foreground">governance policy</strong> (review / allow quorum).</li>
+                <li>
+                    On the workspace detail page, mint a <strong class="text-foreground">workspace credential</strong>
+                    (Client ID + secret). The secret is shown once. Owner and Maintainer only.
+                    Rotate keeps the same Client ID and issues a new secret; revoke disables it.
+                </li>
+                <li>
+                    Point <a href="/docs/enforcer-gateway" class="text-link hover:underline">Enforcer Gateway</a>
+                    at the Integrations Gateway with that Client ID + secret. No PAT and no consent prompt.
+                </li>
+            </ol>
+
+            <h2 class="text-xl font-semibold mt-10">Mobile (read-only)</h2>
+            <p class="text-muted-foreground">
+                In the Mobile Approver, <strong class="text-foreground">Organization &amp; policy</strong>
+                lists orgs, projects, teams, and why you count toward a policy quorum.
+                That is not the same as pairing <strong class="text-foreground">do-not-disturb</strong> policies.
+            </p>
+
+            <h2 class="text-xl font-semibold mt-10">Airlock Apps vs workspace keys</h2>
+            <p class="text-muted-foreground">
+                Third-party products still register an
+                <a href="/docs/airlock-apps" class="text-link hover:underline">Airlock App</a>
+                and send Client ID + secret <em>and</em> a user PAT. Workspace credentials are for
+                the first-party Enforcer Gateway only.
+            </p>
+        </div>
+
+        <div class="mt-8 flex gap-4 flex-wrap">
+            <a href="/docs/enforcer-gateway" class="text-sm text-link hover:underline">Enforcer Gateway</a>
+            <a href="/docs/getting-started" class="text-sm text-link hover:underline">Getting started</a>
+            <a href="/docs" class="text-sm text-muted-foreground hover:underline">← All Docs</a>
+        </div>
+    </div>
+</DocsLayout>
