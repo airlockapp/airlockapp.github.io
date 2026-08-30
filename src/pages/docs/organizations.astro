@@ -5,23 +5,83 @@ import DocsLayout from "../../layouts/docs.astro";
 <DocsLayout title="Organizations">
     <div class="space-y-8">
         <div>
-            <h1 class="text-3xl md:text-4xl font-bold">Organizations, projects, and workspaces</h1>
+            <h1 class="text-3xl md:text-4xl font-bold">Organizations and workspaces</h1>
             <p class="text-muted-foreground mt-2 max-w-2xl">
-                Platform.App is the control plane for enterprise RBAC and workspace credentials.
-                The Mobile Approver can <em>read</em> membership; it cannot create teams or policies.
+                Your company is an organization. Each agent, repo, or workflow you want
+                to gate is a workspace. People join workspaces; review policy lives there.
+                Set this up in Platform.App. The Mobile Approver can <em>see</em> where
+                you belong — it cannot create workspaces, roles, or policies.
             </p>
         </div>
 
         <div class="prose dark:prose-invert max-w-none space-y-6">
-            <h2 class="text-xl font-semibold">Click path in Platform.App</h2>
-            <ol class="space-y-3 text-muted-foreground list-decimal pl-5">
-                <li>Create or open an <strong class="text-foreground">organization</strong>. Invite members and assign org roles.</li>
-                <li>Create a <strong class="text-foreground">project</strong> under the org. Assign Owner / Maintainer / Member.</li>
-                <li>Create a <strong class="text-foreground">workspace</strong> in the project.</li>
-                <li>Optionally create <strong class="text-foreground">teams</strong> and a workspace <strong class="text-foreground">governance policy</strong> (review / allow quorum).</li>
+            <h2 class="text-xl font-semibold">The pieces that matter</h2>
+            <ul class="space-y-3 text-muted-foreground list-disc pl-5">
                 <li>
-                    On the workspace detail page, mint a <strong class="text-foreground">workspace credential</strong>
-                    (Client ID + secret). The secret is shown once. Owner and Maintainer only.
+                    <strong class="text-foreground">Organization</strong> — your company
+                    account. People exist here. You define reusable review roles here
+                    (for example Security reviewer or SRE).
+                </li>
+                <li>
+                    <strong class="text-foreground">Workspace</strong> — one policy
+                    boundary: an app, a folder in a monorepo, a production flow, or an
+                    agent. Pairing and the Enforcer Gateway credential belong to the workspace.
+                </li>
+                <li>
+                    <strong class="text-foreground">Workspace roles</strong> — Owner,
+                    Maintainer, and Member on <em>that</em> workspace (who can edit
+                    policy and credentials). An <em>organization</em> Owner can create
+                    workspaces and has workspace Owner authority on every workspace
+                    in the org. An organization Maintainer does not.
+                </li>
+                <li>
+                    <strong class="text-foreground">Review roles</strong> — names you
+                    create on the org, then <em>add to a workspace</em>. Only then can
+                    you assign people and use them in that workspace’s approve/allow policy.
+                </li>
+            </ul>
+
+            <h2 class="text-xl font-semibold mt-10">Who can approve: two kinds of assignment</h2>
+            <p class="text-muted-foreground">
+                Adding a review role to a workspace does not put everyone in the org
+                on the hook. You still assign people:
+            </p>
+            <ul class="space-y-3 text-muted-foreground list-disc pl-5">
+                <li>
+                    <strong class="text-foreground">This workspace only</strong> —
+                    a contractor who should see one flow, or a specialist on one service.
+                </li>
+                <li>
+                    <strong class="text-foreground">Whole organization</strong> —
+                    “this person is SRE everywhere we use the SRE role.” They count
+                    on every workspace that has that role added. They do
+                    <em>not</em> count on a workspace that never added it.
+                </li>
+            </ul>
+            <p class="text-muted-foreground">
+                Typical setup: add Security reviewer to all production workspaces, assign
+                your security staff once at org level, and they cover every new production
+                workspace you attach that role to. No re-invite per workspace.
+            </p>
+
+            <h2 class="text-xl font-semibold mt-10">Click path in Platform.App</h2>
+            <ol class="space-y-3 text-muted-foreground list-decimal pl-5">
+                <li>Create or open an <strong class="text-foreground">organization</strong>. Invite people and assign org Owner / Maintainer / Member.</li>
+                <li>Define <strong class="text-foreground">review roles</strong> on the org (name and key only — no members yet).</li>
+                <li>Create a <strong class="text-foreground">workspace</strong> (organization Owner).</li>
+                <li>
+                    <strong class="text-foreground">Add review roles</strong> to that workspace,
+                    then assign people (this workspace, and/or org-wide for a shared pool).
+                    Invite to the workspace as Owner, Maintainer, Member, or a review role.
+                </li>
+                <li>
+                    Write a <strong class="text-foreground">governance policy</strong>:
+                    named people and/or “at least N of this review role.”
+                </li>
+                <li>
+                    On the workspace page, mint a <strong class="text-foreground">workspace credential</strong>
+                    (Client ID + secret). The secret is shown once. Workspace Owner or Maintainer,
+                    or an organization Owner (not org Maintainer unless they are also workspace Owner/Maintainer).
                     Rotate keeps the same Client ID and issues a new secret; revoke disables it.
                 </li>
                 <li>
@@ -30,10 +90,61 @@ import DocsLayout from "../../layouts/docs.astro";
                 </li>
             </ol>
 
+            <h2 class="text-xl font-semibold mt-10">What if we grow?</h2>
+            <p class="text-muted-foreground">
+                You do not need extra layers for “we have several apps” or “security
+                reviews everything.” Use more workspaces and the two assignment kinds
+                above. Here is how common situations map.
+            </p>
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm text-left border-collapse">
+                    <thead>
+                        <tr class="border-b border-border/50">
+                            <th class="py-2 pr-4 text-foreground">You need…</th>
+                            <th class="py-2 text-foreground">In Airlock</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-muted-foreground">
+                        <tr class="border-b border-border/30">
+                            <td class="py-3 pr-4">The same reviewers on every production workflow</td>
+                            <td class="py-3">Org-wide assignment + add that review role to each production workspace</td>
+                        </tr>
+                        <tr class="border-b border-border/30">
+                            <td class="py-3 pr-4">Someone who should only approve one workflow</td>
+                            <td class="py-3">Assign them on that workspace only</td>
+                        </tr>
+                        <tr class="border-b border-border/30">
+                            <td class="py-3 pr-4">Frontend vs backend vs a full-repo gate</td>
+                            <td class="py-3">Separate workspaces (they may overlap the same repo)</td>
+                        </tr>
+                        <tr class="border-b border-border/30">
+                            <td class="py-3 pr-4">Several products, one security staff</td>
+                            <td class="py-3">One org, many workspaces, org-wide security role</td>
+                        </tr>
+                        <tr class="border-b border-border/30">
+                            <td class="py-3 pr-4">A one-off list that is not a job title (this week’s on-call)</td>
+                            <td class="py-3">Named people on that policy, or a short-lived review role</td>
+                        </tr>
+                        <tr>
+                            <td class="py-3 pr-4">Two product lines that must not see each other’s people, roles, or admins</td>
+                            <td class="py-3">Two organizations (or talk to us — that is more structure than one shared org)</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <p class="text-muted-foreground">
+                Airlock does not use a Project or Team layer. If you later need a
+                named group that is <em>not</em> a permission (for example a synced
+                directory group), or a wall inside one company so one product’s
+                admins cannot manage another’s people and role names, that is when
+                we would add more structure. Until then, org + workspaces + review
+                roles is the whole model.
+            </p>
+
             <h2 class="text-xl font-semibold mt-10">Mobile (read-only)</h2>
             <p class="text-muted-foreground">
                 In the Mobile Approver, <strong class="text-foreground">Organization &amp; policy</strong>
-                lists orgs, projects, teams, and why you count toward a policy quorum.
+                lists your orgs, workspaces, and why you count toward a policy.
                 That is not the same as pairing <strong class="text-foreground">do-not-disturb</strong> policies.
             </p>
 

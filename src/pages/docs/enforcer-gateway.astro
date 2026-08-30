@@ -63,7 +63,8 @@ import DocsLayout from "../../layouts/docs.astro";
 
             <h2 class="text-xl font-semibold mt-10">Auth to Integrations Gateway</h2>
             <p class="text-muted-foreground">
-                Mint a workspace credential in Platform.App (org/project Owner or Maintainer).
+                Mint a workspace credential in Platform.App (workspace Owner or Maintainer,
+                or an organization Owner).
                 Point Enforcer Gateway at IGW with <code class="rounded bg-muted px-1 text-xs">Airlock__GatewayUrl</code>
                 and store Client ID + secret in the pairing file or environment.
                 Third-party Enforcer Apps still use Client ID + secret <em>plus</em> PAT; that path is unchanged.
