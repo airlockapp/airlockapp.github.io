@@ -55,10 +55,25 @@ import DocsLayout from "../../layouts/docs.astro";
 
             <h2 class="text-xl font-semibold mt-10">What it does</h2>
             <ul class="space-y-2 text-muted-foreground list-disc pl-5">
-                <li>Forwards OpenAI, Anthropic, Azure OpenAI, Codex Responses, and Bedrock Converse/Invoke paths to the real provider.</li>
-                <li>Inspects tool calls, encrypts a HARP <code class="rounded bg-muted px-1 text-xs">tool-call-approval</code> artifact, waits for a mobile decision, and <strong class="text-foreground">verifies</strong> the decision signature before releasing the response.</li>
-                <li>Returns <code class="rounded bg-muted px-1 text-xs">503 airlock_pairing_pending</code> until pairing (routing token + AES key) is on disk.</li>
+                <li>Forwards OpenAI, Anthropic, Azure OpenAI, Codex Responses, and Bedrock Converse/Invoke paths to the real provider. The inbound provider key is forwarded unchanged — this is not a vault.</li>
+                <li>Inspects tool calls, wraps a HARP <code class="rounded bg-muted px-1 text-xs">tool-call-approval</code> artifact to <strong class="text-foreground">workspace members</strong> who have Mobile Approver keys (not the whole org), waits for a mobile decision, and <strong class="text-foreground">verifies</strong> the decision signature before releasing the response.</li>
+                <li>Returns <code class="rounded bg-muted px-1 text-xs">503 airlock_not_configured</code> until an Integrations Gateway URL and a workspace Client ID + secret are available (process env, or a key binding plus the secrets file).</li>
+                <li>Does not pair with a phone and does not use a pairing file, routing token, or pairing AES key. Host IDE enforcers still pair; this process does not.</li>
                 <li>Does not implement HTTP CONNECT. Do not use it as a generic HTTP proxy.</li>
+            </ul>
+
+            <h2 class="text-xl font-semibold mt-10">Workspace routing (provider-key bind)</h2>
+            <p class="text-muted-foreground">
+                A governance workspace is a <strong class="text-foreground">credential and policy boundary</strong>, not a folder on disk.
+                Enforcer Gateway never stores a workspace Guid. It maps each request to a workspace
+                <strong class="text-foreground">Client ID</strong> (<code class="rounded bg-muted px-1 text-xs">alc_…</code>), and Integrations Gateway resolves that to the workspace.
+            </p>
+            <ul class="space-y-2 text-muted-foreground list-disc pl-5">
+                <li>On <code class="rounded bg-muted px-1 text-xs">http://127.0.0.1:8787/config</code> (loopback only), bind the SHA-256 of a provider API key (or Bedrock Access Key ID) to a workspace Client ID. After save, only the last 4 characters are shown.</li>
+                <li>If any bindings exist, an unknown inbound key is <code class="rounded bg-muted px-1 text-xs">401 unknown_provider_key</code> — there is no default workspace.</li>
+                <li>If the bind table is empty, the process-level Client ID + <code class="rounded bg-muted px-1 text-xs">Airlock__ClientSecret</code> is used (same as a single-workspace install).</li>
+                <li>Client secrets are not stored in SQLite. Optional per-Client-ID secrets go in <code class="rounded bg-muted px-1 text-xs">airlock-enforcer-secrets.json</code>. Env is the fallback when the bound Client ID matches the process Client ID.</li>
+                <li>Escape hatch: prefix the provider path, for example <code class="rounded bg-muted px-1 text-xs">http://127.0.0.1:8787/ws/engineering/v1/chat/completions</code>. If both the path label and the inbound key bind, they must name the same Client ID or the proxy returns <code class="rounded bg-muted px-1 text-xs">403 workspace_bind_conflict</code>.</li>
             </ul>
 
             <h2 class="text-xl font-semibold mt-10">Auth to Integrations Gateway</h2>
@@ -66,7 +81,8 @@ import DocsLayout from "../../layouts/docs.astro";
                 Mint a workspace credential in Platform.App (workspace Owner or Maintainer,
                 or an organization Owner).
                 Point Enforcer Gateway at IGW with <code class="rounded bg-muted px-1 text-xs">Airlock__GatewayUrl</code>
-                and store Client ID + secret in the pairing file or environment.
+                and put Client ID in config (or a key binding) and the secret in env or the secrets file.
+                Approvals wrap to <strong class="text-foreground">active workspace members</strong>, not every org member.
                 Third-party Enforcer Apps still use Client ID + secret <em>plus</em> PAT; that path is unchanged.
                 See <a href="/docs/organizations" class="text-link hover:underline">Organizations</a>
                 and <a href="/docs/airlock-apps" class="text-link hover:underline">Airlock Apps</a>.

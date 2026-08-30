@@ -23,9 +23,10 @@ import DocsLayout from "../../layouts/docs.astro";
                     (for example Security reviewer or SRE).
                 </li>
                 <li>
-                    <strong class="text-foreground">Workspace</strong> — one policy
-                    boundary: an app, a folder in a monorepo, a production flow, or an
-                    agent. Pairing and the Enforcer Gateway credential belong to the workspace.
+                    <strong class="text-foreground">Workspace</strong> — one credential
+                    and policy boundary (an app, a production flow, or an agent). It is
+                    not a filesystem folder. Host-enforcer pairing and the Enforcer Gateway
+                    workspace Client ID both attach here.
                 </li>
                 <li>
                     <strong class="text-foreground">Workspace roles</strong> — Owner,
